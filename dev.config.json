@@ -1,0 +1,43 @@
+﻿{
+    "certificate": {
+        "key": "certificates/jsreport.net.key",    
+        "cert": "certificates/jsreport.net.cert"
+    },
+    "connectionString": {
+        "name": "fs",
+        "address": "127.0.0.1",
+        "databaseName" : "multitenant"
+    },
+    "httpPort": 3000,
+    "scheduling": {
+        "enabled": false
+    },
+    "electron": {
+        "strategy": "electron-server"
+    },
+    "license-key": "foo",
+    "express": {
+        "inputRequestLimit": "128mb"
+    },
+    "electron": {
+        "strategy":"dedicated-process",
+        "timeout": 30000
+    },
+    "phantom": {
+        "numberOfWorkers" : 2,
+        "timeout": 5200000,
+        "strategy": "dedicated-process"
+    },
+    "electron": {
+        "timeout": 5200000,
+        "strategy": "electron-ipc"
+    },
+    "tasks": {
+        "numberOfWorkers" : 2,
+        "strategy": "dedicated-process",
+        "allowedModules": "*"
+    },
+    "scripts": {
+        "allowedModules": "*"
+    }
+}
