@@ -1,24 +1,29 @@
 import React, {Component, PropTypes} from 'react';
 import {connect} from 'react-redux';
 import {list as listAction} from 'redux/modules/templates';
-// import { asyncConnect } from 'redux-async-connect';
 
-/*
-@asyncConnect([{
-  deferred: true,
-  promise: ({store: {dispatch}}) => dispatch(listAction())
-}]) */
+let AceEditor;
+
+if (typeof window !== 'undefined') {
+  AceEditor = require('react-ace');
+
+  require('brace/mode/javascript');
+  require('brace/theme/chrome');
+}
+
 @connect(
     state => ({
       list: state.templates.list,
       error: state.templates.error,
-      loading: state.templates.loading
-    }), { listAction })
+      loading: state.templates.loading,
+      loaded: state.templates.loaded
+  }), {listAction})
 export default class Templates extends Component {
   static propTypes = {
     list: PropTypes.array,
     error: PropTypes.string,
     loading: PropTypes.bool,
+    loaded: PropTypes.bool,
     listAction: PropTypes.func.isRequired
   };
 
@@ -26,18 +31,26 @@ export default class Templates extends Component {
     this.props.listAction();
   }
 
+  handleClick() {
+    alert('click');
+  }
+
   render() {
-    const { list, error} = this.props;
+    const { list, loaded, error} = this.props;
 
     return (
       <div>
-        <div>
-           aaa 22233aarrrzzz
-        </div>
-        <div>
-          { list.map((t) => <span key={t._id}>Template: {t.name}</span>)}
-        </div>
-        Templates
+        <button className="btn btn-success" >Save</button>
+        aaa
+        {loaded ?
+        <div> <AceEditor
+          mode="javascript"
+          theme="chrome"
+          name="UNIQUE_ID_OF_DIV"
+          value={list[0].content}
+          editorProps={{$blockScrolling: true}}
+          /></div>
+           : <div>loading</div>}
       </div>
     );
   }

@@ -1,13 +1,12 @@
 import React, { Component, PropTypes } from 'react';
+import { connect } from 'react-redux';
 import Helmet from 'react-helmet';
+import config from '../../config';
+import { asyncConnect } from 'redux-async-connect';
 import Navbar from 'react-bootstrap/lib/Navbar';
 import Nav from 'react-bootstrap/lib/Nav';
 import NavItem from 'react-bootstrap/lib/NavItem';
-import { IndexLink } from 'react-router';
-import { LinkContainer } from 'react-router-bootstrap';
-import config from '../../config';
-import { connect } from 'react-redux';
-import { asyncConnect } from 'redux-async-connect';
+import { Link } from 'react-router';
 
 @asyncConnect([{
   promise: ({store: {}}) => {
@@ -29,26 +28,15 @@ export default class App extends Component {
     const styles = require('./App.scss');
 
     return (
-      <div className={styles.app}>
+      <div>
         <Helmet {...config.app.head}/>
-        <Navbar fixedTop>
-          <Navbar.Header>
-            <Navbar.Brand>
-              <IndexLink to="/" activeStyle={{color: '#33e0ff'}}>
-                <span>{config.app.title}</span>
-              </IndexLink>
-            </Navbar.Brand>
-            <Navbar.Toggle/>
-          </Navbar.Header>
-
-          <Navbar.Collapse eventKey={0}>
-            <Nav navbar>
-              <LinkContainer to="/templates">
-                <NavItem eventKey={1}>Templates</NavItem>
-              </LinkContainer>
-            </Nav>
-          </Navbar.Collapse>
-        </Navbar>
+        <nav className="navbar navbar-dark bg-primary navbar-fixed-top">
+          <div className="navbar-nav">
+            <Link to="/" className="nav-item nav-link active">Home</Link>
+            <Link to="/templates" className="nav-item nav-link">Templates</Link>
+            <Link to="/data" className="nav-item nav-link">Data</Link>
+          </div>
+        </nav>
 
         <div className={styles.appContent}>
           {this.props.children}
