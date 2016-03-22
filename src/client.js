@@ -19,6 +19,8 @@ window.studio = {
   routes: []
 };
 
+window.studio.react = React;
+
 function start() {
   const routes = getRoutes(window.studio.routes);
 
@@ -38,9 +40,11 @@ function start() {
   );
 }
 
-fetchExtension(function() {
-  start();
-});
+start();
+
+//fetchExtension(function() {
+//  start();
+//});
 
 
 

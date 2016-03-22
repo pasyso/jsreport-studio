@@ -6,9 +6,9 @@ export default class Home extends Component {
     return (
       <div>
         <Helmet title="Home"/>
-        <h1>Home... </h1>
+        <h1>Home.zzz </h1>
         <button type="button" className="btn btn-default">Default</button>
-
+sdasd
         <p>Lorreee mw eof mweopcmewcopewmcpo emcewmoc emcpewmo pcemwpocewmopcmp cm </p>
         <p>Lorreee mw eof mweopcmewcopewmcpo emcewmoc emcpewmo pcemwpocewmopcmp cm </p>
         <p>Lorreee mw eof mweopcmewcopewmcpo emcewmoc emcpewmo pcemwpocewmopcmp cm </p>
