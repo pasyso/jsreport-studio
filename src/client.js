@@ -40,11 +40,9 @@ function start() {
   );
 }
 
-start();
-
-//fetchExtension(function() {
-//  start();
-//});
+fetchExtension(function() {
+  start();
+});
 
 
 

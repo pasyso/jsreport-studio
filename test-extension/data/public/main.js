@@ -53,7 +53,7 @@
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 	studio.routes.push({
-	  path: 'studio/data',
+	  path: '/data',
 	  component: _List2.default
 	});
 
@@ -89,6 +89,7 @@
 
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
+	var React = studio.react;
 	var Component = studio.react.Component;
 
 	var List = function (_Component) {
