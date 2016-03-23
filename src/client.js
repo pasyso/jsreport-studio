@@ -5,7 +5,6 @@ import createStore from './redux/create';
 import ApiClient from './helpers/ApiClient';
 import {Provider} from 'react-redux';
 import { Router, browserHistory } from 'react-router';
-import { ReduxAsyncConnect } from 'redux-async-connect';
 import useScroll from 'scroll-behavior/lib/useStandardScroll';
 import getRoutes from './routes';
 import fetchExtension from './fetchExtensions';
@@ -22,19 +21,14 @@ window.studio = {
 window.studio.react = React;
 
 function start() {
+  console.log('getting routes from ', window.studio.routes);
   const routes = getRoutes(window.studio.routes);
-
-  const component = (
-    <Router render={(props) =>
-        <ReduxAsyncConnect {...props} helpers={{client}} filter={item => !item.deferred} />
-      } history={history}>
-      {routes}
-    </Router>
-  );
 
   ReactDOM.render(
     <Provider store={store} key="provider">
-      {component}
+      <Router history={history}>
+        {routes}
+      </Router>
     </Provider>,
     document.getElementById('content')
   );

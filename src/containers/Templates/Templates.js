@@ -39,7 +39,7 @@ export default class Templates extends Component {
 
     return (
       <div>
-        <Button bsStyle="success" onClick={() => this.handleClick()}>Run</Button>
+        <Button bsStyle="success" onClick={() => this.handleClick()}>Runxab</Button>
         <SplitPane split="vertical" minSize="50" defaultSize="50%">
            <AceEditor
               mode="javascript"

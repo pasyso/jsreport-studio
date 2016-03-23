@@ -2,17 +2,8 @@ import React, { Component, PropTypes } from 'react';
 import { connect } from 'react-redux';
 import Helmet from 'react-helmet';
 import config from '../../config';
-import { asyncConnect } from 'redux-async-connect';
-import Navbar from 'react-bootstrap/lib/Navbar';
-import Nav from 'react-bootstrap/lib/Nav';
-import NavItem from 'react-bootstrap/lib/NavItem';
 import { Link } from 'react-router';
 
-@asyncConnect([{
-  promise: ({store: {}}) => {
-    return Promise.all([]);
-  }
-}])
 @connect(null, null)
 export default class App extends Component {
   static propTypes = {

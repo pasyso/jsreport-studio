@@ -9,6 +9,7 @@ import {
 export default (aroutes) => {
   const routes = aroutes || [];
 
+  console.log('rendering routes');
   return (
     <Route path="/" component={App}>
       { /* Home (main) route */ }

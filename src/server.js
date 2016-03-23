@@ -6,11 +6,12 @@ var path = require('path');
 var http = require('http');
 var app = new Express();
 var server = new http.Server(app);
+var fs = require('fs');
 
 app.use(compression());
 app.use(favicon(path.join(__dirname, '..', 'static', 'favicon.ico')));
 
-app.use('/extension/data', Express.static(path.join(__dirname, '../', 'test-extension', 'data')));
+app.use('/extension/data', Express.static(path.join(__dirname, '../', 'extensions', 'data')));
 var webpack = require('webpack');
 var webpackConfig = require('../webpack/dev.config');
 var compiler = webpack(webpackConfig);
@@ -31,6 +32,8 @@ var jsreport = require('jsreport')({
 });
 
 jsreport.init().then(function() {
+  fs.writeFileSync(path.join(__dirname, 'dev-extensions-require.js'), "import '../extensions/data/public/main_dev.js'");
+
   app.get('*', function response(req, res) {
     res.sendFile(path.join(__dirname, '../static/dist/index.html'));
   });
