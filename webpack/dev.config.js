@@ -70,7 +70,8 @@ module.exports = {
   },
   output: {
     path: assetsPath,
-    filename: 'client.js'
+    filename: 'client.js',
+    publicPath: '/studio/assets/'
   },
   module: {
     loaders: [

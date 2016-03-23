@@ -15,7 +15,7 @@ export default (aroutes) => {
       { /* Home (main) route */ }
       <IndexRoute component={Home}/>
       { /* Routes */ }
-      <Route path="/templating" component={Templates}/>
+      <Route path="/studio/templating" component={Templates}/>
 
       {routes.map((r) => <Route path={r.path} component={r.component} key={r.path} />)}
     </Route>

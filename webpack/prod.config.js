@@ -15,28 +15,34 @@ module.exports = {
   context: path.resolve(__dirname, '..'),
   entry: {
     'main': [
-      'bootstrap-sass!./src/theme/bootstrap.config.prod.js',
       'font-awesome-webpack!./src/theme/font-awesome.config.prod.js',
       './src/client.js'
     ]
   },
   output: {
     path: assetsPath,
-    filename: '[name]-[chunkhash].js',
-    chunkFilename: '[name]-[chunkhash].js',
-    publicPath: '/dist/'
+    filename: 'client.js',
+    publicPath: '/studio/assets/'
   },
   module: {
     loaders: [
       { test: /\.jsx?$/, exclude: /node_modules/, loaders: [strip.loader('debug'), 'babel']},
       { test: /\.json$/, loader: 'json-loader' },
-      { test: /\.less$/, loader: ExtractTextPlugin.extract('style', 'css?modules&importLoaders=2&sourceMap!autoprefixer?browsers=last 2 version!less?outputStyle=expanded&sourceMap=true&sourceMapContents=true') },
-      { test: /\.scss$/, loader: ExtractTextPlugin.extract('style', 'css?modules&importLoaders=2&sourceMap!autoprefixer?browsers=last 2 version!sass?outputStyle=expanded&sourceMap=true&sourceMapContents=true') },
+      { test: /\.less$/, loader: 'style!css?modules&importLoaders=2&sourceMap&localIdentName=[local]___[hash:base64:5]!autoprefixer?browsers=last 2 version!less?outputStyle=expanded&sourceMap' },
+      { test: /\.scss$/,
+        loader: 'style!css?modules&importLoaders=2&sourceMap&localIdentName=[local]___[hash:base64:5]!sass?outputStyle=expanded&sourceMap',
+        exclude: [ /.*theme.*/]
+      },
+      {
+        loader: 'style!css?importLoaders=2!sass?outputStyle=expanded',
+        include: [ /.*theme.*\.scss/]
+      },
       { test: /\.woff(\?v=\d+\.\d+\.\d+)?$/, loader: "url?limit=10000&mimetype=application/font-woff" },
       { test: /\.woff2(\?v=\d+\.\d+\.\d+)?$/, loader: "url?limit=10000&mimetype=application/font-woff" },
       { test: /\.ttf(\?v=\d+\.\d+\.\d+)?$/, loader: "url?limit=10000&mimetype=application/octet-stream" },
       { test: /\.eot(\?v=\d+\.\d+\.\d+)?$/, loader: "file" },
-      { test: /\.svg(\?v=\d+\.\d+\.\d+)?$/, loader: "url?limit=10000&mimetype=image/svg+xml" }
+      { test: /\.svg(\?v=\d+\.\d+\.\d+)?$/, loader: "url?limit=10000&mimetype=image/svg+xml" },
+      { test: /\.(png|jpg)$/, loader: 'url-loader?limit=8192' }
     ]
   },
   progress: true,
@@ -49,9 +55,6 @@ module.exports = {
   },
   plugins: [
     new CleanPlugin([assetsPath], { root: projectRootPath }),
-
-    // css files from the extract-text-plugin loader
-    new ExtractTextPlugin('[name]-[chunkhash].css', {allChunks: true}),
     new webpack.DefinePlugin({
       'process.env': {
         NODE_ENV: '"production"'
