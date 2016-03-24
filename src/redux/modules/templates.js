@@ -4,6 +4,7 @@ const LIST_FAIL = 'templates/LIST_FAIL';
 
 const initialState = {
   list: [],
+  detail: null,
   error: null,
   loading: false,
   loaded: false
@@ -12,8 +13,7 @@ const initialState = {
 export default function reducer(state = initialState, action = {}) {
 
   switch (action.type) {
-    case LIST:
-      return {
+    case LIST: return {
         ...state,
         loading: true
       };
