@@ -26,6 +26,7 @@ export default class App extends Component {
             <Link to="/" className="nav-item nav-link active">Home</Link>
             <Link to="/studio/templating" className="nav-item nav-link">Templates</Link>
             <Link to="/studio/data" className="nav-item nav-link">Data</Link>
+            <Link to="/studio/scripts" className="nav-item nav-link">Scripts</Link>
           </div>
         </nav>
 

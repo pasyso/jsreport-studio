@@ -17,7 +17,14 @@ module.exports = function(reporter, definition) {
   });
 
   reporter.on('express-configure', function() {
-    fs.writeFileSync(path.join(__dirname, 'dev-extensions-require.js'), "import '../extensions/data/public/main_dev.js'");
+    if (reporter.options.mode === 'production') {
+      var content = fs.readFileSync(path.join(__dirname, '../extensions/data/public/main.js')) + '\n' +
+        fs.readFileSync(path.join(__dirname, '../extensions/scripts/public/main.js'));
+
+      fs.writeFileSync(path.join(__dirname, '../static/dist/extensions.js'), content);
+    } else {
+      fs.writeFileSync(path.join(__dirname, 'dynamicExtensions.js'), "import '../extensions/data/public/main_dev.js'");
+    }
 
     var app = reporter.express.app;
 
@@ -41,7 +48,7 @@ module.exports = function(reporter, definition) {
 
     app.use('/studio/assets', Express.static(path.join(__dirname, '../', 'static', 'dist')));
 
-    app.get('/studio', function response(req, res) {
+    app.get('/studio/*', function response(req, res) {
       res.sendFile(path.join(__dirname, '../static/index.html'));
     });
   });

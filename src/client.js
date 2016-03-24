@@ -14,11 +14,18 @@ const client = new ApiClient();
 const history = useScroll(() => browserHistory)();
 const store = createStore(history, client, window.__data);
 
-window.studio = {
-  routes: []
+var studio = window.studio = {
+  routes: [],
+  runtime: {},
+  react : React
 };
 
-window.studio.react = React;
+studio.runtime['core-js/object/get-prototype-of'] = require('babel-runtime/core-js/object/get-prototype-of');
+studio.runtime['helpers/classCallCheck'] = require('babel-runtime/helpers/classCallCheck');
+studio.runtime['helpers/createClass'] = require('babel-runtime/helpers/createClass');
+studio.runtime['helpers/possibleConstructorReturn'] = require('babel-runtime/helpers/possibleConstructorReturn');
+studio.runtime['helpers/inherits'] = require('babel-runtime/helpers/inherits');
+
 
 function start() {
   console.log('getting routes from ', window.studio.routes);
@@ -34,8 +41,11 @@ function start() {
   );
 }
 
+//require('./dynamicExtensions');
+//start();
+
 fetchExtension(function() {
-  start();
+ start();
 });
 
 

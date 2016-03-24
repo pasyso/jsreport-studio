@@ -16,13 +16,17 @@ function loadScript(url, callback) {
 
 //start prod udela neco podobneho, ale embedne tam ten script
 
+//require('./dev-extensions-require.js');
+//cb();
+
+//loadScript('/extension/data/public/main.js', function() {
+//  console.log('done');
+//  cb();
+//});
 
 export default function(cb) {
-  console.log('loading');
-  require('./dev-extensions-require.js');
-  cb();
-  //loadScript('/extension/data/public/main.js', function() {
-  //  console.log('done');
-  //  cb();
-  //});
+  loadScript('/studio/assets/extensions.js', function() {
+    console.log('done');
+    cb();
+  });
 }
