@@ -58,16 +58,32 @@
   border-right: 5px solid rgba(0, 0, 0, 0.5);
 }
 
+
+
+//.previewPane {
+//  display: block;
+//  position: absolute;
+//  height: auto;
+//  bottom: 0;
+//  top: 0;
+//  left: 0;
+//  right: 0;
+//  margin-bottom: 5px;
+//  margin-right: 5px;
+//  margin-left: 0px;
+//  border: 1px solid #dddddd;
+//}
+
 .previewPane {
-  display: block;
-  position: absolute;
-  height: auto;
-  bottom: 0;
-  top: 0;
-  left: 0;
-  right: 0;
-  margin-bottom: 5px;
-  margin-right: 5px;
-  margin-left: 0px;
-  border: 1px solid #dddddd;
+  width: 100%;
+  height: 100%;
 }
+
+
+.previewPaneWrap {
+  width: 100%;
+  height: 100%;
+  pading-right: 4px;
+  padding-bottom: 3px;
+}
+

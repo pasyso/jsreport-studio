@@ -25,6 +25,7 @@ function loadScript(url, callback) {
 //});
 
 export default function(cb) {
+  console.log('loading extensions');
   loadScript('/studio/assets/extensions.js', function() {
     console.log('done');
     cb();

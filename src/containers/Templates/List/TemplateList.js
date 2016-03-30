@@ -31,7 +31,7 @@ export default class Templates extends Component {
 
     return (
       <div>
-        <Button bsStyle='success' onClick={() => this.handleClick()}>Run-zz</Button>
+        <Button bsStyle='success' onClick={() => this.handleClick()}>Run-aha</Button>
         {loaded ? list.map((l) => <span key={l._id}>{l.name}</span>) : ''}
       </div>
     )

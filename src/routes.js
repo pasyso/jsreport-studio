@@ -3,7 +3,7 @@ import {IndexRoute, Route} from 'react-router';
 import {
     App,
     Home,
-    Template,
+    Templates,
     TemplateList
   } from 'containers';
 
@@ -16,8 +16,8 @@ export default (aroutes) => {
       { /* Home (main) route */ }
       <IndexRoute component={Home}/>
       { /* Routes */ }
-      <Route path="/studio/templating" component={TemplateList}/>
-      <Route path="/studio/templating" component={Template}/>
+      <Route path="/studio/templates" component={TemplateList}/>
+      <Route path="/studio/templating" component={Templates}/>
 
       {routes.map((r) => <Route path={r.path} component={r.component} key={r.path} />)}
     </Route>
