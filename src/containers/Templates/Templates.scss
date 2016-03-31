@@ -1,65 +1,116 @@
-:global .SplitPane {
-  position: absolute;
-  height: auto !important;
-  bottom: 0 !important;
-  top: 0 !important;
-  left: 0px !important;
-  right: 0 !important;
-  float: left !important;
-  margin-bottom: 5px !important;
-  margin-right: 5px !important;
-  padding-left: 10px !important;
-  margin-top: 90px !important;
-}
+//:global .SplitPane {
+//  position: absolute;
+//  height: auto !important;
+//  bottom: 0 !important;
+//  top: 0 !important;
+//  left: 0px !important;
+//  right: 0 !important;
+//  float: left !important;
+//  margin-bottom: 5px !important;
+//  margin-right: 5px !important;
+//  padding-left: 10px !important;
+//  margin-top: 90px !important;
+//}
+//
+//:global .Resizer {
+//  background: #000;
+//  opacity: .2;
+//  z-index: 1;
+//  -moz-box-sizing: border-box;
+//  -webkit-box-sizing: border-box;
+//  box-sizing: border-box;
+//  -moz-background-clip: padding;
+//  -webkit-background-clip: padding;
+//  background-clip: padding-box;
+//}
+//
+//:global .Resizer:hover {
+//  -webkit-transition: all 2s ease;
+//  transition: all 2s ease;
+//}
+//
+//:global .Resizer.horizontal {
+//  height: 11px;
+//  margin: -5px 0;
+//  border-top: 5px solid rgba(255, 255, 255, 0);
+//  border-bottom: 5px solid rgba(255, 255, 255, 0);
+//  cursor: row-resize;
+//  width: 100%;
+//}
+//
+//:global .Resizer.horizontal:hover {
+//  border-top: 5px solid rgba(0, 0, 0, 0.5);
+//  border-bottom: 5px solid rgba(0, 0, 0, 0.5);
+//}
+//
+//:global .Resizer.vertical {
+//  width: 11px;
+//  margin: 0 -5px;
+//  border-left: 5px solid rgba(255, 255, 255, 0);
+//  border-right: 5px solid rgba(255, 255, 255, 0);
+//  cursor: col-resize;
+//  height: 100%;
+//}
+//
+//:global .Resizer.vertical:hover {
+//  border-left: 5px solid rgba(0, 0, 0, 0.5);
+//  border-right: 5px solid rgba(0, 0, 0, 0.5);
+//}
 
-
-:global .Resizer {
-  background: #000;
-  opacity: .2;
-  z-index: 1;
-  -moz-box-sizing: border-box;
-  -webkit-box-sizing: border-box;
-  box-sizing: border-box;
-  -moz-background-clip: padding;
-  -webkit-background-clip: padding;
-  background-clip: padding-box;
-}
-
-:global .Resizer:hover {
-  -webkit-transition: all 2s ease;
-  transition: all 2s ease;
-}
-
-:global .Resizer.horizontal {
-  height: 11px;
-  margin: -5px 0;
-  border-top: 5px solid rgba(255, 255, 255, 0);
-  border-bottom: 5px solid rgba(255, 255, 255, 0);
-  cursor: row-resize;
+.studioContainer {
+  display:         flex;
+  flex: 1;
+  flex-direction: column;
   width: 100%;
 }
 
-:global .Resizer.horizontal:hover {
-  border-top: 5px solid rgba(0, 0, 0, 0.5);
-  border-bottom: 5px solid rgba(0, 0, 0, 0.5);
+.toolbar {
+  background-color: brown;
+  flex: 1;
+  z-index: 1;
 }
 
-:global .Resizer.vertical {
-  width: 11px;
-  margin: 0 -5px;
-  border-left: 5px solid rgba(255, 255, 255, 0);
-  border-right: 5px solid rgba(255, 255, 255, 0);
-  cursor: col-resize;
-  height: 100%;
+.main {
+  flex: 39;
+  display: flex;
+  background-color: green;
 }
 
-:global .Resizer.vertical:hover {
-  border-left: 5px solid rgba(0, 0, 0, 0.5);
-  border-right: 5px solid rgba(0, 0, 0, 0.5);
+.editor {
+  display:         flex;
+  flex-direction: column;
+  background-color: red;
+  flex: 1;
+  z-index: 10;
 }
 
+.ace {
+  background-color: brown;
+  flex: 1;
+}
 
-
+.preview {
+  display:         flex;
+  flex-direction: column;
+  background-color: yellow;
+  flex: 1 1 auto;
+}
+//
+//
+//.editor {
+//  display: block;
+//  position: absolute;
+//  height: auto;
+//  bottom: 0;
+//  top: 0;
+//  left:0;
+//  right: 0;
+//  margin-bottom: 0;
+//  margin-right: 0;
+//  margin-left: 0;
+//  margin-top: 0px;
+//}
+//
 //.previewPane {
 //  display: block;
 //  position: absolute;
@@ -73,17 +124,5 @@
 //  margin-left: 0px;
 //  border: 1px solid #dddddd;
 //}
-
-.previewPane {
-  width: 100%;
-  height: 100%;
-}
-
-
-.previewPaneWrap {
-  width: 100%;
-  height: 100%;
-  pading-right: 4px;
-  padding-bottom: 3px;
-}
-
+//
+//

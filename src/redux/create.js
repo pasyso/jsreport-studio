@@ -1,36 +1,36 @@
-import { createStore as _createStore, applyMiddleware, compose } from 'redux';
-import createMiddleware from './middleware/clientMiddleware';
-import { syncHistory } from 'react-router-redux';
+import { createStore as _createStore, applyMiddleware, compose } from 'redux'
+import thunk from 'redux-thunk'
+import { syncHistory } from 'react-router-redux'
 
-export default function createStore(history, client, data) {
+export default function createStore (history, data) {
   // Sync dispatched route actions to the history
-  const reduxRouterMiddleware = syncHistory(history);
+  const reduxRouterMiddleware = syncHistory(history)
 
-  const middleware = [createMiddleware(client), reduxRouterMiddleware];
+  const middleware = [ thunk, reduxRouterMiddleware ]
 
-  let finalCreateStore;
-  if (__DEVELOPMENT__ && __CLIENT__ && __DEVTOOLS__) {
-    const { persistState } = require('redux-devtools');
-    const DevTools = require('../containers/DevTools/DevTools');
+  let finalCreateStore
+  if (__DEVELOPMENT__ && __DEVTOOLS__) {
+    const { persistState } = require('redux-devtools')
+    const DevTools = require('../containers/DevTools/DevTools')
     finalCreateStore = compose(
       applyMiddleware(...middleware),
       window.devToolsExtension ? window.devToolsExtension() : DevTools.instrument(),
       persistState(window.location.href.match(/[?&]debug_session=([^&]+)\b/))
-    )(_createStore);
+    )(_createStore)
   } else {
-    finalCreateStore = applyMiddleware(...middleware)(_createStore);
+    finalCreateStore = applyMiddleware(...middleware)(_createStore)
   }
 
-  const reducer = require('./modules/reducer');
-  const store = finalCreateStore(reducer, data);
+  const reducer = require('./modules/reducer')
+  const store = finalCreateStore(reducer, data)
 
-  reduxRouterMiddleware.listenForReplays(store);
+  reduxRouterMiddleware.listenForReplays(store)
 
   if (__DEVELOPMENT__ && module.hot) {
     module.hot.accept('./modules/reducer', () => {
-      store.replaceReducer(require('./modules/reducer'));
-    });
+      store.replaceReducer(require('./modules/reducer'))
+    })
   }
 
-  return store;
+  return store
 }

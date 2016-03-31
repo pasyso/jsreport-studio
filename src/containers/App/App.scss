@@ -1,3 +1,18 @@
 .appContent {
-  margin-top: 50px; // for fixed navbar
+  flex: 1;
+  margin-top: 3em;
+}
+
+.navbar {
+  width: 100%;
+  position: fixed;
+  z-index: 99;
+  background: deepskyblue;
+  padding: 1em;
+}
+
+.nav-link {
+  color: white;
+  text-decoration: none;
+  padding: 1em;
 }

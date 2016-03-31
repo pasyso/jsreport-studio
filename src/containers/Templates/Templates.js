@@ -1,107 +1,96 @@
 import React, {Component, PropTypes} from 'react'
 import {connect} from 'react-redux'
-import {list as listAction} from 'redux/modules/templates'
-import {Button} from 'react-bootstrap'
+import { fetchTemplateNames, fetchTemplate } from 'redux/modules/studio'
 import AceEditor from 'react-ace'
 import 'brace/mode/handlebars'
 import 'brace/theme/chrome'
-import SplitPane from 'react-split-pane'
 import style from './Templates.scss'
 import preview from './preview'
-import { DockPane, DockPanel } from 'dock-spawn'
+import SplitPane from 'react-split-pane'
 
-@connect(
-    state => ({
-    list: state.templates.list,
-    error: state.templates.error,
-    loading: state.templates.loading,
-    loaded: state.templates.loaded
-  }), { listAction })
+@connect((state) => ({
+  list: state.studio.templateList,
+  details: state.studio.templateDetails,
+  currentDetail: state.studio.currentDetail
+}), { fetchTemplateNames, fetchTemplate })
 export default class Templates extends Component {
   static propTypes = {
     list: PropTypes.array,
+    details: PropTypes.array,
+    currentDetail: PropTypes.object,
     error: PropTypes.string,
     loading: PropTypes.bool,
     loaded: PropTypes.bool,
-    listAction: PropTypes.func.isRequired
+    fetchTemplateNames: PropTypes.func.isRequired,
+    fetchTemplate: PropTypes.func.isRequired
   };
 
-  constructor() {
+  constructor () {
     super()
     this.handleClick = this.handleClick.bind(this)
     this.handleContentChange = this.handleContentChange.bind(this)
+    this.handleDetail = this.handleDetail.bind(this)
   }
 
   componentDidMount () {
-    this.props.listAction()
-    var self = this;
+    this.props.fetchTemplateNames()
+    var self = this
 
-    this.refs.dockPane.dockManager.addLayoutListener({
-      onResumeLayout: function() {
-        self.refs.ace.editor.resize()
-      }
-    })
-
-    //setInterval(function() {
-    //  //self.forceUpdate()
-    //  self.refs.ace.editor.resize()
-    //  console.log(self.refs.ace)
-    //}, 5000)
-  }
-
-  componentDidUpdate () {
-    window.onresize()
+    //if (this.refs.dockPane) {
+    //  this.refs.dockPane.dockManager.addLayoutListener({
+    //    onResumeLayout: function () {
+    //      self.refs.aceContent.editor.resize()
+    //      self.refs.aceHelpers.editor.resize()
+    //    }
+    //  })
+    //}
   }
 
   handleClick () {
-    preview(this.props.list[ 0 ], 'previewFrame')
+    preview(this.props.currentDetail, 'previewFrame')
+  }
+
+  handleDetail (id) {
+    this.props.fetchTemplate(id)
   }
 
   handleContentChange (val) {
-    this.props.list[0].content = val
+    this.props.currentDetail.content = val
   }
 
   render () {
-    const { list, loaded, error} = this.props
-    const template = list.length ? list[ 0 ] : { content: 'loading' }
+
+    const { currentDetail, list} = this.props
+
+    if (!currentDetail) {
+      return <div></div>
+    }
+
     return (
-      <div>
-        <div>
-          <Button bsStyle='success' onClick={this.handleClick}>Run-zz {loaded}</Button>
+      <div className={style.studioContainer}>
+        <div className={style.toolbar}>
+          <button onClick={this.handleClick}>Run</button>
+          {list.map((l) =>
+            <button key={l._id} onClick={() => this.handleDetail(l._id)}>{l.name}
+            </button>)
+          }
         </div>
-        <DockPane ref='dockPane'>
-          <DockPanel position='fill' title='template content'>
-            <AceEditor ref='ace'
-              mode='handlebars'
-              onChange={this.handleContentChange}
+        <div className={style.main}>
+          <div className={style.editor}>
+            <AceEditor
+              mode='javascript'
               theme='chrome'
+              name='UNIQUE_ID_OF_DIV'
               width='100%'
-              height='100%'
-              name='UNIQUE_ID_2'
-              value={template.content}
-              editorProps={{$blockScrolling: true}}
-              />
-
-            <DockPanel position='right' title='preview' ratio={0.5}>
-              <div className={style.previewPaneWrap}>
-                <iframe name='previewFrame' className={style.previewPane} allowTransparency='true' frameBorder='0' allowFullScreen='true'></iframe>
-              </div>
-            </DockPanel>
-
-            <DockPanel position='down' title='template helpers' ratio={0.5}>
-              <AceEditor
-                mode='javascript'
-                theme='chrome'
-                width='100%'
-                height='100%'
-                name='UNIQUE_ID_1'
-                value={template.helpers}
-                editorProps={{$blockScrolling: true}}
-                />
-            </DockPanel>
-          </DockPanel>
-
-        </DockPane>
+              className={style.ace}
+              value={currentDetail.content}
+              editorProps={{$blockScrolling: true}}/>
+          </div>
+          <div className={style.preview}>
+            <iframe id='iframe' style={{width:'100%', height:'100%', flex: 1}} allowTransparency='true' frameBorder='0'
+                    allowFullScreen='true' src="http://www.pdf995.com/samples/pdf.pdf"></iframe>
+          </div>
+        </div>
       </div>
     )
   }
