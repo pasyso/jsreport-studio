@@ -12,9 +12,10 @@ export default React.createClass({
 
     let style = {
       flex: 1,
-      position: 'relative',
+      display: 'flex',
       outline: 'none'
     }
+
     if (this.state.size !== undefined) {
       if (split === 'vertical') {
         style.width = this.state.size
@@ -24,8 +25,7 @@ export default React.createClass({
       }
       style.flex = 'none'
     }
-    const prefixed = VendorPrefix.prefix({styles: style})
 
-    return (<div className={classes.join(' ')} style={prefixed.styles}>{this.props.children}</div>)
+    return (<div className={classes.join(' ')} style={style}>{this.props.children}</div>)
   }
 })
