@@ -1,18 +1,19 @@
 import React, {Component, PropTypes} from 'react'
 import {connect} from 'react-redux'
-import { fetchTemplateNames, fetchTemplate } from 'redux/modules/studio'
+import * as actions from 'redux/modules/studio'
 import AceEditor from 'react-ace'
 import 'brace/mode/handlebars'
 import 'brace/theme/chrome'
 import style from './Templates.scss'
 import preview from './preview'
 import SplitPane from '../../components/common/SplitPane/SplitPane.js'
+import {TabPane, Tab} from '../../components/common/Tabs/TabPane.js'
 
 @connect((state) => ({
   list: state.studio.templateList,
   details: state.studio.templateDetails,
   currentDetail: state.studio.currentDetail
-}), { fetchTemplateNames, fetchTemplate })
+}), actions)
 export default class Templates extends Component {
   static propTypes = {
     list: PropTypes.array,
@@ -20,16 +21,13 @@ export default class Templates extends Component {
     currentDetail: PropTypes.object,
     error: PropTypes.string,
     loading: PropTypes.bool,
-    loaded: PropTypes.bool,
-    fetchTemplateNames: PropTypes.func.isRequired,
-    fetchTemplate: PropTypes.func.isRequired
+    loaded: PropTypes.bool
   };
 
   constructor () {
     super()
     this.handleClick = this.handleClick.bind(this)
     this.handleContentChange = this.handleContentChange.bind(this)
-    this.handleDetail = this.handleDetail.bind(this)
     this.handleSplitChanged = this.handleSplitChanged.bind(this)
     this.handleSplitDragFinished = this.handleSplitDragFinished.bind(this)
   }
@@ -42,7 +40,11 @@ export default class Templates extends Component {
     preview(this.props.currentDetail, 'previewFrame')
   }
 
-  handleDetail (id) {
+  openTab (id) {
+    this.props.fetchTemplate(id)
+  }
+
+  activateTab (id) {
     this.props.fetchTemplate(id)
   }
 
@@ -62,38 +64,48 @@ export default class Templates extends Component {
   }
 
   render () {
-    const {currentDetail, list} = this.props
+    const {currentDetail, list, details, fetchTemplate, closeTemplate } = this.props
 
     if (!currentDetail) {
       return <div></div>
     }
 
     return (
-      <div className={style.studioContainer}>
+      <div className='block'>
         <div className={style.toolbar}>
           <button onClick={this.handleClick}>Run</button>
           {list.map((l) =>
-            <button key={l._id} onClick={() => this.handleDetail(l._id)}>{l.name}
+            <button key={l._id} onClick={() => this.openTab(l._id)}>{l.name}
             </button>)
           }
         </div>
-        <div className={style.main}>
-          <SplitPane defaultSize='50%' onChange={this.handleSplitChanged} onDragFinished={this.handleSplitDragFinished}
+        <div className='block'>
+          <SplitPane
+            onChange={this.handleSplitChanged} onDragFinished={this.handleSplitDragFinished}
             resizerClassName={style.resizer}>
-            <AceEditor
-              ref='ace'
-              mode='javascript'
-              theme='chrome'
-              name='UNIQUE_ID_OF_DIV'
-              width='100%'
-              className={style.ace}
-              value={currentDetail.content}
-              editorProps={{$blockScrolling: true}}/>
+            <TabPane
+              activeTabKey={currentDetail._id} activateTab={fetchTemplate} closeTab={closeTemplate}>
+              {details.map((t) =>
+                <Tab key={t._id} title={t.name}>
+                  <AceEditor
+                    key={t._id}
+                    ref='ace'
+                    mode='javascript'
+                    theme='chrome'
+                    name={t._id}
+                    width='100%'
+                    className={style.ace}
+                    value={t.content}
+                    editorProps={{$blockScrolling: true}}/>
+                </Tab>)
+              }
+            </TabPane>
 
-            <div style={{flex: 1, display: 'flex'}}>
+            <div className='block'>
               <div id='overlay' style={{display: 'none'}}></div>
-              <iframe id='preview' frameBorder='0' name='previewFrame' src='http://www.pdf995.com/samples/pdf.pdf'
-                      allowTransparency='true' allowFullScreen='true' style={{width: '100%', flex: 1}}></iframe>
+              <iframe
+                id='preview' frameBorder='0' name='previewFrame' allowTransparency='true' allowFullScreen='true'
+                className='block-item'></iframe>
             </div>
           </SplitPane>
         </div>

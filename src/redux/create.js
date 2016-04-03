@@ -1,12 +1,15 @@
 import { createStore as _createStore, applyMiddleware, compose } from 'redux'
 import thunk from 'redux-thunk'
+import createLogger from 'redux-logger'
 import { syncHistory } from 'react-router-redux'
+
+const logger = createLogger()
 
 export default function createStore (history, data) {
   // Sync dispatched route actions to the history
   const reduxRouterMiddleware = syncHistory(history)
 
-  const middleware = [ thunk, reduxRouterMiddleware ]
+  const middleware = [ thunk, reduxRouterMiddleware, logger ]
 
   let finalCreateStore
   if (__DEVELOPMENT__ && __DEVTOOLS__) {

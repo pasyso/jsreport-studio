@@ -1,47 +1,49 @@
-import React from 'react'
+import React, {Component} from 'react'
 import ReactDOM from 'react-dom'
 import Pane from './Pane'
 import Resizer from './Resizer'
 
-export default React.createClass({
+export default class SplitPane extends Component {
+  constructor () {
+    super()
+    this.state = {
+      active: false,
+      resized: false
+    }
+    this.onMouseDown = this.onMouseDown.bind(this)
+    this.onMouseMove = this.onMouseMove.bind(this)
+    this.onMouseUp = this.onMouseUp.bind(this)
+  }
 
-  propTypes: {
+  static propTypes = {
     primary: React.PropTypes.oneOf([ 'first', 'second' ]),
     minSize: React.PropTypes.number,
-    defaultSize: React.PropTypes.object,
+    defaultSize: React.PropTypes.string,
     size: React.PropTypes.number,
     allowResize: React.PropTypes.bool,
     resizerClassName: React.PropTypes.string,
     split: React.PropTypes.oneOf([ 'vertical', 'horizontal' ]),
     onDragStarted: React.PropTypes.func,
     onDragFinished: React.PropTypes.func
-  },
+  }
 
-  getInitialState () {
-    return {
-      active: false,
-      resized: false
-    }
-  },
-
-  getDefaultProps () {
-    return {
-      split: 'vertical',
-      minSize: 50,
-      allowResize: true,
-      primary: 'first'
-    }
-  },
+  static defaultProps = {
+    split: 'vertical',
+    minSize: 50,
+    allowResize: true,
+    rimary: 'first',
+    defaultSize: '50%'
+  }
 
   componentDidMount () {
     this.setSize(this.props, this.state)
     document.addEventListener('mouseup', this.onMouseUp)
     document.addEventListener('mousemove', this.onMouseMove)
-  },
+  }
 
   componentWillReceiveProps (props) {
     this.setSize(props, this.state)
-  },
+  }
 
   setSize (props, state) {
     const ref = this.props.primary === 'first' ? this.refs.pane1 : this.refs.pane2
@@ -52,12 +54,12 @@ export default React.createClass({
         size: newSize
       })
     }
-  },
+  }
 
   componentWillUnmount () {
     document.removeEventListener('mouseup', this.onMouseUp)
     document.removeEventListener('mousemove', this.onMouseMove)
-  },
+  }
 
   onMouseDown (event) {
     if (this.props.allowResize && !this.props.size) {
@@ -71,7 +73,7 @@ export default React.createClass({
         position: position
       })
     }
-  },
+  }
 
   onMouseMove (event) {
     if (this.props.allowResize && !this.props.size) {
@@ -113,7 +115,7 @@ export default React.createClass({
         }
       }
     }
-  },
+  }
 
   onMouseUp () {
     if (this.props.allowResize && !this.props.size) {
@@ -126,7 +128,7 @@ export default React.createClass({
         })
       }
     }
-  },
+  }
 
   unFocus () {
     if (document.selection) {
@@ -134,13 +136,13 @@ export default React.createClass({
     } else {
       window.getSelection().removeAllRanges()
     }
-  },
+  }
 
-  merge: function (into, obj) {
+  merge (into, obj) {
     for (let attr in obj) {
       into[ attr ] = obj[ attr ]
     }
-  },
+  }
 
   render () {
     const {split, allowResize, resizerClassName} = this.props
@@ -176,9 +178,11 @@ export default React.createClass({
     return (
       <div className={classes.join(' ')} style={style} ref='splitPane'>
         <Pane ref='pane1' key='pane1' className='Pane1' split={split}>{children[ 0 ]}</Pane>
-        <Resizer ref='resizer' key='resizer' className={disabledClass + ' ' + resizerClassName} onMouseDown={this.onMouseDown} split={split}/>
+        <Resizer
+          ref='resizer' key='resizer' className={disabledClass + ' ' + resizerClassName}
+          onMouseDown={this.onMouseDown} split={split}/>
         <Pane ref='pane2' key='pane2' className='Pane2' split={split}>{children[ 1 ]}</Pane>
       </div>
     )
   }
-})
+}

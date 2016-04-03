@@ -21,29 +21,12 @@
   transition: all 2s ease;
 }
 
-.studioContainer {
-  display:         flex;
-  flex: 1;
-  flex-direction: column;
-}
-
 .toolbar {
   background-color: brown;
-  flex: 1;
-}
-
-.main {
-  flex: 39;
-  display: flex;
-  background-color: green;
 }
 
 .ace {
   background-color: yellow;
   flex: 1;
   height: auto !important;
-}
-
-.block {
-
 }

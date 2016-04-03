@@ -16,6 +16,16 @@ html, body {
   width: 100%;
 }
 
+.block {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+}
+
+.block-item {
+  flex: 1;
+}
+
 //@import "variables";
 //
 //@import "../../node_modules/bootstrap/scss/variables";

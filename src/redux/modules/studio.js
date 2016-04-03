@@ -4,6 +4,7 @@ let client = new ApiClient()
 const FETCH_TEMPLATES_NAMES = 'FETCH_TEMPLATES_NAMES'
 const FETCH_TEMPLATE = 'FETCH_TEMPLATE'
 const SET_CURRENT = 'SET_CURRENT'
+const CLOSE_TEMPLATE = 'CLOSE_TEMPLATE'
 
 const initialState = {
   templateList: [],
@@ -18,7 +19,7 @@ export default function reducer (state = initialState, action = {}) {
         templateList: action.result.value
       })
     case FETCH_TEMPLATE:
-      let template = action.result.value[0]
+      let template = action.result.value[ 0 ]
       let details = Object.assign([], state.templateDetails)
       if (!details.filter((t) => t._id === template._id).length) {
         details.push(template)
@@ -31,6 +32,19 @@ export default function reducer (state = initialState, action = {}) {
     case SET_CURRENT:
       return Object.assign({}, state, {
         currentDetail: action.result
+      })
+    case CLOSE_TEMPLATE:
+      let newDetails = state.templateDetails.filter((t) => t._id !== action._id)
+
+      let newCurrent = state.currentDetail
+
+      if (state.currentDetail && state.currentDetail._id === action._id) {
+        newCurrent = newDetails.length ? newDetails[ newDetails.length - 1 ] : null
+      }
+
+      return Object.assign({}, state, {
+        currentDetail: newCurrent,
+        templateDetails: newDetails
       })
     default:
       return state
@@ -55,8 +69,17 @@ export function fetchTemplate (id) {
   return (dispatch, getState) => {
     let found = getState().studio.templateDetails.filter((d) => d._id === id)
     if (found.length) {
-      return dispatch({type: SET_CURRENT, result: found[0]})
+      return dispatch({ type: SET_CURRENT, result: found[ 0 ] })
     }
     return client.get(`/odata/templates(${id})`).then((r) => dispatch({ type: FETCH_TEMPLATE, result: r }))
   }
 }
+
+export function closeTemplate (id) {
+  return {
+    type: CLOSE_TEMPLATE,
+    _id: id
+  }
+}
+
+//export let actions = { fetchTemplateNames, fetchTemplate, closeTemplate }
