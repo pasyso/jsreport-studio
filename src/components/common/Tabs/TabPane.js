@@ -26,7 +26,7 @@ class TabPane extends Component {
       <div className='block-row'>
         {React.Children.map(this.props.children, (t) =>
           <div style={{display: 'inline-block'}}>
-            <button
+            <button className='hvr-overline-from-center'
               key={t.key} onClick={() => activateTab(t.key)}>{t.props.title + ' ' + (t.key === activeTabKey ? 'active' : '')}
             </button>
             <button key={'x' + t.key} onClick={() => closeTab(t.key)}>x</button>

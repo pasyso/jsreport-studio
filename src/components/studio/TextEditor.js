@@ -5,7 +5,8 @@ import 'brace/theme/chrome'
 
 export default class TextEditor extends Component {
   static propTypes = {
-    object: React.PropTypes.object.isRequired
+    object: React.PropTypes.object.isRequired,
+    onUpdate: React.PropTypes.func.isRequired
   }
 
   resize () {
@@ -17,10 +18,10 @@ export default class TextEditor extends Component {
 
     return (<AceEditor
       key={object._id}
-      mode='javascript'
+      mode='handlebars'
       theme='chrome'
       ref='ace'
-      onChange={onUpdate}
+      onChange={(v) => onUpdate(Object.assign({}, object, {content: v}))}
       name={object._id}
       width='100%'
       className={className}

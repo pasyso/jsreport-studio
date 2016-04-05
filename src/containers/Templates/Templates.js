@@ -5,6 +5,7 @@ import * as editorActions from 'redux/modules/editor'
 import * as objectDetailActions from 'redux/modules/objectDetails'
 import Preview from '../../components/studio/Preview.js'
 import ObjectTree from '../../components/studio/ObjectTree.js'
+import Properties from '../../components/studio/Properties.js'
 import TextEditor from '../../components/studio/TextEditor.js'
 import style from './Templates.scss'
 import preview from './preview'
@@ -28,10 +29,6 @@ export default class Templates extends Component {
   };
 
   componentDidMount () {
-    var self = this
-    this.props.fetchObjectReferences().then(function (res) {
-      self.props.openTab(res.result[ 0 ]._id)
-    })
   }
 
   handleClick () {
@@ -39,7 +36,7 @@ export default class Templates extends Component {
   }
 
   handleSplitChanged (id) {
-    this.props.tabs.forEach((t) => this.refs[ t ].resize())
+    this.props.tabs.forEach((t) => this.refs[ t._id ].resize())
     document.getElementById('overlay').style.display = 'block'
     document.getElementById('preview').style.display = 'none'
   }
@@ -54,9 +51,12 @@ export default class Templates extends Component {
   }
 
   render () {
-    const { references, tabs, activeTab, openTab, details, updateTemplateContent, closeTab } = this.props
+    const { references, tabs, activeTab, openTab, activateTab, details, update, closeTab } = this.props
 
-    const tabsWithDetails = tabs.map((t) => details.templates.filter((d) => d._id === t)[ 0 ])
+    const currentTab = activeTab ? tabs.filter((t) => t._id === activeTab)[ 0 ] : null
+    const currentObject = currentTab ? this.props.details[ currentTab.objectType ].filter((o) => o._id === currentTab._id)[ 0 ] : null
+
+    const tabsWithDetails = tabs.map((t) => Object.assign({}, t, details[ t.objectType ].filter((d) => d._id === t._id)[ 0 ]))
 
     return (
       <div className='block'>
@@ -64,23 +64,24 @@ export default class Templates extends Component {
           <button onClick={() => this.handleClick()}>Run</button>
         </div>
         <div className='block'>
-          <SplitPane resizerClassName={style.resizer} defaultSize='90%'>
-            <SplitPane resizerClassName={style.resizerHorizontal} split='horizontal' defaultSize='50%'>
+          <SplitPane resizerClassName={style.resizer} defaultSize='80%'>
+            <SplitPane resizerClassName={style.resizerHorizontal} split='horizontal' defaultSize='400px'>
               <ObjectTree objects={references} onClick={openTab}/>
-              <div className={style.properties + ' block-item'}>Properties</div>
+              <Properties object={currentObject}/>
             </SplitPane>
             <SplitPane
               onChange={() => this.handleSplitChanged()} onDragFinished={() => this.handleSplitDragFinished()}
               resizerClassName={style.resizer}>
-              <TabPane activeTabKey={activeTab} activateTab={openTab} closeTab={closeTab}>
+              <TabPane activeTabKey={activeTab} activateTab={activateTab} closeTab={closeTab}>
                 {tabsWithDetails.map((t) =>
                   <Tab key={t._id} title={t.name}>
-                    <TextEditor
-                      object={t} ref={t._id} className={style.ace} onUpdate={(v) => updateTemplateContent(t._id, v)}/>
+                    {t.objectType === 'templates' ? <TextEditor
+                      object={t} ref={t._id} className={style.ace}
+                      onUpdate={(o) => update(t.objectType, o)}/>
+                      : React.createElement(studio.detailComponents[ t.objectType ], { object: t,  onUpdate: (o) => update(t.objectType, o)})}
                   </Tab>)
                 }
               </TabPane>
-
               <Preview/>
             </SplitPane>
           </SplitPane>

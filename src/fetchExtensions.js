@@ -1,33 +1,24 @@
-function loadScript(url, callback) {
-  const script = document.createElement('script');
-  script.type = 'text/javascript';
-  script.onload = function() {
-    callback();
-  };
+function loadScript (url, callback) {
+  const script = document.createElement('script')
+  script.type = 'text/javascript'
+  script.onload = function () {
+    callback()
+  }
 
-  script.src = url;
-  document.getElementsByTagName('head')[0].appendChild(script);
+  script.src = url
+  document.getElementsByTagName('head')[ 0 ].appendChild(script)
 }
 
-//require('./extension')(studio);
+export default function (cb) {
+  console.log('loading extensions')
 
-//development tam chci mit ten require, jak ho tam ale dostanu???
-//start dev projde to vsechno a nasoube to nekam
+  if (__DEVELOPMENT__) {
+    require('./dynamicExtensions.js')
+    return cb()
+  }
 
-//start prod udela neco podobneho, ale embedne tam ten script
-
-//require('./dev-extensions-require.js');
-//cb();
-
-//loadScript('/extension/data/public/main.js', function() {
-//  console.log('done');
-//  cb();
-//});
-
-export default function(cb) {
-  console.log('loading extensions');
-  loadScript('/studio/assets/extensions.js', function() {
-    console.log('done');
-    cb();
-  });
+  loadScript('/studio/assets/extensions.js', function () {
+    console.log('done')
+    cb()
+  })
 }

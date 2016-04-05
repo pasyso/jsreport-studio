@@ -14,10 +14,13 @@ export default function reducer (state = initialState, action = {}) {
     case OPEN_TAB:
       return {
         ...state,
-        tabs: state.tabs.filter((t) => t === action._id).length ? state.tabs : state.tabs.concat(action._id)
+        tabs: state.tabs.filter((t) => t._id === action._id).length ? state.tabs : [ ...state.tabs, {
+          _id: action._id,
+          objectType: action.objectType
+        } ]
       }
     case CLOSE_TAB:
-      let newTabs = state.tabs.filter((t) => t !== action._id)
+      let newTabs = state.tabs.filter((t) => t._id !== action._id)
       let newActivatTab = state.activeTab
       if (state.activeTab === action._id) {
         newActivatTab = newTabs.length ? newTabs[ newTabs.length - 1 ] : null
@@ -44,12 +47,13 @@ export function closeTab (id) {
   })
 }
 
-export function openTab (id) {
+export function openTab (objectType, id) {
   return (dispatch, getState) => {
-    return fetchObjectDetail(id)(dispatch, getState).then(function () {
+    return fetchObjectDetail(objectType, id)(dispatch, getState).then(function () {
       dispatch({
         type: OPEN_TAB,
-        _id: id
+        _id: id,
+        objectType: objectType
       })
       dispatch({
         type: ACTIVATE_TAB,
@@ -59,3 +63,9 @@ export function openTab (id) {
   }
 }
 
+export function activateTab (id) {
+  return (dispatch) => dispatch({
+    type: ACTIVATE_TAB,
+    _id: id
+  })
+}

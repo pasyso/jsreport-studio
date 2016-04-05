@@ -4,36 +4,45 @@ import Promise from 'bluebird'
 let client = new ApiClient()
 
 const FETCH_OBJECT_DETAIL = 'FETCH_OBJECT_DETAIL'
-const UPDATE_TEMPLATE_CONTENT = 'UPDATE_TEMPLATE_CONTENT'
+const UPDATE = 'UPDATE'
 
 const initialState = { templates: [] }
 
 export default function reducer (state = initialState, action = {}) {
   switch (action.type) {
     case FETCH_OBJECT_DETAIL:
-      return {
-        templates: [ ...state.templates, action.result ]
-      }
-    case UPDATE_TEMPLATE_CONTENT:
-      let index = state.templates.map((t) => t._id).indexOf(action._id)
-      return {
-        templates: [
-          ...state.templates.slice(0, index),
-          Object.assign({}, state.templates[ index ], { content: action.content }),
-          ...state.templates.slice(index + 1)
-        ]
-      }
+      let newState = { ...state }
+      newState[ action.objectType ] = [ ...state[ action.objectType ] || [], action.result ]
+      return newState
+    case UPDATE:
+      let index = state[ action.objectType ].map((t) => t._id).indexOf(action.object._id)
+      let updatedState = { ...state }
+      updatedState[ action.objectType ] = [
+        ...state[ action.objectType ].slice(0, index),
+        Object.assign({}, state[ action.objectType ][ index ], action.object),
+        ...state[ action.objectType ].slice(index + 1)
+      ]
+      return updatedState
     default:
       return state
   }
 }
 
-export function fetchObjectDetail (id) {
+export function update (objectType, object) {
+  return (dispatch) => dispatch({
+    type: UPDATE,
+    object: object,
+    objectType: objectType
+  })
+}
+
+export function fetchObjectDetail (objectType, id) {
   return (dispatch, getState) => {
     // there should be likely another check in the reducer or other lock preventing duplicated details
-    if (!getState().objectDetails.templates.filter((d) => d._id === id).length) {
-      return client.get(`/odata/templates(${id})`).then((r) => dispatch({
+    if (!getState().objectDetails[ objectType ] || !getState().objectDetails[ objectType ].filter((d) => d._id === id).length) {
+      return client.get(`/odata/${objectType}(${id})`).then((r) => dispatch({
         type: FETCH_OBJECT_DETAIL,
+        objectType: objectType,
         result: r.value[ 0 ],
         _id: id
       }))
@@ -42,12 +51,3 @@ export function fetchObjectDetail (id) {
     return Promise.resolve()
   }
 }
-
-export function updateTemplateContent (id, content) {
-  return (dispatch, getState) => dispatch({
-    type: UPDATE_TEMPLATE_CONTENT,
-    _id: id,
-    content: content
-  })
-}
-

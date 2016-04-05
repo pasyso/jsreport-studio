@@ -9,9 +9,7 @@ const initialState = {templates: []}
 export default function reducer (state = initialState, action = {}) {
   switch (action.type) {
     case FETCH_OBJECT_REFERENCES:
-      return {
-        templates: action.result
-      }
+      return action.result
     default:
       return state
   }
