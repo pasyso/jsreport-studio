@@ -5,10 +5,10 @@ import {Button} from 'react-bootstrap'
 
 @connect(
   (state) => ({
-    list: state.templates.list,
-    error: state.templates.error,
-    loading: state.templates.loading,
-    loaded: state.templates.loaded
+    list: state.studio.list,
+    error: state.studio.error,
+    loading: state.studio.loading,
+    loaded: state.studio.loaded
   }), { listAction })
 export default class Templates extends Component {
   static propTypes = {

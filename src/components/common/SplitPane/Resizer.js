@@ -2,13 +2,13 @@ import React from 'react'
 
 export default React.createClass({
 
-  onMouseDown(event) {
+  onMouseDown (event) {
     this.props.onMouseDown(event)
   },
 
-  render() {
+  render () {
     const {split, className} = this.props
-    const classes = ['Resizer', split, className]
-    return (<span className={classes.join(' ')} onMouseDown={this.onMouseDown} />)
+    const classes = [ 'Resizer', split, className ]
+    return (<span className={classes.join(' ')} onMouseDown={this.onMouseDown}/>)
   }
 })

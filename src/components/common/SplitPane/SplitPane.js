@@ -166,8 +166,6 @@ export default class SplitPane extends Component {
     } else {
       this.merge(style, {
         flexDirection: 'column',
-        height: '100%',
-        minHeight: '100%',
         width: '100%'
       })
     }

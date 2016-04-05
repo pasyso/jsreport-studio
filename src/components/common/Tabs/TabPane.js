@@ -6,7 +6,7 @@ class TabPane extends Component {
   static propTypes = {
     activateTab: React.PropTypes.func.isRequired,
     closeTab: React.PropTypes.func.isRequired,
-    activeTabKey: React.PropTypes.string.isRequired
+    activeTabKey: React.PropTypes.string
   }
 
   componentWillMount () {
@@ -25,7 +25,7 @@ class TabPane extends Component {
     return <div className='block'>
       <div className='block-row'>
         {React.Children.map(this.props.children, (t) =>
-          <div>
+          <div style={{display: 'inline-block'}}>
             <button
               key={t.key} onClick={() => activateTab(t.key)}>{t.props.title + ' ' + (t.key === activeTabKey ? 'active' : '')}
             </button>

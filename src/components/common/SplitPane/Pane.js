@@ -1,14 +1,13 @@
 import React from 'react'
 
-
 export default React.createClass({
-  getInitialState() {
+  getInitialState () {
     return {}
   },
 
-  render() {
+  render () {
     const split = this.props.split
-    const classes = ['Pane', split, this.props.className]
+    const classes = [ 'Pane', split, this.props.className ]
 
     let style = {
       flex: 1,
