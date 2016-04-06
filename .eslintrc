@@ -2,6 +2,8 @@
   "extends": ["standard", "standard-jsx"],
   "parser": "babel-eslint",
   "globals" : {
-    "studio": 1
+    "studio": 1,
+    "describe": 1,
+    "it": 1
   }
 }
