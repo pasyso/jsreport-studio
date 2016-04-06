@@ -26,7 +26,10 @@ var studio = window.studio = {
   detailComponents: {},
   objectReferences: {},
   initializeListeners: [],
-  AceEditor: AceEditor
+  AceEditor: AceEditor,
+  registerObjectType: function (type) {
+    store.dispatch({ type: 'REGISTER_OBJECT_TYPE', objectType: type })
+  }
 }
 
 studio.runtime[ 'core-js/object/get-prototype-of' ] = require('babel-runtime/core-js/object/get-prototype-of')

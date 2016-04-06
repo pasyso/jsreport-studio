@@ -10,19 +10,27 @@ const initialState = { templates: [] }
 
 export default function reducer (state = initialState, action = {}) {
   switch (action.type) {
+    case 'REGISTER_OBJECT_TYPE':
+      return {
+        ...state,
+        [action.objectType]: []
+      }
     case FETCH_OBJECT_DETAIL:
-      let newState = { ...state }
-      newState[ action.objectType ] = [ ...state[ action.objectType ] || [], action.result ]
-      return newState
+      return {
+        ...state,
+        [action.objectType]: [ ...state[ action.objectType ] || [], action.result ]
+      }
     case UPDATE:
       let index = state[ action.objectType ].map((t) => t._id).indexOf(action.object._id)
-      let updatedState = { ...state }
-      updatedState[ action.objectType ] = [
-        ...state[ action.objectType ].slice(0, index),
-        Object.assign({}, state[ action.objectType ][ index ], action.object),
-        ...state[ action.objectType ].slice(index + 1)
-      ]
-      return updatedState
+
+      return {
+        ...state,
+        [ action.objectType ]: [
+          ...state[ action.objectType ].slice(0, index),
+          Object.assign({}, state[ action.objectType ][ index ], action.object),
+          ...state[ action.objectType ].slice(index + 1)
+        ]
+      }
     default:
       return state
   }
@@ -37,15 +45,16 @@ export function update (objectType, object) {
 }
 
 export function fetchObjectDetail (objectType, id) {
-  return (dispatch, getState) => {
+  return async function (dispatch, getState) {
     // there should be likely another check in the reducer or other lock preventing duplicated details
     if (!getState().objectDetails[ objectType ] || !getState().objectDetails[ objectType ].filter((d) => d._id === id).length) {
-      return client.get(`/odata/${objectType}(${id})`).then((r) => dispatch({
+      let response = await client.get(`/odata/${objectType}(${id})`)
+      dispatch({
         type: FETCH_OBJECT_DETAIL,
         objectType: objectType,
-        result: r.value[ 0 ],
+        result: response.value[ 0 ],
         _id: id
-      }))
+      })
     }
 
     return Promise.resolve()

@@ -1,13 +1,5 @@
 import isObject from 'lodash/lang/isobject'
 
-function getUIState (state) {
-  state.content = state.content || ' '
-  state.helpers = state.helpers || ''
-
-  delete state._id
-  return state
-}
-
 function addInput (form, name, value) {
   const input = document.createElement('input')
   input.type = 'hidden'
@@ -16,11 +8,11 @@ function addInput (form, name, value) {
   form.appendChild(input)
 }
 
-export default function (model, target) {
-  model = Object.assign({}, model)
-  const uiState = getUIState(model)
+export default function (request, target) {
+  delete request.template._id
 
-  const request = { template: uiState, options: Object.assign({ preview: true }, uiState.options) }
+  request.options = request.options || {}
+  request.options.preview = true
 
   const mapForm = document.createElement('form')
   mapForm.target = target
@@ -47,11 +39,8 @@ export default function (model, target) {
     }
   }
 
-  addBody('template', uiState)
-
-  if (request.options) {
-    addBody('options', request.options)
-  }
+  addBody('template', request.template)
+  addBody('options', request.options)
 
   if (request.data) {
     addInput(mapForm, 'data', request.data)

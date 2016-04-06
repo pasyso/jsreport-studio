@@ -31,8 +31,16 @@ export default class Templates extends Component {
   componentDidMount () {
   }
 
-  handleClick () {
-    preview(this.props.details.templates.filter((d) => d._id === this.props.activeTab)[ 0 ], 'previewFrame')
+  handleRun () {
+    let activeTemplates = this.props.details.templates.filter((d) => d._id === this.props.activeTab)
+    if (!activeTemplates.length) {
+      activeTemplates = this.props.details.templates
+    }
+
+    let template = Object.assign({}, activeTemplates[ 0 ])
+    let request = { template: template }
+    studio.onPreview(request, Object.assign({}, this.props.details))
+    preview(request, 'previewFrame')
   }
 
   handleSplitChanged (id) {
@@ -46,12 +54,8 @@ export default class Templates extends Component {
     document.getElementById('preview').style.display = 'block'
   }
 
-  handleContentChange (id, val) {
-    this.props.updateTemplateContent(id, val)
-  }
-
   render () {
-    const { references, tabs, activeTab, openTab, activateTab, details, update, closeTab } = this.props
+    const { references, tabs, activeTab, openTab, activateTab, openNewTab, details, update, save, closeTab } = this.props
 
     const currentTab = activeTab ? tabs.filter((t) => t._id === activeTab)[ 0 ] : null
     const currentObject = currentTab ? this.props.details[ currentTab.objectType ].filter((o) => o._id === currentTab._id)[ 0 ] : null
@@ -61,12 +65,13 @@ export default class Templates extends Component {
     return (
       <div className='block'>
         <div className={style.toolbar}>
-          <button onClick={() => this.handleClick()}>Run</button>
+          <button onClick={() => this.handleRun()}>Run</button>
+          <button onClick={save}>Save</button>
         </div>
         <div className='block'>
           <SplitPane resizerClassName={style.resizer} defaultSize='80%'>
             <SplitPane resizerClassName={style.resizerHorizontal} split='horizontal' defaultSize='400px'>
-              <ObjectTree objects={references} onClick={openTab}/>
+              <ObjectTree objects={references} onClick={openTab} onNewClick={openNewTab}/>
               <Properties object={currentObject}/>
             </SplitPane>
             <SplitPane
@@ -78,7 +83,10 @@ export default class Templates extends Component {
                     {t.objectType === 'templates' ? <TextEditor
                       object={t} ref={t._id} className={style.ace}
                       onUpdate={(o) => update(t.objectType, o)}/>
-                      : React.createElement(studio.detailComponents[ t.objectType ], { object: t,  onUpdate: (o) => update(t.objectType, o)})}
+                      : React.createElement(studio.detailComponents[ t.objectType ], {
+                      object: t,
+                      onUpdate: (o) => update(t.objectType, o)
+                    })}
                   </Tab>)
                 }
               </TabPane>
