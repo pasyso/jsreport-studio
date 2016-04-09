@@ -6,8 +6,8 @@ import Preview from '../../components/studio/Preview.js'
 import ObjectTree from '../../components/studio/ObjectTree.js'
 import Properties from '../../components/studio/Properties.js'
 import TextEditor from '../../components/studio/TextEditor.js'
-import style from './Templates.scss'
-import preview from './preview'
+import style from './Studio.scss'
+import preview from '../../helpers/preview'
 import SplitPane from '../../components/common/SplitPane/SplitPane.js'
 import {TabPane, Tab} from '../../components/common/Tabs/TabPane.js'
 
@@ -19,7 +19,7 @@ import {TabPane, Tab} from '../../components/common/Tabs/TabPane.js'
   tabsWithEntities: editor.getTabWithEntities(state),
   activeEntity: editor.getActiveEntity(state)
 }), { ...editor })
-export default class Templates extends Component {
+export default class Studio extends Component {
   static propTypes = {
     entities: PropTypes.object,
     references: PropTypes.object,
@@ -52,7 +52,7 @@ export default class Templates extends Component {
   }
 
   render () {
-    const { tabsWithEntities, references, activeTab, remove, openTab, activateTab, openNewTab, activeEntity, update, save, closeTab } = this.props
+    const { tabsWithEntities, references, activeTab, entities, remove, openTab, activateTab, openNewTab, activeEntity, update, save, closeTab } = this.props
 
     console.log('render', tabsWithEntities)
 
@@ -66,15 +66,15 @@ export default class Templates extends Component {
         <div className='block'>
           <SplitPane resizerClassName={style.resizer} defaultSize='80%'>
             <SplitPane resizerClassName={style.resizerHorizontal} split='horizontal' defaultSize='400px'>
-              <ObjectTree objects={references} onClick={openTab} onNewClick={openNewTab}/>
-              <Properties object={activeEntity}/>
+              <ObjectTree entities={references} onClick={openTab} onNewClick={openNewTab}/>
+              <Properties entity={activeEntity} entities={entities} onChange={(e) => update(e)}/>
             </SplitPane>
             <SplitPane
               onChange={() => this.handleSplitChanged()} onDragFinished={() => this.handleSplitDragFinished()}
               resizerClassName={style.resizer}>
               <TabPane activeTabKey={activeTab} activateTab={activateTab} closeTab={closeTab}>
                 {tabsWithEntities.map((t) =>
-                  <Tab key={t._id} title={t.name}>
+                  <Tab key={t._id} title={t.name + (t.__isDirty ? ' (!) ' : '')}>
                     {t.__entityType === 'templates' ? <TextEditor
                       object={t} ref={t._id} className={style.ace}
                       onUpdate={(o) => update(o)}/>

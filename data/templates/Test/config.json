@@ -7,9 +7,12 @@
     },
     "shortid": "XkKdTuPAl",
     "modificationDate": {
-        "$$date": 1460145748957
+        "$$date": 1460229455513
     },
     "_id": "B1aYLlt44zEEiKJH",
     "objectType": "templates",
-    "entityType": "templates"
+    "entityType": "templates",
+    "__entityType": "templates",
+    "__isDirty": true,
+    "__isLoaded": true
 }
