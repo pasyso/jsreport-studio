@@ -8,7 +8,6 @@ import useScroll from 'scroll-behavior/lib/useStandardScroll'
 import getRoutes from './routes'
 import fetchExtension from './fetchExtensions'
 import './theme/style.scss'
-import * as objectReferences from './redux/modules/objectReferences.js'
 import ApiClient from './helpers/ApiClient.js'
 import AceEditor from 'react-ace'
 
@@ -24,7 +23,7 @@ var studio = window.studio = {
   properties: [],
   api: new ApiClient(),
   detailComponents: {},
-  objectReferences: {},
+  references: {},
   initializeListeners: [],
   AceEditor: AceEditor,
   registerObjectType: function (type) {
@@ -68,10 +67,10 @@ function start () {
 fetchExtension(function () {
   studio.initializeListeners[ 0 ](function () {
     studio.api.get('/odata/templates?$select=name').then((r) => {
-      studio.objectReferences.templates = r.value
+      studio.references.templates = r.value
       store.dispatch({
-        type: 'FETCH_OBJECT_REFERENCES',
-        result: studio.objectReferences
+        type: 'REFERENCES_UPDATE',
+        result: studio.references
       })
       start()
     })

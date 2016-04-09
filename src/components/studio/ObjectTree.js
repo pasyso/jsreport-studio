@@ -1,4 +1,5 @@
 import React, {Component} from 'react'
+import ReactList from 'react-list'
 
 export default class ObjectTree extends Component {
   static propTypes = {
@@ -7,11 +8,19 @@ export default class ObjectTree extends Component {
     onNewClick: React.PropTypes.func.isRequired
   }
 
+  createRenderer (entityType) {
+    return (index, key) => this.renderNode(entityType, this.props.objects[ entityType ][ index ])
+  }
+
+  renderNode (entityType, entity) {
+    return <button key={entity._id} onClick={() => this.props.onClick(entityType, entity._id)}>{entity.name}</button>
+  }
+
   renderObjectSubTree (k) {
     return <div key={k}>{k}:
       <button key={k + 'new'} onClick={() => this.props.onNewClick(k)}>+</button>
-      {this.props.objects[ k ].map((c) =>
-        <button key={c._id} onClick={() => this.props.onClick(k, c._id)}>{c.name}</button>)}</div>
+      <ReactList itemRenderer={this.createRenderer(k)} length={this.props.objects[k].length}/>
+    </div>
   }
 
   render () {

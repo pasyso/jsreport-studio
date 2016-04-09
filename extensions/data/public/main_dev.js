@@ -15,7 +15,7 @@ studio.detailComponents.data = DataEditor
 
 studio.initializeListeners.push(function (cb) {
   return studio.api.get('/odata/data?$select=name').then(function (r) {
-    studio.objectReferences.data = r.value
+    studio.references.data = r.value
     cb()
   })
 })
