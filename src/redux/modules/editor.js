@@ -43,15 +43,15 @@ export default function reducer (state = initialState, action = {}) {
         ...state,
         activeTab: action._id
       }
-    case SAVE_NEW:
+    case entities.SAVE_NEW:
       let index = state.tabs.indexOf(action.oldId)
 
       return {
         tabs: [
           ...state.tabs.slice(0, index),
-          action.newId,
+          action.entity._id,
           ...state.tabs.slice(index + 1) ],
-        activeTab: action._id
+        activeTab: action.entity._id
       }
     default:
       return state
@@ -108,16 +108,7 @@ export function update (entity) {
 export function save () {
   return async function (dispatch, getState) {
     try {
-      const oldEntity = Object.assign({}, getActiveEntity(getState()))
-      const newEntity = await entities.save(getState().editor.activeTab)(dispatch, getState)
-
-      if (oldEntity._id !== newEntity._id) {
-        dispatch({
-          type: SAVE_NEW,
-          oldId: oldEntity._id,
-          newId: newEntity._id
-        })
-      }
+      await entities.save(getState().editor.activeTab)(dispatch, getState)
     } catch (e) {
       console.error(e)
     }

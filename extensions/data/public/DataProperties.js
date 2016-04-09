@@ -9,6 +9,10 @@ export default class Properties extends Component {
     const { entity, entities, onChange } = this.props
     const dataItems = this.selectDataItems(entities)
 
+    if (entity.__entityType !== 'templates') {
+      return <div></div>
+    }
+
     return (
       <div>
         <select value={entity.data ? entity.data.shortid : ''} onChange={(v) => onChange({_id: entity._id, data: { shortid: v.target.value }})}>

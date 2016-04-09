@@ -1,3 +1,6 @@
+import ApiClient from '../../helpers/ApiClient.js'
+import _omit from 'lodash/object/omit'
+
 export const LOAD = 'ENTITIES_LOAD'
 export const ADD = 'ENTITIES_ADD'
 export const SAVE = 'ENTITIES_SAVE'
@@ -5,7 +8,6 @@ export const SAVE_NEW = 'ENTITIES_SAVE_NEW'
 export const UPDATE = 'ENTITIES_UPDATE'
 export const LOAD_REFERENCES = 'LOAD_REFERENCES'
 export const REMOVE = 'ENTITIES_REMOVE'
-import ApiClient from '../../helpers/ApiClient.js'
 
 let client = new ApiClient()
 
@@ -40,15 +42,13 @@ export default function reducer (state = initialState, action = {}) {
         [action._id]: Object.assign({}, state[ action._id ], { __isDirty: false })
       }
     case SAVE_NEW:
-      return {
+      return _omit({
         ...state,
-        [action.oldId]: undefined,
-        [action.newId]: Object.assign({}, state[ action.oldId ], {
-          _id: action.newId,
+        [action.entity._id]: Object.assign({}, state[ action.oldId ], action.entity, {
           __isDirty: false,
           __isNew: false
         })
-      }
+      }, action.oldId)
     case LOAD_REFERENCES:
       let newStateRef = Object.assign({}, state)
       action.entities.forEach((e) => {
@@ -57,10 +57,7 @@ export default function reducer (state = initialState, action = {}) {
       })
       return newStateRef
     case REMOVE:
-      return {
-        ...state,
-        [action._id]: undefined
-      }
+      return _omit({ ...state }, action._id)
     default:
       return state
   }
@@ -76,7 +73,7 @@ export const getById = (state, id) => {
 
 export const getReferences = (state) => {
   let result = {}
-  Object.keys(state.entities).filter((e) => state.entities[e]).forEach((eid) => {
+  Object.keys(state.entities).filter((e) => state.entities[ e ]).forEach((eid) => {
     const entity = state.entities[ eid ]
     result[ entity.__entityType ] = result[ entity.__entityType ] || []
     result[ entity.__entityType ].push(entity)
@@ -147,11 +144,14 @@ export function save (id) {
       const entity = Object.assign({}, getById(getState(), id))
 
       if (entity.__isNew) {
+        const oldId = entity._id
+        delete entity._id
         const response = await client.post(`/odata/${entity.__entityType}`, { data: entity })
+        entity._id = response._id
         dispatch({
           type: SAVE_NEW,
-          oldId: entity._id,
-          newId: response._id
+          oldId: oldId,
+          entity: response
         })
         entity._id = response._id
       } else {
