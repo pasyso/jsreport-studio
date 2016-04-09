@@ -9,11 +9,11 @@ export default class ObjectTree extends Component {
   }
 
   createRenderer (entityType) {
-    return (index, key) => this.renderNode(entityType, this.props.objects[ entityType ][ index ])
+    return (index, key) => this.renderNode(this.props.objects[ entityType ][ index ])
   }
 
-  renderNode (entityType, entity) {
-    return <button key={entity._id} onClick={() => this.props.onClick(entityType, entity._id)}>{entity.name}</button>
+  renderNode (entity) {
+    return <button key={entity._id} onClick={() => this.props.onClick(entity._id)}>{entity.name}</button>
   }
 
   renderObjectSubTree (k) {

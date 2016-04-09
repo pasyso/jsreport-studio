@@ -1,7 +1,5 @@
 import * as entities from './entities.js'
 import uid from '../../helpers/uid.js'
-import ApiClient from '../../helpers/ApiClient.js'
-let client = new ApiClient()
 
 const OPEN_TAB = 'EDITOR_OPEN_TAB'
 const CLOSE_TAB = 'EDITOR_CLOSE_TAB'
@@ -19,25 +17,24 @@ export default function reducer (state = initialState, action = {}) {
     case OPEN_TAB:
       return {
         ...state,
-        tabs: state.tabs.filter((t) => t._id === action._id).length ? state.tabs : [ ...state.tabs, {
-          _id: action._id,
-          entityType: action.entityType
-        } ]
+        tabs: state.tabs.includes(action._id) ? state.tabs : [ ...state.tabs, action._id ]
       }
     case OPEN_NEW_TAB:
       return {
         ...state,
         activeTab: action._id,
-        tabs: [ ...state.tabs, { entityType: action.entityType, _id: action._id, name: 'New ' + action.entityType } ]
+        tabs: [ ...state.tabs, action._id ]
       }
+    case entities.REMOVE:
     case CLOSE_TAB:
-      let newTabs = state.tabs.filter((t) => t._id !== action._id)
+      let newTabs = state.tabs.filter((t) => t !== action._id)
       let newActivatTab = state.activeTab
       if (state.activeTab === action._id) {
-        newActivatTab = newTabs.length ? newTabs[ newTabs.length - 1 ]._id : null
+        newActivatTab = newTabs.length ? newTabs[ newTabs.length - 1 ] : null
       }
 
       return {
+        ...state,
         activeTab: newActivatTab,
         tabs: newTabs
       }
@@ -47,12 +44,12 @@ export default function reducer (state = initialState, action = {}) {
         activeTab: action._id
       }
     case SAVE_NEW:
-      let index = state.tabs.indexOf((t) => t._id === action.oldId)
+      let index = state.tabs.indexOf(action.oldId)
 
       return {
         tabs: [
           ...state.tabs.slice(0, index),
-          { _id: action.newId, entityType: action.entityType, name: action.name },
+          action.newId,
           ...state.tabs.slice(index + 1) ],
         activeTab: action._id
       }
@@ -68,14 +65,13 @@ export function closeTab (id) {
   })
 }
 
-export function openTab (entityType, id) {
+export function openTab (id) {
   return async function (dispatch, getState) {
-    await entities.load(entityType, id)(dispatch, getState)
+    await entities.load(id)(dispatch, getState)
 
     dispatch({
       type: OPEN_TAB,
-      _id: id,
-      entityType: entityType
+      _id: id
     })
     dispatch({
       type: ACTIVATE_TAB,
@@ -84,55 +80,10 @@ export function openTab (entityType, id) {
   }
 }
 
-export function save () {
-  return async function (dispatch, getState) {
-    let entity = Object.assign({}, getActiveEntity(getState()))
-    const tab = getActiveTab(getState())
-
-    if (entity.__isNew) {
-      let oldId = entity._id
-      delete entity._id
-      let response = await client.post(`/odata/${tab.entityType}`, { data: entity })
-      entity._id = response._id
-      entity.__isNew = false
-      dispatch({
-        type: SAVE_NEW,
-        oldId: oldId,
-        newId: entity._id,
-        entityType: tab.entityType,
-        name: entity.name
-      })
-    } else {
-      await client.patch(`/odata/${tab.entityType}(${tab._id})`, { data: entity })
-    }
-
-    entities.update(tab.entityType, entity)
-  }
-}
-
-export function remove (id) {
-  return async function (dispatch, getState) {
-    const tab = getState().editor.tabs.filter((t) => t._id === id)[ 0 ]
-  }
-}
-
-export const getTabWithEntities = (state) => state.editor.tabs.map((t) => Object.assign({}, t, state.entities[ t.entityType ][ t._id ]))
-export const getActiveTab = (state) => state.editor.activeTab ? state.editor.tabs.filter((t) => t._id === state.editor.activeTab)[ 0 ] : null
-
-export const getActiveEntity = (state) => {
-  if (!state.editor.activeTab) {
-    return null
-  }
-
-  const currentTab = state.editor.tabs.filter((t) => t._id === state.editor.activeTab)[ 0 ]
-
-  return state.entities[ currentTab.entityType ][ currentTab._id ]
-}
-
 export function openNewTab (entityType) {
   return (dispatch) => {
     let id = uid()
-    dispatch(entities.update(entityType, { _id: id, __isNew: true }))
+    dispatch(entities.add({ _id: id, __entityType: entityType, name: 'New ' + entityType }))
     dispatch({
       type: OPEN_NEW_TAB,
       _id: id,
@@ -147,3 +98,46 @@ export function activateTab (id) {
     _id: id
   })
 }
+
+export function update (entity) {
+  return async function (dispatch, getState) {
+    await entities.update(entity)(dispatch, getState)
+  }
+}
+
+export function save () {
+  return async function (dispatch, getState) {
+    try {
+      const oldEntity = Object.assign({}, getActiveEntity(getState()))
+      const newEntity = await entities.save(getState().editor.activeTab)(dispatch, getState)
+
+      if (oldEntity._id !== newEntity._id) {
+        dispatch({
+          type: SAVE_NEW,
+          oldId: oldEntity._id,
+          newId: newEntity._id
+        })
+      }
+    } catch (e) {
+      console.error(e)
+    }
+  }
+}
+
+export function remove () {
+  return async function (dispatch, getState) {
+    await dispatch(entities.remove(getState().editor.activeTab))
+  }
+}
+
+export const getTabWithEntities = (state) => state.editor.tabs.map((t) => entities.getById(state, t))
+export const getActiveTab = (state) => state.editor.activeTab ? state.editor.tabs.filter((t) => t._id === state.editor.activeTab)[ 0 ] : null
+
+export const getActiveEntity = (state) => {
+  if (!state.editor.activeTab) {
+    return null
+  }
+
+  return entities.getById(state, state.editor.activeTab)
+}
+

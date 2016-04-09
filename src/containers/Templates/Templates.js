@@ -1,7 +1,7 @@
 import React, {Component, PropTypes} from 'react'
 import {connect} from 'react-redux'
 import * as editor from 'redux/modules/editor'
-import * as entitiesActions from 'redux/modules/entities'
+import * as entities from 'redux/modules/entities'
 import Preview from '../../components/studio/Preview.js'
 import ObjectTree from '../../components/studio/ObjectTree.js'
 import Properties from '../../components/studio/Properties.js'
@@ -12,17 +12,18 @@ import SplitPane from '../../components/common/SplitPane/SplitPane.js'
 import {TabPane, Tab} from '../../components/common/Tabs/TabPane.js'
 
 @connect((state) => ({
-  references: state.references,
   entities: state.entities,
+  references: entities.getReferences(state),
   tabs: state.editor.tabs,
   activeTab: state.editor.activeTab,
   tabsWithEntities: editor.getTabWithEntities(state),
   activeEntity: editor.getActiveEntity(state)
-}), { ...editor, ...entitiesActions })
+}), { ...editor })
 export default class Templates extends Component {
   static propTypes = {
-    references: PropTypes.object,
     entities: PropTypes.object,
+    references: PropTypes.object,
+    tabsWithEntities: PropTypes.array,
     currentDetail: PropTypes.object,
     error: PropTypes.string,
     loading: PropTypes.bool,
@@ -51,7 +52,9 @@ export default class Templates extends Component {
   }
 
   render () {
-    const { references, tabsWithEntities, activeTab, remove, openTab, activateTab, openNewTab, activeEntity, update, save, closeTab } = this.props
+    const { tabsWithEntities, references, activeTab, remove, openTab, activateTab, openNewTab, activeEntity, update, save, closeTab } = this.props
+
+    console.log('render', tabsWithEntities)
 
     return (
       <div className='block'>
@@ -72,12 +75,12 @@ export default class Templates extends Component {
               <TabPane activeTabKey={activeTab} activateTab={activateTab} closeTab={closeTab}>
                 {tabsWithEntities.map((t) =>
                   <Tab key={t._id} title={t.name}>
-                    {t.entityType === 'templates' ? <TextEditor
+                    {t.__entityType === 'templates' ? <TextEditor
                       object={t} ref={t._id} className={style.ace}
-                      onUpdate={(o) => update(t.entityType, o)}/>
-                      : React.createElement(studio.detailComponents[ t.entityType ], {
+                      onUpdate={(o) => update(o)}/>
+                      : React.createElement(studio.detailComponents[ t.__entityType ], {
                       object: t,
-                      onUpdate: (o) => update(t.entityType, o)
+                      onUpdate: (o) => update(o)
                     })}
                   </Tab>)
                 }

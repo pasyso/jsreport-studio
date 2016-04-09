@@ -10,6 +10,8 @@ import fetchExtension from './fetchExtensions'
 import './theme/style.scss'
 import ApiClient from './helpers/ApiClient.js'
 import AceEditor from 'react-ace'
+import * as entities from './redux/modules/entities.js'
+import Promise from 'bluebird'
 
 window.React = React
 
@@ -26,9 +28,7 @@ var studio = window.studio = {
   references: {},
   initializeListeners: [],
   AceEditor: AceEditor,
-  registerObjectType: function (type) {
-    store.dispatch({ type: 'REGISTER_OBJECT_TYPE', objectType: type })
-  }
+  entityTypes: [ 'templates' ]
 }
 
 studio.runtime[ 'core-js/object/get-prototype-of' ] = require('babel-runtime/core-js/object/get-prototype-of')
@@ -65,14 +65,7 @@ function start () {
 }
 
 fetchExtension(function () {
-  studio.initializeListeners[ 0 ](function () {
-    studio.api.get('/odata/templates?$select=name').then((r) => {
-      studio.references.templates = r.value
-      store.dispatch({
-        type: 'REFERENCES_UPDATE',
-        result: studio.references
-      })
-      start()
-    })
-  })
+  //studio.initializeListeners[ 0 ](function () {
+    Promise.all(studio.entityTypes.map((t) => entities.loadReferences(t)(store.dispatch))).then(start)
+  //})
 })

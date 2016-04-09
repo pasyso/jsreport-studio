@@ -7,18 +7,11 @@ studio.routes.push({
   component: List
 })
 
-studio.registerObjectType('data')
+studio.entityTypes.push('data')
 
 studio.properties.push(Properties)
 
 studio.detailComponents.data = DataEditor
-
-studio.initializeListeners.push(function (cb) {
-  return studio.api.get('/odata/data?$select=name').then(function (r) {
-    studio.references.data = r.value
-    cb()
-  })
-})
 
 studio.onPreview = function (request, objectDetails) {
   if (!objectDetails.data || !request.template.data || !request.template.data.shortid) {

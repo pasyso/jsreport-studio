@@ -3,6 +3,7 @@ import thunk from 'redux-thunk'
 import createLogger from 'redux-logger'
 import { syncHistory } from 'react-router-redux'
 import invariant from 'redux-immutable-state-invariant'
+import { enableBatching } from 'redux-batched-actions'
 
 const logger = createLogger()
 
@@ -26,7 +27,7 @@ export default function createStore (history, data) {
   }
 
   const reducer = require('./modules/reducer')
-  const store = finalCreateStore(reducer, data)
+  const store = finalCreateStore(enableBatching(reducer), data)
 
   reduxRouterMiddleware.listenForReplays(store)
 
