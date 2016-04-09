@@ -39,3 +39,5 @@ dist/
 webpack-assets.json
 webpack-stats.json
 npm-debug.log
+
+data
