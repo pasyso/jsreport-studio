@@ -26,14 +26,14 @@ export default function createStore (history, data) {
     finalCreateStore = applyMiddleware(...middleware)(_createStore)
   }
 
-  const reducer = require('./modules/reducer')
+  const reducer = require('./reducer')
   const store = finalCreateStore(enableBatching(reducer), data)
 
   reduxRouterMiddleware.listenForReplays(store)
 
   if (__DEVELOPMENT__ && module.hot) {
-    module.hot.accept('./modules/reducer', () => {
-      store.replaceReducer(require('./modules/reducer'))
+    module.hot.accept('./reducer', () => {
+      store.replaceReducer(require('./reducer'))
     })
   }
 

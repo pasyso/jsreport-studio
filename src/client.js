@@ -10,7 +10,7 @@ import fetchExtension from './fetchExtensions'
 import './theme/style.scss'
 import ApiClient from './helpers/ApiClient.js'
 import AceEditor from 'react-ace'
-import * as entities from './redux/modules/entities.js'
+import * as entities from 'redux/entities'
 import Promise from 'bluebird'
 import TemplateEditor from './components/studio/TemplateEditor.js'
 import TemplateProperties from './components/studio/TemplateProperties.js'
@@ -68,7 +68,7 @@ function start () {
 
 fetchExtension(async function () {
   //studio.initializeListeners[ 0 ](function () {
-  await Promise.all(studio.entityTypes.map((t) => entities.loadReferences(t)(store.dispatch)))
+  await Promise.all(studio.entityTypes.map((t) => entities.actions.loadReferences(t)(store.dispatch)))
 
   studio.recipes = await studio.api.get('/api/recipe')
   studio.engines = await studio.api.get('/api/engine')

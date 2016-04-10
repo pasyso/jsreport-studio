@@ -1,7 +1,7 @@
 import React, {Component, PropTypes} from 'react'
 import {connect} from 'react-redux'
-import * as editor from 'redux/modules/editor'
-import * as entities from 'redux/modules/entities'
+import { actions, selectors } from 'redux/editor'
+import * as entities from 'redux/entities'
 import Preview from '../../components/studio/Preview.js'
 import EntityTree from '../../components/studio/EntityTree.js'
 import Properties from '../../components/studio/Properties.js'
@@ -13,13 +13,13 @@ import {TabPane, Tab} from '../../components/common/Tabs/TabPane.js'
 
 @connect((state) => ({
   entities: state.entities,
-  references: entities.getReferences(state),
+  references: entities.selectors.getReferences(state),
   tabs: state.editor.tabs,
   activeTab: state.editor.activeTab,
   isSaving: state.editor.isSaving,
-  tabsWithEntities: editor.getTabWithEntities(state),
-  activeEntity: editor.getActiveEntity(state)
-}), { ...editor })
+  tabsWithEntities: selectors.getTabWithEntities(state),
+  activeEntity: selectors.getActiveEntity(state)
+}), { ...actions })
 export default class Studio extends Component {
   static propTypes = {
     entities: PropTypes.object,

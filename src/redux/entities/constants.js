@@ -1,0 +1,7 @@
+export const LOAD = 'ENTITIES_LOAD'
+export const ADD = 'ENTITIES_ADD'
+export const SAVE = 'ENTITIES_SAVE'
+export const SAVE_NEW = 'ENTITIES_SAVE_NEW'
+export const UPDATE = 'ENTITIES_UPDATE'
+export const LOAD_REFERENCES = 'LOAD_REFERENCES'
+export const REMOVE = 'ENTITIES_REMOVE'
