@@ -14,7 +14,7 @@ export default class EntityTree extends Component {
   }
 
   renderNode (entity) {
-    return <div key={entity._id}><a className={style.link} onClick={() => this.props.onClick(entity._id)}>{entity.name}</a></div>
+    return <div key={entity._id}><a className={style.link} onClick={() => this.props.onClick(entity._id)}>{entity.name + (entity.__isDirty ? '*' : '')}</a></div>
   }
 
   renderObjectSubTree (k) {

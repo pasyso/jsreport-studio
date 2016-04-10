@@ -85,7 +85,7 @@ export default class Studio extends Component {
               resizerClassName='resizer'>
               <TabPane activeTabKey={activeTab} activateTab={activateTab} closeTab={closeTab}>
                 {tabsWithEntities.map((t) =>
-                  <Tab key={t._id} title={t.name + (t.__isDirty ? ' (!) ' : '')}>
+                  <Tab key={t._id} title={t.name + (t.__isDirty ? '*' : '')}>
                     {React.createElement(studio.detailComponents[ t.__entityType ], {
                       entity: t,
                       ref: t._id,

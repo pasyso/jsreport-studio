@@ -14,7 +14,7 @@ const initialState = {
   activeTab: null
 }
 
-export default function reducer (state = initialState, action = {}) {
+export default function (state = initialState, action = {}) {
   switch (action.type) {
     case OPEN_TAB:
       return {
@@ -40,7 +40,7 @@ export default function reducer (state = initialState, action = {}) {
         activeTab: newActivatTab,
         tabs: newTabs
       }
-    case ACTIVATE_TAB:
+    case ACTIVATE_TAB:      
       return {
         ...state,
         activeTab: action._id

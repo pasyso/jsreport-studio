@@ -118,11 +118,13 @@ export function add (entity) {
 
 export function load (id) {
   return async function (dispatch, getState) {
-    const entity = getById(getState(), id)
-    let response = await client.get(`/odata/${entity.__entityType}(${id})`)
+    let entity = getById(getState(), id)
+    if (!entity.__isLoaded && !entity.__isNew) {
+      entity = (await client.get(`/odata/${entity.__entityType}(${id})`)).value[0]
+    }
     dispatch({
       type: LOAD,
-      entity: response.value[ 0 ]
+      entity: entity
     })
   }
 }
