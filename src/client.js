@@ -12,6 +12,8 @@ import ApiClient from './helpers/ApiClient.js'
 import AceEditor from 'react-ace'
 import * as entities from './redux/modules/entities.js'
 import Promise from 'bluebird'
+import TemplateEditor from './components/studio/TemplateEditor.js'
+import TemplateProperties from './components/studio/TemplateProperties.js'
 
 window.React = React
 
@@ -22,9 +24,9 @@ var studio = window.studio = {
   routes: [],
   runtime: {},
   react: React,
-  properties: [],
+  properties: [TemplateProperties],
   api: new ApiClient(),
-  detailComponents: {},
+  detailComponents: { 'templates': TemplateEditor },
   references: {},
   initializeListeners: [],
   AceEditor: AceEditor,
@@ -64,8 +66,12 @@ function start () {
   //}
 }
 
-fetchExtension(function () {
+fetchExtension(async function () {
   //studio.initializeListeners[ 0 ](function () {
-    Promise.all(studio.entityTypes.map((t) => entities.loadReferences(t)(store.dispatch))).then(start)
+  await Promise.all(studio.entityTypes.map((t) => entities.loadReferences(t)(store.dispatch)))
+
+  studio.recipes = await studio.api.get('/api/recipe')
+  studio.engines = await studio.api.get('/api/engine')
+  start()
   //})
 })

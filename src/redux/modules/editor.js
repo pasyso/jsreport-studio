@@ -5,7 +5,9 @@ const OPEN_TAB = 'EDITOR_OPEN_TAB'
 const CLOSE_TAB = 'EDITOR_CLOSE_TAB'
 const ACTIVATE_TAB = 'EDITOR_ACTIVATE_TAB'
 const OPEN_NEW_TAB = 'EDITOR_OPEN_NEW_TAB'
-const SAVE_NEW = 'EDITOR_SAVE_NEW'
+const OPEN_TAB_STARTED = 'EDITOR_OPEN_TAB_STARTED'
+const SAVE_STARTED = 'EDITOR_SAVE_STARTED'
+const SAVE_SUCCESS = 'EDITOR_SAVE_SUCCESS'
 
 const initialState = {
   tabs: [],
@@ -52,6 +54,16 @@ export default function reducer (state = initialState, action = {}) {
           action.entity._id,
           ...state.tabs.slice(index + 1) ],
         activeTab: action.entity._id
+      }
+    case SAVE_STARTED:
+      return {
+        ...state,
+        isSaving: true
+      }
+    case SAVE_SUCCESS:
+      return {
+        ...state,
+        isSaving: false
       }
     default:
       return state
@@ -108,7 +120,31 @@ export function update (entity) {
 export function save () {
   return async function (dispatch, getState) {
     try {
+      dispatch({
+        type: SAVE_STARTED
+      })
       await entities.save(getState().editor.activeTab)(dispatch, getState)
+      dispatch({
+        type: SAVE_SUCCESS
+      })
+    } catch (e) {
+      console.error(e)
+    }
+  }
+}
+
+export function saveAll () {
+  return async function (dispatch, getState) {
+    try {
+      dispatch({
+        type: SAVE_STARTED
+      })
+
+      await Promise.all(getState().editor.tabs.map((t) => entities.save(t)(dispatch, getState)))
+
+      dispatch({
+        type: SAVE_SUCCESS
+      })
     } catch (e) {
       console.error(e)
     }

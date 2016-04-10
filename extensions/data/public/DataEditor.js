@@ -4,7 +4,7 @@ const { Component } = studio.react
 
 export default class DataEditor extends Component {
   static propTypes = {
-    object: React.PropTypes.object.isRequired,
+    entity: React.PropTypes.object.isRequired,
     onUpdate: React.PropTypes.func.isRequired
   }
 
@@ -13,17 +13,18 @@ export default class DataEditor extends Component {
   }
 
   render () {
-    const { object, onUpdate } = this.props
+    const { entity, onUpdate } = this.props
 
     return (<AceEditor
-      key={object._id}
+      key={entity._id}
       mode='javascript'
       theme='chrome'
       ref='ace'
-      name={object._id}
+      name={entity._id}
       width='100%'
-      value={object.dataJson}
-      onChange={(v) => onUpdate(Object.assign({}, object, {dataJson: v}))}
+      className='ace'
+      value={entity.dataJson}
+      onChange={(v) => onUpdate(Object.assign({}, entity, {dataJson: v}))}
       editorProps={{$blockScrolling: true}}/>)
   }
 }

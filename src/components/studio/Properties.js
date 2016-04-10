@@ -11,9 +11,14 @@ export default class Properties extends Component {
     const { entity, onChange, entities } = this.props
 
     return <div>
-      <div>engine: <input type='text' value={entity.engine} onChange={(v) => onChange({_id: entity._id, engine: v.target.value})}/></div>
-      <div>recipe: <input type='text' value={entity.recipe} onChange={(v) => onChange({_id: entity._id, recipe: v.target.value})}/></div>
-      <div> {studio.properties.map((p, i) => React.createElement(p, { key: i, entity: entity, entities: entities, onChange: onChange }))}</div>
+      <div>name: <input
+        type='text' value={entity.name} onChange={(v) => onChange({_id: entity._id, name: v.target.value})}/></div>
+      <div> {studio.properties.map((p, i) => React.createElement(p, {
+        key: i,
+        entity: entity,
+        entities: entities,
+        onChange: onChange
+      }))}</div>
     </div>
   }
 

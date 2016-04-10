@@ -13,12 +13,12 @@ studio.properties.push(Properties)
 
 studio.detailComponents.data = DataEditor
 
-studio.onPreview = function (request, objectDetails) {
-  if (!objectDetails.data || !request.template.data || !request.template.data.shortid) {
+studio.onPreview = function (request, entities) {
+  if (!request.template.data || !request.template.data.shortid) {
     return
   }
 
-  let dataDetails = objectDetails.data.filter((d) => d.shortid === request.template.data.shortid)
+  let dataDetails = Object.keys(entities).map((e) => entities[e]).filter((d) => d.shortid === request.template.data.shortid && d.__entityType === 'data')
 
   if (!dataDetails.length) {
     return
