@@ -12,8 +12,8 @@ import ApiClient from './helpers/ApiClient.js'
 import AceEditor from 'react-ace'
 import * as entities from 'redux/entities'
 import Promise from 'bluebird'
-import TemplateEditor from './components/studio/TemplateEditor.js'
-import TemplateProperties from './components/studio/TemplateProperties.js'
+import TemplateEditor from './components/Editor/TemplateEditor.js'
+import TemplateProperties from './components/Properties/TemplateProperties.js'
 
 window.React = React
 

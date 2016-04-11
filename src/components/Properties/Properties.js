@@ -1,4 +1,5 @@
 import React, {Component} from 'react'
+import style from './Properties.scss'
 
 export default class Properties extends Component {
   static propTypes = {
@@ -25,7 +26,7 @@ export default class Properties extends Component {
   render () {
     const { entity } = this.props
 
-    return <div className='block-item'>
+    return <div className={style.propertiesContainer}>
       Properties
       {entity ? this.renderProperties(entity) : ''}
     </div>

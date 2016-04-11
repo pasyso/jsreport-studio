@@ -1,0 +1,44 @@
+@import "../../../theme/variables";
+
+.tabPane {
+  background-color: $secondaryBackgroundColor
+}
+
+.tabContainer {
+  display: inline-block;
+}
+
+.tabTitle {
+  display: inline-block;
+  background-color: $secondaryBackgroundColor;
+  padding: 0.3em;
+  cursor: pointer;
+  font-size: 0.8em;
+}
+
+.tabTitle.active {
+  background: $primarySelectionBackgroundColor;
+  color: $primarySelectionColor;
+}
+
+.tabTitle:hover {
+  background: $primaryHoverBackgroundColor;
+  color: $primaryHoverColor;
+}
+
+.tabClose {
+  display: inline-block;
+  margin-left: 0.3em;
+}
+
+.tabClose:after {
+  content: "\f00d";
+  color: $secondaryColor;
+  padding: 0.1em;
+  font-family: FontAwesome;
+  font-size: 0.9em;
+}
+
+.tabClose:hover {
+  background-color: $secondaryHoverBackgroundColor;
+}

@@ -20,7 +20,7 @@ export default class EntityTree extends Component {
   renderObjectSubTree (k) {
     return <div key={k}>
       <span className={style.nodeTitle}>{k}</span>
-      <a key={k + 'new'} onClick={() => this.props.onNewClick(k)} className={style.add}><i className='fa fa-plus-square'></i></a>
+      <a key={k + 'new'} onClick={() => this.props.onNewClick(k)} className={style.add}></a>
       <div className={style.nodeContainer}>
         <ReactList itemRenderer={this.createRenderer(k)} length={this.props.entities[k].length}/>
       </div>

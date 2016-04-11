@@ -1,0 +1,41 @@
+@import "../../theme/variables";
+
+.toolbar {
+  background-color: $tertiaryBackgroundColor;
+}
+
+.btn {
+  display: inline-block;
+  font-size: 0.8em;
+  padding: 0.7em;
+  cursor: pointer;
+}
+
+.btn:hover {
+  background: $primaryHoverBackgroundColor;
+  color: $primaryHoverColor;
+}
+
+.run:before {
+  content: "\f04b";
+  margin-right:0.2em;
+  font-family: FontAwesome;
+}
+
+.save:before {
+  content: "\f0c7";
+  margin-right:0.2em;
+  font-family: FontAwesome;
+}
+
+.saveAll:before {
+  content: "\f0c7";
+  margin-right:0.2em;
+  font-family: FontAwesome;
+}
+
+.delete:before {
+  content: "\f014";
+  margin-right:0.2em;
+  font-family: FontAwesome;
+}

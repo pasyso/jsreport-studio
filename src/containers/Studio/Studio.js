@@ -2,10 +2,11 @@ import React, {Component, PropTypes} from 'react'
 import {connect} from 'react-redux'
 import { actions, selectors } from 'redux/editor'
 import * as entities from 'redux/entities'
-import Preview from '../../components/studio/Preview.js'
-import EntityTree from '../../components/studio/EntityTree.js'
-import Properties from '../../components/studio/Properties.js'
+import Preview from '../../components/Preview/Preview.js'
+import EntityTree from '../../components/EntityTree/EntityTree.js'
+import Properties from '../../components/Properties/Properties.js'
 import style from './Studio.scss'
+import Toolbar from '../../components/Toolbar/Toolbar.js'
 import _debounce from 'lodash/function/debounce'
 import preview from '../../helpers/preview'
 import SplitPane from '../../components/common/SplitPane/SplitPane.js'
@@ -66,12 +67,7 @@ export default class Studio extends Component {
 
     return (
       <div className='block'>
-        <div className={style.toolbar}>
-          <button onClick={() => this.handleRun()}>Run</button>
-          <button onClick={save}>Save {isSaving ? '...' : ''}</button>
-          <button onClick={saveAll}>Save All {isSaving ? '...' : ''}</button>
-          <button onClick={remove}>Delete</button>
-        </div>
+        <Toolbar onSave={save} onSaveAll={saveAll} onRemove={remove} onRun={() => this.handleRun()}/>
         <div className='block'>
           <SplitPane
             resizerClassName='resizer' defaultSize='80%' onChange={() => this.handleSplitChanged()}

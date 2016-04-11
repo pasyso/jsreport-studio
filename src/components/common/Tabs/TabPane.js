@@ -1,6 +1,7 @@
 import React, {Component} from 'react'
 import Tab from './Tab'
 import TabContent from './TabContent'
+import style from './Tabs.scss'
 
 class TabPane extends Component {
   static propTypes = {
@@ -22,14 +23,15 @@ class TabPane extends Component {
   render () {
     const { activeTabKey, activateTab, closeTab } = this.props
 
-    return <div className='block'>
+    return <div className={'block ' + style.tabPane}>
       <div className='block-row'>
-        {React.Children.map(this.props.children, (t) =>
-          <div style={{display: 'inline-block'}}>
-            <button className='hvr-overline-from-center'
-              key={t.key} onClick={() => activateTab(t.key)}>{t.props.title + ' ' + (t.key === activeTabKey ? 'active' : '')}
-            </button>
-            <button key={'x' + t.key} onClick={() => closeTab(t.key)}>x</button>
+        {React.Children.map(this.props.children,
+          (t) => <div className={style.tabContainer}>
+            <div className={style.tabTitle + ' ' + (t.key === activeTabKey ? style.active : '')} key={t.key} onClick={() => activateTab(t.key)}>
+              {t.props.title}
+              <div className={style.tabClose} key={'x' + t.key} onClick={() => closeTab(t.key)}></div>
+            </div>
+
           </div>
         )}
       </div>

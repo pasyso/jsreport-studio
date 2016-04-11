@@ -1,0 +1,58 @@
+@import "../../theme/variables";
+
+.treeListContainer {
+  padding: 0.5em;
+  flex: 1;
+  background-color: $secondaryBackgroundColor;
+}
+
+.nodeContainer {
+  margin-left: 0.8em;
+  margin-bottom: 0.5em;
+}
+
+.nodeTitle {
+  margin-left: 0.3em;
+  margin-right: 0.3em;
+  font-size: 0.8em;
+}
+
+.nodeTitle:before {
+  content: "\f07b";
+  font-family: FontAwesome;
+  color: darkkhaki;
+  margin-right: 0.3em;
+}
+
+
+.link {
+  padding: 0.3em;
+  font-size: 0.8em;
+  cursor: pointer;
+}
+
+.link:hover {
+  background: $primaryHoverBackgroundColor;
+  color: $primaryHoverColor;
+}
+
+.link:before {
+  content: "\f016";
+  margin-right: 0.3em;
+  font-family: FontAwesome;
+}
+
+.add {
+  cursor: pointer;
+}
+
+.add:after {
+  content: "\f0fe";
+  font-family: FontAwesome;
+  color: $secondaryColor;
+  padding: 0.1em;
+  font-size: 0.9em;
+}
+
+
+
