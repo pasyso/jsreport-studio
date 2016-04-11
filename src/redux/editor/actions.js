@@ -1,25 +1,32 @@
 import * as entities from '../entities'
 import * as ActionTypes from './constants.js'
 import uid from '../../helpers/uid.js'
+import * as selectors from './selectors.js'
 
 export function closeTab (id) {
   return (dispatch) => dispatch({
     type: ActionTypes.CLOSE_TAB,
-    _id: id
+    key: id
   })
 }
 
-export function openTab (id) {
+export function openTab (tab) {
   return async function (dispatch, getState) {
-    await entities.actions.load(id)(dispatch, getState)
+    if (tab._id) {
+      await entities.actions.load(tab._id)(dispatch, getState)
+    }
+
+    tab.type = tab._id ? 'entity' : 'custom'
+    tab.key = tab.key || tab._id
 
     dispatch({
       type: ActionTypes.OPEN_TAB,
-      _id: id
+      tab: tab
     })
+
     dispatch({
       type: ActionTypes.ACTIVATE_TAB,
-      _id: id
+      key: tab.key
     })
   }
 }
@@ -31,6 +38,7 @@ export function openNewTab (entityType) {
     dispatch({
       type: ActionTypes.OPEN_NEW_TAB,
       _id: id,
+      key: id,
       entityType: entityType
     })
   }
@@ -39,7 +47,7 @@ export function openNewTab (entityType) {
 export function activateTab (id) {
   return (dispatch) => dispatch({
     type: ActionTypes.ACTIVATE_TAB,
-    _id: id
+    key: id
   })
 }
 
@@ -55,7 +63,7 @@ export function save () {
       dispatch({
         type: ActionTypes.SAVE_STARTED
       })
-      await entities.actions.save(getState().editor.activeTab)(dispatch, getState)
+      await entities.actions.save(selectors.getActiveTab(getState())._id)(dispatch, getState)
       dispatch({
         type: ActionTypes.SAVE_SUCCESS
       })

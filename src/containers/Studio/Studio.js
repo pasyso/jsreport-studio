@@ -10,12 +10,10 @@ import Toolbar from '../../components/Toolbar/Toolbar.js'
 import _debounce from 'lodash/function/debounce'
 import preview from '../../helpers/preview'
 import SplitPane from '../../components/common/SplitPane/SplitPane.js'
-import {TabPane, Tab} from '../../components/common/Tabs/TabPane.js'
-
+import EditorTabs from '../../components/Tabs/EditorTabs.js'
 @connect((state) => ({
   entities: state.entities,
   references: entities.selectors.getReferences(state),
-  tabs: state.editor.tabs,
   activeTab: state.editor.activeTab,
   isSaving: state.editor.isSaving,
   tabsWithEntities: selectors.getTabWithEntities(state),
@@ -38,6 +36,7 @@ export default class Studio extends Component {
   }
 
   componentDidMount () {
+    return this.props.openTab({ key: 'StartupPage', detailComponentKey: 'startup', title: 'Statup' })
   }
 
   handleRun () {
@@ -48,10 +47,7 @@ export default class Studio extends Component {
   }
 
   handleSplitChanged () {
-    if (this.props.activeTab && this.refs[ this.props.activeTab ] && this.refs[ this.props.activeTab ].resize) {
-      this.refs[ this.props.activeTab ].resize()
-    }
-
+    this.refs.editorTabs.resize()
     this.refs.preview.resizeStarted()
   }
 
@@ -68,27 +64,20 @@ export default class Studio extends Component {
     return (
       <div className='block'>
         <Toolbar onSave={save} onSaveAll={saveAll} onRemove={remove} onRun={() => this.handleRun()}/>
+
         <div className='block'>
           <SplitPane
             resizerClassName='resizer' defaultSize='80%' onChange={() => this.handleSplitChanged()}
             onDragFinished={() => this.handleSplitDragFinished()}>
             <SplitPane resizerClassName='resizer-horizontal' split='horizontal' defaultSize='400px'>
-              <EntityTree entities={references} onClick={openTab} onNewClick={openNewTab}/>
+              <EntityTree entities={references} onClick={(_id) => openTab({ _id: _id})} onNewClick={openNewTab}/>
               <Properties entity={activeEntity} entities={entities} onChange={(e) => update(e)}/>
             </SplitPane>
             <SplitPane
               onChange={() => this.handleSplitChanged()} onDragFinished={() => this.handleSplitDragFinished()}
               resizerClassName='resizer'>
-              <TabPane activeTabKey={activeTab} activateTab={activateTab} closeTab={closeTab}>
-                {tabsWithEntities.map((t) =>
-                  <Tab key={t._id} title={t.name + (t.__isDirty ? '*' : '')}>
-                    {React.createElement(studio.detailComponents[ t.__entityType ], {
-                      entity: t,
-                      ref: t._id,
-                      onUpdate: (o) => update(o)
-                    })}
-                  </Tab>)}
-              </TabPane>
+              <EditorTabs activeTabKey={activeTab} ref='editorTabs' activateTab={activateTab} closeTab={closeTab}
+                          onUpdate={update} tabs={tabsWithEntities}/>
               <Preview ref='preview'/>
             </SplitPane>
           </SplitPane>

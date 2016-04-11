@@ -3,7 +3,7 @@ import Tab from './Tab'
 import TabContent from './TabContent'
 import style from './Tabs.scss'
 
-class TabPane extends Component {
+export default class TabPane extends Component {
   static propTypes = {
     activateTab: React.PropTypes.func.isRequired,
     closeTab: React.PropTypes.func.isRequired,
@@ -29,7 +29,7 @@ class TabPane extends Component {
           (t) => <div className={style.tabContainer}>
             <div className={style.tabTitle + ' ' + (t.key === activeTabKey ? style.active : '')} key={t.key} onClick={() => activateTab(t.key)}>
               {t.props.title}
-              <div className={style.tabClose} key={'x' + t.key} onClick={() => closeTab(t.key)}></div>
+              <div className={style.tabClose} key={'x' + t.key} onClick={(e) => { e.stopPropagation(); closeTab(t.key) }}></div>
             </div>
 
           </div>
@@ -42,5 +42,3 @@ class TabPane extends Component {
     </div>
   }
 }
-
-export default { TabPane, Tab }

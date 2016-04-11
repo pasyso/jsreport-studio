@@ -11,9 +11,11 @@ import './theme/style.scss'
 import ApiClient from './helpers/ApiClient.js'
 import AceEditor from 'react-ace'
 import * as entities from 'redux/entities'
+import * as editor from 'redux/editor'
 import Promise from 'bluebird'
 import TemplateEditor from './components/Editor/TemplateEditor.js'
 import TemplateProperties from './components/Properties/TemplateProperties.js'
+import Startup from './containers/Startup/Startup.js'
 
 window.React = React
 
@@ -21,12 +23,14 @@ const history = useScroll(() => browserHistory)()
 const store = createStore(history)
 
 var studio = window.studio = {
+  editor: editor,
+  dispatch: store.dispatch,
   routes: [],
   runtime: {},
   react: React,
   properties: [TemplateProperties],
   api: new ApiClient(),
-  detailComponents: { 'templates': TemplateEditor },
+  detailComponents: { templates: TemplateEditor, startup: Startup },
   references: {},
   initializeListeners: [],
   AceEditor: AceEditor,

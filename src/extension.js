@@ -19,12 +19,12 @@ module.exports = function (reporter, definition) {
   reporter.on('express-configure', function () {
     if (reporter.options.mode === 'production') {
       var content = fs.readFileSync(path.join(__dirname, '../extensions/data/public/main.js')) + '\n' +
-        fs.readFileSync(path.join(__dirname, '../extensions/scripts/public/main.js'));
+        fs.readFileSync(path.join(__dirname, '../extensions/phantom-pdf/public/main.js'));
 
       fs.writeFileSync(path.join(__dirname, '../static/dist/extensions.js'), content);
     } else {
       fs.writeFileSync(path.join(__dirname, 'dynamicExtensions.js'), "import '../extensions/data/public/main_dev.js'" +
-        '\n' + "import '../extensions/scripts/public/main_dev.js'")
+        '\n' + "import '../extensions/phantom-pdf/public/main_dev.js'")
     }
 
     var app = reporter.express.app;

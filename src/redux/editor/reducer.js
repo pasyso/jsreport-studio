@@ -1,63 +1,61 @@
 import * as ActionTypes from './constants.js'
 import { ActionTypes as EntityActionTypes } from '../entities'
+import createReducer from '../createReducer.js'
 
-const initialState = {
+const reducer = createReducer({
   tabs: [],
   activeTab: null
-}
+})
+export default reducer.export()
 
-export default function (state = initialState, action = {}) {
-  switch (action.type) {
-    case ActionTypes.OPEN_TAB:
-      return {
-        ...state,
-        tabs: state.tabs.includes(action._id) ? state.tabs : [ ...state.tabs, action._id ]
-      }
-    case ActionTypes.OPEN_NEW_TAB:
-      return {
-        ...state,
-        activeTab: action._id,
-        tabs: [ ...state.tabs, action._id ]
-      }
-    case EntityActionTypes.REMOVE:
-    case ActionTypes.CLOSE_TAB:
-      let newTabs = state.tabs.filter((t) => t !== action._id)
-      let newActivatTab = state.activeTab
-      if (state.activeTab === action._id) {
-        newActivatTab = newTabs.length ? newTabs[ newTabs.length - 1 ] : null
-      }
+reducer.handleAction(ActionTypes.OPEN_TAB, (state, { tab }) => ({
+  ...state,
+  tabs: state.tabs.filter((t) => t.key === tab.key).length ? state.tabs : [ ...state.tabs, tab ]
+}))
 
-      return {
-        ...state,
-        activeTab: newActivatTab,
-        tabs: newTabs
-      }
-    case ActionTypes.ACTIVATE_TAB:
-      return {
-        ...state,
-        activeTab: action._id
-      }
-    case EntityActionTypes.SAVE_NEW:
-      let index = state.tabs.indexOf(action.oldId)
+reducer.handleAction(ActionTypes.OPEN_NEW_TAB, (state, action) => ({
+  ...state,
+  activeTab: action.key,
+  tabs: [ ...state.tabs, action.key ]
+}))
 
-      return {
-        tabs: [
-          ...state.tabs.slice(0, index),
-          action.entity._id,
-          ...state.tabs.slice(index + 1) ],
-        activeTab: action.entity._id
-      }
-    case ActionTypes.SAVE_STARTED:
-      return {
-        ...state,
-        isSaving: true
-      }
-    case ActionTypes.SAVE_SUCCESS:
-      return {
-        ...state,
-        isSaving: false
-      }
-    default:
-      return state
+reducer.handleActions([EntityActionTypes.REMOVE, ActionTypes.CLOSE_TAB], (state, action) => {
+  let newTabs = state.tabs.filter((t) => t.key !== action.key)
+  let newActivatTab = state.activeTab
+  if (state.activeTab === action.key) {
+    newActivatTab = newTabs.length ? newTabs[ newTabs.length - 1 ] : null
   }
-}
+
+  return {
+    ...state,
+    activeTab: newActivatTab ? newActivatTab.key : null,
+    tabs: newTabs
+  }
+})
+
+reducer.handleAction(ActionTypes.ACTIVATE_TAB, (state, action) => ({
+  ...state,
+  activeTab: action.key
+}))
+
+reducer.handleAction(EntityActionTypes.SAVE_NEW, (state, action) => {
+  let index = state.tabs.indexOf(action.oldId)
+
+  return {
+    tabs: [
+      ...state.tabs.slice(0, index),
+      action.entity._id,
+      ...state.tabs.slice(index + 1) ],
+    activeTab: action.entity._id
+  }
+})
+
+reducer.handleAction(ActionTypes.SAVE_STARTED, (state, action) => ({
+  ...state,
+  isSaving: true
+}))
+
+reducer.handleAction(ActionTypes.SAVE_SUCCESS, (state, action) => ({
+  ...state,
+  isSaving: false
+}))

@@ -20,3 +20,7 @@ Reducer.prototype.export = function () {
 Reducer.prototype.handleAction = function (type, fn) {
   this.handlers[ type ] = fn
 }
+
+Reducer.prototype.handleActions = function (actionTypes, fn) {
+  actionTypes.forEach((type) => { this.handlers[ type ] = fn })
+}
