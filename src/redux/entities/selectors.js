@@ -6,6 +6,11 @@ export const getById = (state, id) => {
   return state.entities[ id ]
 }
 
+export const getByShortid = (state, shortid) => {
+  const entities = Object.keys(state.entities).map((e) => state.entities[ e ]).filter((e) => e.shortid === shortid)
+  return entities.length ? entities[0] : 0
+}
+
 export const getReferences = (state) => {
   let result = {}
   Object.keys(state.entities).filter((e) => state.entities[ e ]).forEach((eid) => {

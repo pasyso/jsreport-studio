@@ -1,4 +1,4 @@
 module.exports = {
   'name': 'studio',
-  'main': 'src/extension.js',
+  'main': 'lib/studio.js'
 }

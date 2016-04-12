@@ -4,7 +4,6 @@ import ReactDOM from 'react-dom'
 import createStore from './redux/create'
 import {Provider} from 'react-redux'
 import { Router, browserHistory } from 'react-router'
-import useScroll from 'scroll-behavior/lib/useStandardScroll'
 import getRoutes from './routes'
 import fetchExtension from './fetchExtensions'
 import './theme/style.scss'
@@ -16,11 +15,12 @@ import Promise from 'bluebird'
 import TemplateEditor from './components/Editor/TemplateEditor.js'
 import TemplateProperties from './components/Properties/TemplateProperties.js'
 import Startup from './containers/Startup/Startup.js'
+import { syncHistoryWithStore } from 'react-router-redux'
 
 window.React = React
 
-const history = useScroll(() => browserHistory)()
-const store = createStore(history)
+const store = createStore(browserHistory)
+const history = syncHistoryWithStore(browserHistory, store)
 
 var studio = window.studio = {
   editor: editor,
@@ -38,6 +38,7 @@ var studio = window.studio = {
 }
 
 studio.runtime[ 'core-js/object/get-prototype-of' ] = require('babel-runtime/core-js/object/get-prototype-of')
+studio.runtime[ 'core-js/object/keys' ] = require('babel-runtime/core-js/object/keys')
 studio.runtime[ 'helpers/classCallCheck' ] = require('babel-runtime/helpers/classCallCheck')
 studio.runtime[ 'helpers/createClass' ] = require('babel-runtime/helpers/createClass')
 studio.runtime[ 'helpers/possibleConstructorReturn' ] = require('babel-runtime/helpers/possibleConstructorReturn')

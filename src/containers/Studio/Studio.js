@@ -36,7 +36,17 @@ export default class Studio extends Component {
   }
 
   componentDidMount () {
+    console.log('componentDidMount', this.props)
+    if (this.props.params.shortid) {
+      this.props.openTab({ shortid: this.props.params.shortid, entityType: this.props.params.entityType })
+      return
+    }
+
     return this.props.openTab({ key: 'StartupPage', detailComponentKey: 'startup', title: 'Statup' })
+  }
+
+  componentDidUpdate () {
+    this.props.updateHistory()
   }
 
   handleRun () {
@@ -59,7 +69,7 @@ export default class Studio extends Component {
   render () {
     const { tabsWithEntities, references, saveAll, isSaving, activeTab, entities, remove, openTab, activateTab, openNewTab, activeEntity, update, save, closeTab } = this.props
 
-    console.log('render', tabsWithEntities)
+    // console.log('render', this.props)
 
     return (
       <div className='block'>

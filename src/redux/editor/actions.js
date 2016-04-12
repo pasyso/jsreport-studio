@@ -2,6 +2,7 @@ import * as entities from '../entities'
 import * as ActionTypes from './constants.js'
 import uid from '../../helpers/uid.js'
 import * as selectors from './selectors.js'
+import { push } from 'react-router-redux'
 
 export function closeTab (id) {
   return (dispatch) => dispatch({
@@ -12,6 +13,10 @@ export function closeTab (id) {
 
 export function openTab (tab) {
   return async function (dispatch, getState) {
+    if (tab.shortid) {
+      tab._id = entities.selectors.getByShortid(getState(), tab.shortid)._id
+    }
+
     if (tab._id) {
       await entities.actions.load(tab._id)(dispatch, getState)
     }
@@ -37,18 +42,38 @@ export function openNewTab (entityType) {
     dispatch(entities.actions.add({ _id: id, __entityType: entityType, name: 'New ' + entityType }))
     dispatch({
       type: ActionTypes.OPEN_NEW_TAB,
-      _id: id,
-      key: id,
-      entityType: entityType
+      tab: {
+        _id: id,
+        key: id,
+        type: 'entity'
+      }
     })
   }
 }
 
 export function activateTab (id) {
-  return (dispatch) => dispatch({
-    type: ActionTypes.ACTIVATE_TAB,
-    key: id
-  })
+  return (dispatch, getState) => {
+    dispatch({
+      type: ActionTypes.ACTIVATE_TAB,
+      key: id
+    })
+  }
+}
+
+export function updateHistory () {
+  return (dispatch, getState) => {
+    const entity = selectors.getActiveEntity(getState())
+    let path
+    if (entity && entity.shortid) {
+      path = `/studio/${entity.__entityType}/${entity.shortid}`
+    } else {
+      path = '/'
+    }
+
+    if (path !== getState().routing.locationBeforeTransitions.pathname) {
+      dispatch(push(path))
+    }
+  }
 }
 
 export function update (entity) {
@@ -80,7 +105,7 @@ export function saveAll () {
         type: ActionTypes.SAVE_STARTED
       })
 
-      await Promise.all(getState().editor.tabs.map((t) => entities.actions.save(t)(dispatch, getState)))
+      await Promise.all(getState().editor.tabs.filter((t) => t.type === 'entity').map((t) => entities.actions.save(t._id)(dispatch, getState)))
 
       dispatch({
         type: ActionTypes.SAVE_SUCCESS

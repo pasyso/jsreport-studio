@@ -1,5 +1,4 @@
-var webpack = require('webpack');
-
+var webpack = require('webpack')
 
 module.exports = {
   entry: {
@@ -12,8 +11,8 @@ module.exports = {
   externals: [
     function (context, request, callback) {
       if (/babel-runtime/.test(request))
-        return callback(null, 'studio.runtime[\'' + request.substring('babel-runtime/'.length) + '\']');
-      callback();
+        return callback(null, 'studio.runtime[\'' + request.substring('babel-runtime/'.length) + '\']')
+      callback()
     }
   ],
   module: {
@@ -32,4 +31,4 @@ module.exports = {
   plugins: [
     new webpack.IgnorePlugin(/foo/)
   ]
-};
+}

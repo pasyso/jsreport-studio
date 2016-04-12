@@ -2,9 +2,7 @@ import React from 'react'
 import {IndexRoute, Route} from 'react-router'
 import {
     App,
-    Home,
-    Studio,
-    TemplateList
+    Studio
   } from 'containers'
 
 export default (aroutes) => {
@@ -12,12 +10,12 @@ export default (aroutes) => {
 
   return (
     <Route path='/' component={App}>
-      { /* Home (main) route */ }
-      <IndexRoute component={Home}/>
-      { /* Routes */ }
-      <Route path='/studio/templates' component={TemplateList}/>
-      <Route path='/studio/templating' component={Studio}/>
-
+      <IndexRoute component={Studio}/>
+      <Route path='studio' component={Studio}>
+        <Route path=':entityType' component={Studio}>
+          <Route path=':shortid' component={Studio} />
+        </Route>
+      </Route>
       {routes.map((r) => <Route path={r.path} component={r.component} key={r.path} />)}
     </Route>
   )

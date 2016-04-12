@@ -13,10 +13,10 @@ reducer.handleAction(ActionTypes.OPEN_TAB, (state, { tab }) => ({
   tabs: state.tabs.filter((t) => t.key === tab.key).length ? state.tabs : [ ...state.tabs, tab ]
 }))
 
-reducer.handleAction(ActionTypes.OPEN_NEW_TAB, (state, action) => ({
+reducer.handleAction(ActionTypes.OPEN_NEW_TAB, (state, { tab }) => ({
   ...state,
-  activeTab: action.key,
-  tabs: [ ...state.tabs, action.key ]
+  activeTab: tab.key,
+  tabs: [ ...state.tabs, tab ]
 }))
 
 reducer.handleActions([EntityActionTypes.REMOVE, ActionTypes.CLOSE_TAB], (state, action) => {
@@ -39,12 +39,15 @@ reducer.handleAction(ActionTypes.ACTIVATE_TAB, (state, action) => ({
 }))
 
 reducer.handleAction(EntityActionTypes.SAVE_NEW, (state, action) => {
-  let index = state.tabs.indexOf(action.oldId)
+  let index = state.tabs.indexOf(state.tabs.filter((t) => t.key === action.oldId)[0])
+  const tab = Object.assign({}, state.tabs[index])
+  tab.key = action.entity._id
+  tab._id = tab.key
 
   return {
     tabs: [
       ...state.tabs.slice(0, index),
-      action.entity._id,
+      tab,
       ...state.tabs.slice(index + 1) ],
     activeTab: action.entity._id
   }

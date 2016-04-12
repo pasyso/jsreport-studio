@@ -13,7 +13,7 @@ export default function (cb) {
   console.log('loading extensions')
 
   if (__DEVELOPMENT__) {
-    require('./dynamicExtensions.js')
+    require('./extensions_dev.js')
     return cb()
   }
 

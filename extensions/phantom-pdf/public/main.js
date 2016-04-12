@@ -46,149 +46,22 @@
 
 	'use strict';
 
-	var _keys = __webpack_require__(1);
+	var _PhantomEditor = __webpack_require__(1);
 
-	var _keys2 = _interopRequireDefault(_keys);
+	var _PhantomEditor2 = _interopRequireDefault(_PhantomEditor);
 
-	var _List = __webpack_require__(2);
+	var _PhantomProperties = __webpack_require__(8);
 
-	var _List2 = _interopRequireDefault(_List);
-
-	var _DataEditor = __webpack_require__(8);
-
-	var _DataEditor2 = _interopRequireDefault(_DataEditor);
-
-	var _DataProperties = __webpack_require__(10);
-
-	var _DataProperties2 = _interopRequireDefault(_DataProperties);
+	var _PhantomProperties2 = _interopRequireDefault(_PhantomProperties);
 
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-	studio.routes.push({
-	  path: '/studio/data',
-	  component: _List2.default
-	});
+	studio.properties.push(_PhantomProperties2.default);
 
-	studio.entityTypes.push('data');
-
-	studio.properties.push(_DataProperties2.default);
-
-	studio.detailComponents.data = _DataEditor2.default;
-
-	studio.onPreview = function (request, entities) {
-	  if (!request.template.data || !request.template.data.shortid) {
-	    return;
-	  }
-
-	  var dataDetails = (0, _keys2.default)(entities).map(function (e) {
-	    return entities[e];
-	  }).filter(function (d) {
-	    return d.shortid === request.template.data.shortid && d.__entityType === 'data';
-	  });
-
-	  if (!dataDetails.length) {
-	    return;
-	  }
-
-	  request.data = dataDetails[0].dataJson;
-	};
+	studio.detailComponents.phantom = _PhantomEditor2.default;
 
 /***/ },
 /* 1 */
-/***/ function(module, exports) {
-
-	module.exports = studio.runtime['core-js/object/keys'];
-
-/***/ },
-/* 2 */
-/***/ function(module, exports, __webpack_require__) {
-
-	"use strict";
-
-	Object.defineProperty(exports, "__esModule", {
-	  value: true
-	});
-
-	var _getPrototypeOf = __webpack_require__(3);
-
-	var _getPrototypeOf2 = _interopRequireDefault(_getPrototypeOf);
-
-	var _classCallCheck2 = __webpack_require__(4);
-
-	var _classCallCheck3 = _interopRequireDefault(_classCallCheck2);
-
-	var _createClass2 = __webpack_require__(5);
-
-	var _createClass3 = _interopRequireDefault(_createClass2);
-
-	var _possibleConstructorReturn2 = __webpack_require__(6);
-
-	var _possibleConstructorReturn3 = _interopRequireDefault(_possibleConstructorReturn2);
-
-	var _inherits2 = __webpack_require__(7);
-
-	var _inherits3 = _interopRequireDefault(_inherits2);
-
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-	var React = studio.react;
-	var Component = studio.react.Component;
-
-	var List = function (_Component) {
-	  (0, _inherits3.default)(List, _Component);
-
-	  function List() {
-	    (0, _classCallCheck3.default)(this, List);
-	    return (0, _possibleConstructorReturn3.default)(this, (0, _getPrototypeOf2.default)(List).apply(this, arguments));
-	  }
-
-	  (0, _createClass3.default)(List, [{
-	    key: "render",
-	    value: function render() {
-	      return React.createElement(
-	        "div",
-	        null,
-	        "Data2"
-	      );
-	    }
-	  }]);
-	  return List;
-	}(Component);
-
-	exports.default = List;
-
-/***/ },
-/* 3 */
-/***/ function(module, exports) {
-
-	module.exports = studio.runtime['core-js/object/get-prototype-of'];
-
-/***/ },
-/* 4 */
-/***/ function(module, exports) {
-
-	module.exports = studio.runtime['helpers/classCallCheck'];
-
-/***/ },
-/* 5 */
-/***/ function(module, exports) {
-
-	module.exports = studio.runtime['helpers/createClass'];
-
-/***/ },
-/* 6 */
-/***/ function(module, exports) {
-
-	module.exports = studio.runtime['helpers/possibleConstructorReturn'];
-
-/***/ },
-/* 7 */
-/***/ function(module, exports) {
-
-	module.exports = studio.runtime['helpers/inherits'];
-
-/***/ },
-/* 8 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -197,7 +70,7 @@
 	  value: true
 	});
 
-	var _assign = __webpack_require__(9);
+	var _assign = __webpack_require__(2);
 
 	var _assign2 = _interopRequireDefault(_assign);
 
@@ -249,16 +122,16 @@
 
 
 	      return React.createElement(AceEditor, {
-	        key: entity._id,
-	        mode: 'javascript',
+	        key: entity._id + '_phantom',
+	        mode: 'handlebars',
 	        theme: 'chrome',
 	        ref: 'ace',
-	        name: entity._id,
+	        name: entity._id + '_phantom',
 	        width: '100%',
 	        className: 'ace',
-	        value: entity.dataJson,
+	        value: entity.phantom ? entity.phantom.header : '',
 	        onChange: function onChange(v) {
-	          return onUpdate((0, _assign2.default)({}, entity, { dataJson: v }));
+	          return onUpdate((0, _assign2.default)({}, entity, { phantom: { header: v } }));
 	        },
 	        editorProps: { $blockScrolling: true } });
 	    }
@@ -273,13 +146,43 @@
 	exports.default = DataEditor;
 
 /***/ },
-/* 9 */
+/* 2 */
 /***/ function(module, exports) {
 
 	module.exports = studio.runtime['core-js/object/assign'];
 
 /***/ },
-/* 10 */
+/* 3 */
+/***/ function(module, exports) {
+
+	module.exports = studio.runtime['core-js/object/get-prototype-of'];
+
+/***/ },
+/* 4 */
+/***/ function(module, exports) {
+
+	module.exports = studio.runtime['helpers/classCallCheck'];
+
+/***/ },
+/* 5 */
+/***/ function(module, exports) {
+
+	module.exports = studio.runtime['helpers/createClass'];
+
+/***/ },
+/* 6 */
+/***/ function(module, exports) {
+
+	module.exports = studio.runtime['helpers/possibleConstructorReturn'];
+
+/***/ },
+/* 7 */
+/***/ function(module, exports) {
+
+	module.exports = studio.runtime['helpers/inherits'];
+
+/***/ },
+/* 8 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -287,10 +190,6 @@
 	Object.defineProperty(exports, "__esModule", {
 	  value: true
 	});
-
-	var _keys = __webpack_require__(1);
-
-	var _keys2 = _interopRequireDefault(_keys);
 
 	var _getPrototypeOf = __webpack_require__(3);
 
@@ -326,48 +225,44 @@
 	  }
 
 	  (0, _createClass3.default)(Properties, [{
-	    key: 'selectDataItems',
-	    value: function selectDataItems(entities) {
-	      return (0, _keys2.default)(entities).filter(function (k) {
-	        return entities[k] && !entities[k].__isNew && entities[k].__entityType === 'data';
-	      }).map(function (k) {
-	        return entities[k];
-	      });
+	    key: 'openHeader',
+	    value: function openHeader() {
+	      studio.dispatch(studio.editor.actions.openTab({
+	        key: this.props.entity._id + '_phantom',
+	        _id: this.props.entity._id,
+	        detailComponentKey: 'phantom',
+	        title: 'Phantom'
+	      }));
 	    }
 	  }, {
 	    key: 'render',
 	    value: function render() {
+	      var _this2 = this;
+
 	      var _props = this.props;
 	      var entity = _props.entity;
 	      var entities = _props.entities;
-	      var _onChange = _props.onChange;
+	      var onChange = _props.onChange;
 
-	      var dataItems = this.selectDataItems(entities);
 
-	      if (entity.__entityType !== 'templates') {
+	      if (entity.__entityType !== 'templates' || entity.recipe !== 'phantom-pdf') {
 	        return React.createElement('div', null);
 	      }
 
 	      return React.createElement(
 	        'div',
 	        null,
+	        'Phantom settings....',
 	        React.createElement(
-	          'select',
-	          { value: entity.data ? entity.data.shortid : '', onChange: function onChange(v) {
-	              return _onChange({ _id: entity._id, data: { shortid: v.target.value } });
-	            } },
+	          'div',
+	          null,
 	          React.createElement(
-	            'option',
-	            { key: 'empty', value: 'empty' },
-	            '- not selected -'
-	          ),
-	          dataItems.map(function (e) {
-	            return React.createElement(
-	              'option',
-	              { key: e.shortid, value: e.shortid },
-	              e.name
-	            );
-	          })
+	            'button',
+	            { onClick: function onClick() {
+	                return _this2.openHeader();
+	              } },
+	            'open header'
+	          )
 	        )
 	      );
 	    }
