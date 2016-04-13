@@ -6,7 +6,4 @@ module.exports = [ {
 }, {
   name: 'phantom-pdf',
   directory: path.join(__dirname, 'phantom-pdf')
-}, {
-  name: 'scripts',
-  directory: path.join(__dirname, 'scripts')
-} ]
+}]

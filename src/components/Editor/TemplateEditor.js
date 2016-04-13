@@ -3,7 +3,7 @@ import AceEditor from 'react-ace'
 import 'brace/mode/handlebars'
 import 'brace/mode/javascript'
 import 'brace/theme/chrome'
-import _debounce from 'lodash/function/debounce'
+import _debounce from 'lodash/debounce'
 import SplitPane from '../../components/common/SplitPane/SplitPane.js'
 
 export default class TemplateEditor extends Component {
@@ -20,6 +20,10 @@ export default class TemplateEditor extends Component {
   resize () {
     this.refs.ace.editor.resize()
     this.refs.aceHelpers.editor.resize()
+  }
+
+  componentDidUpdate () {
+    this.refs.ace.editor.renderer.setScrollMargin(5, 0)
   }
 
   handleSplitChanged () {

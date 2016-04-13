@@ -7,7 +7,7 @@ import EntityTree from '../../components/EntityTree/EntityTree.js'
 import Properties from '../../components/Properties/Properties.js'
 import style from './Studio.scss'
 import Toolbar from '../../components/Toolbar/Toolbar.js'
-import _debounce from 'lodash/function/debounce'
+import _debounce from 'lodash/debounce'
 import preview from '../../helpers/preview'
 import SplitPane from '../../components/common/SplitPane/SplitPane.js'
 import EditorTabs from '../../components/Tabs/EditorTabs.js'
@@ -16,6 +16,10 @@ import EditorTabs from '../../components/Tabs/EditorTabs.js'
   references: entities.selectors.getReferences(state),
   activeTab: state.editor.activeTab,
   isSaving: state.editor.isSaving,
+  canRun: selectors.canRun(state),
+  canSave: selectors.canSave(state),
+  canSaveAll: selectors.canSaveAll(state),
+  canRemove: selectors.canRemove(state),
   tabsWithEntities: selectors.getTabWithEntities(state),
   activeEntity: selectors.getActiveEntity(state)
 }), { ...actions })
@@ -36,7 +40,6 @@ export default class Studio extends Component {
   }
 
   componentDidMount () {
-    console.log('componentDidMount', this.props)
     if (this.props.params.shortid) {
       this.props.openTab({ shortid: this.props.params.shortid, entityType: this.props.params.entityType })
       return
@@ -67,13 +70,16 @@ export default class Studio extends Component {
   }
 
   render () {
-    const { tabsWithEntities, references, saveAll, isSaving, activeTab, entities, remove, openTab, activateTab, openNewTab, activeEntity, update, save, closeTab } = this.props
+    const { tabsWithEntities, references, saveAll, canRun, canSave, canRemove, canSaveAll, isSaving, activeTab, entities,
+      remove, openTab, activateTab, openNewTab, activeEntity, update, save, closeTab } = this.props
 
-    // console.log('render', this.props)
+    console.log('render', this.props)
 
     return (
       <div className='block'>
-        <Toolbar onSave={save} onSaveAll={saveAll} onRemove={remove} onRun={() => this.handleRun()}/>
+        <Toolbar
+          canRun={canRun} canSave={canSave} canSaveAll={canSaveAll} canRemove={canRemove} onSave={save} onSaveAll={saveAll}
+          onRemove={remove} onRun={() => this.handleRun()}/>
 
         <div className='block'>
           <SplitPane

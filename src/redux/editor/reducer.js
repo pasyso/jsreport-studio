@@ -20,9 +20,9 @@ reducer.handleAction(ActionTypes.OPEN_NEW_TAB, (state, { tab }) => ({
 }))
 
 reducer.handleActions([EntityActionTypes.REMOVE, ActionTypes.CLOSE_TAB], (state, action) => {
-  let newTabs = state.tabs.filter((t) => t.key !== action.key)
+  let newTabs = state.tabs.filter((t) => t.key !== action.key && t._id !== action._id)
   let newActivatTab = state.activeTab
-  if (state.activeTab === action.key) {
+  if (state.activeTab === action.key || state.activeTab === action._id) {
     newActivatTab = newTabs.length ? newTabs[ newTabs.length - 1 ] : null
   }
 

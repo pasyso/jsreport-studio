@@ -1,4 +1,4 @@
-import isObject from 'lodash/lang/isobject'
+import isObject from 'lodash/isObject'
 
 function addInput (form, name, value) {
   const input = document.createElement('input')

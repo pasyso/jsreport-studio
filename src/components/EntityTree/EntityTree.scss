@@ -1,33 +1,33 @@
 @import "../../theme/variables";
 
 .treeListContainer {
-  padding: 0.5em;
   flex: 1;
+  padding-top:0.5rem;
   background-color: $secondaryBackgroundColor;
 }
 
-.nodeContainer {
-  margin-left: 0.8em;
-  margin-bottom: 0.5em;
+.nodeBox {
+  margin-top:0.5rem;
 }
 
 .nodeTitle {
-  margin-left: 0.3em;
-  margin-right: 0.3em;
-  font-size: 0.8em;
+  padding-left: 1rem;
+  margin-right: 0.3rem;
+  font-size: 1rem;
 }
 
 .nodeTitle:before {
   content: "\f07b";
   font-family: FontAwesome;
   color: darkkhaki;
-  margin-right: 0.3em;
+  margin-right: 0.3rem;
 }
 
 
 .link {
-  padding: 0.3em;
-  font-size: 0.8em;
+  padding: 0.2rem;
+  padding-left: 1.5rem;
+  font-size: 1rem;
   cursor: pointer;
 }
 
@@ -38,7 +38,7 @@
 
 .link:before {
   content: "\f016";
-  margin-right: 0.3em;
+  margin-right: 0.3rem;
   font-family: FontAwesome;
 }
 
@@ -50,8 +50,8 @@
   content: "\f0fe";
   font-family: FontAwesome;
   color: $secondaryColor;
-  padding: 0.1em;
-  font-size: 0.9em;
+  padding: 0.1rem;
+  font-size: 1rem;
 }
 
 

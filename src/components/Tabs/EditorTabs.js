@@ -27,10 +27,20 @@ export default class EditorTabs extends Component {
     }
   }
 
+  createTitle (t) {
+    return <span>
+      {t.tab.titleComponentKey ? React.createElement(studio.titleComponents[ t.tab.titleComponentKey ], {
+        entity: t.entity,
+        tab: t.tab
+      }) : (<span>{t.tab.title || (t.entity.name + (t.entity.__isDirty ? '*' : ''))}</span>)}
+    </span>
+  }
+
   renderEntityTab (t, onUpdate) {
-    return <Tab key={t.tab.key} title={t.tab.title || (t.entity.name + (t.entity.__isDirty ? '*' : ''))}>
+    return <Tab key={t.tab.key} title={this.createTitle(t)}>
       {React.createElement(studio.detailComponents[ t.tab.detailComponentKey || t.entity.__entityType ], {
         entity: t.entity,
+        tab: t.tab,
         ref: t.tab.key,
         onUpdate: (o) => onUpdate(o)
       })}

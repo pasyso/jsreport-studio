@@ -2,40 +2,48 @@
 
 .toolbar {
   background-color: $tertiaryBackgroundColor;
+  color: $tertiaryColor;
 }
 
 .btn {
   display: inline-block;
-  font-size: 0.8em;
-  padding: 0.7em;
+  font-size: 1rem;
+  padding: 0.7rem;
   cursor: pointer;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
 }
 
-.btn:hover {
+.btn.disabled {
+  color: $secondaryColor
+}
+
+.btn:hover:not(.disabled) {
   background: $primaryHoverBackgroundColor;
   color: $primaryHoverColor;
 }
 
 .run:before {
   content: "\f04b";
-  margin-right:0.2em;
+  margin-right:0.2rem;
   font-family: FontAwesome;
 }
 
 .save:before {
   content: "\f0c7";
-  margin-right:0.2em;
+  margin-right:0.2rem;
   font-family: FontAwesome;
 }
 
 .saveAll:before {
   content: "\f0c7";
-  margin-right:0.2em;
+  margin-right:0.2rem;
   font-family: FontAwesome;
 }
 
 .delete:before {
   content: "\f014";
-  margin-right:0.2em;
+  margin-right:0.2rem;
   font-family: FontAwesome;
 }

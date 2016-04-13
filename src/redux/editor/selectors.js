@@ -16,3 +16,25 @@ export const getActiveEntity = (state) => {
 
   return tab.type === 'entity' ? selectors.getById(state, tab._id) : null
 }
+
+export const canRun = (state) => {
+  const entity = getActiveEntity(state)
+
+  return entity ? entity.__entityType === 'templates' : false
+}
+
+export const canRemove = (state) => {
+  const entity = getActiveEntity(state)
+
+  return entity ? !entity.__isNew : false
+}
+
+export const canSave = (state) => {
+  const entity = getActiveEntity(state)
+
+  return entity ? entity.__isDirty : false
+}
+
+export const canSaveAll = (state) => {
+  return getTabWithEntities(state).filter((t) => t.entity && t.entity.__isDirty).length > 0
+}

@@ -4,6 +4,11 @@
   background-color: $secondaryBackgroundColor
 }
 
+.tabTitles {
+  border-bottom: 0.2rem $primaryHoverBackgroundColor solid;
+  padding-bottom: 0.1rem;
+}
+
 .tabContainer {
   display: inline-block;
 }
@@ -11,9 +16,9 @@
 .tabTitle {
   display: inline-block;
   background-color: $secondaryBackgroundColor;
-  padding: 0.3em;
+  padding: 0.3rem;
   cursor: pointer;
-  font-size: 0.8em;
+  font-size: 1rem;
 }
 
 .tabTitle.active {
@@ -28,15 +33,15 @@
 
 .tabClose {
   display: inline-block;
-  margin-left: 0.3em;
+  margin-left: 0.3rem;
 }
 
 .tabClose:after {
   content: "\f00d";
   color: $secondaryColor;
-  padding: 0.1em;
+  padding: 0.1rem;
   font-family: FontAwesome;
-  font-size: 0.9em;
+  font-size: 0.9rem;
 }
 
 .tabClose:hover {

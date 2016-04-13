@@ -1,9 +1,17 @@
 {
   "extends": ["standard", "standard-jsx"],
   "parser": "babel-eslint",
+  "plugins": [
+    "babel"
+  ],
+  "rules": {
+    "babel/arrow-parens": 2,
+    "arrow-parens": 0
+  },
   "globals" : {
     "studio": 1,
     "describe": 1,
-    "it": 1
+    "it": 1,
+    "__DEVELOPMENT__": 1
   }
 }

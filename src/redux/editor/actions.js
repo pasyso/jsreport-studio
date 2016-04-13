@@ -118,6 +118,7 @@ export function saveAll () {
 
 export function remove () {
   return async function (dispatch, getState) {
-    await dispatch(entities.actions.remove(getState().editor.activeTab))
+    const tab = selectors.getActiveTab(getState())
+    await dispatch(entities.actions.remove(tab._id))
   }
 }

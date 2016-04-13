@@ -1,5 +1,4 @@
 import React, {Component} from 'react'
-import Tab from './Tab'
 import TabContent from './TabContent'
 import style from './Tabs.scss'
 
@@ -7,7 +6,7 @@ export default class TabPane extends Component {
   static propTypes = {
     activateTab: React.PropTypes.func.isRequired,
     closeTab: React.PropTypes.func.isRequired,
-    activeTabKey: React.PropTypes.string
+    activeTabKey: React.PropTypes.string,
   }
 
   componentWillMount () {
@@ -24,7 +23,7 @@ export default class TabPane extends Component {
     const { activeTabKey, activateTab, closeTab } = this.props
 
     return <div className={'block ' + style.tabPane}>
-      <div className='block-row'>
+      <div className={'block-row' + ' ' + style.tabTitles}>
         {React.Children.map(this.props.children,
           (t) => <div className={style.tabContainer}>
             <div className={style.tabTitle + ' ' + (t.key === activeTabKey ? style.active : '')} key={t.key} onClick={() => activateTab(t.key)}>
@@ -35,7 +34,7 @@ export default class TabPane extends Component {
           </div>
         )}
       </div>
-      <div className='block'>
+      <div className={'block' + ' ' + style.tab}>
         {React.Children.map(this.props.children, (t) => <TabContent
           key={t.key} active={t.key === activeTabKey}>{t.props.children}</TabContent>)}
       </div>

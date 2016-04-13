@@ -14,11 +14,11 @@ export default class EntityTree extends Component {
   }
 
   renderNode (entity) {
-    return <div key={entity._id}><a className={style.link} onClick={() => this.props.onClick(entity._id)}>{entity.name + (entity.__isDirty ? '*' : '')}</a></div>
+    return <div key={entity._id} className={style.link}><a onClick={() => this.props.onClick(entity._id)}>{entity.name + (entity.__isDirty ? '*' : '')}</a></div>
   }
 
   renderObjectSubTree (k) {
-    return <div key={k}>
+    return <div key={k} className={style.nodeBox}>
       <span className={style.nodeTitle}>{k}</span>
       <a key={k + 'new'} onClick={() => this.props.onNewClick(k)} className={style.add}></a>
       <div className={style.nodeContainer}>
