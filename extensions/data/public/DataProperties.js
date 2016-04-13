@@ -1,5 +1,5 @@
-const React = studio.react
-const { Component } = studio.react
+const React = Studio.react
+const { Component } = Studio.react
 
 export default class Properties extends Component {
   selectDataItems (entities) {

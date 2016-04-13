@@ -9,7 +9,7 @@ import fetchExtension from 'lib/fetchExtensions'
 import './theme/style.scss'
 import * as entities from 'redux/entities'
 import Promise from 'bluebird'
-import jsreport from './jsreport'
+import StudioInst, { init } from './Studio'
 
 import { syncHistoryWithStore } from 'react-router-redux'
 window.React = React
@@ -17,16 +17,19 @@ window.React = React
 const store = createStore(browserHistory)
 const history = syncHistoryWithStore(browserHistory, store)
 
-var studio = window.studio = jsreport(store)
+var Studio = window.Studio = StudioInst
+init(store)
 
 const start = async () => {
   await fetchExtension()
-  await Promise.all(studio.entityTypes.map((t) => entities.actions.loadReferences(t)(store.dispatch)))
+  await Promise.all(
+    [ ...Studio.entityTypes.map((t) => entities.actions.loadReferences(t)(store.dispatch)),
+      Studio.api.get('/api/engine').then((engines) => (Studio.engines = engines)),
+      Studio.api.get('/api/recipe').then((recipes) => (Studio.recipes = recipes))
+    ]
+  )
 
-  studio.recipes = await studio.api.get('/api/recipe')
-  studio.engines = await studio.api.get('/api/engine')
-
-  const routes = getRoutes(window.studio.routes)
+  const routes = getRoutes(window.Studio.routes)
 
   let component = <Router history={history}>{routes}</Router>
 

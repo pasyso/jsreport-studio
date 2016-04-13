@@ -1,5 +1,6 @@
 import React, {Component} from 'react'
 import style from './Properties.scss'
+import Studio from 'Studio.js'
 
 export default class Properties extends Component {
   static propTypes = {
@@ -14,7 +15,7 @@ export default class Properties extends Component {
     return <div>
       <div>name: <input
         type='text' value={entity.name} onChange={(v) => onChange({_id: entity._id, name: v.target.value})}/></div>
-      <div> {studio.properties.map((p, i) => React.createElement(p, {
+      <div> {Studio.properties.map((p, i) => React.createElement(p, {
         key: i,
         entity: entity,
         entities: entities,

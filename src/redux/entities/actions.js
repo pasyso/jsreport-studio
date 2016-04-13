@@ -1,8 +1,6 @@
 import * as ActionTypes from './constants.js'
-import ApiClient from '../../helpers/ApiClient.js'
+import api from '../../helpers/api.js'
 import * as selectors from './selectors.js'
-let client = new ApiClient()
-
 
 export function update (entity) {
   if (!entity || !entity._id) {
@@ -18,7 +16,7 @@ export function update (entity) {
 export function remove (id) {
   return async function (dispatch, getState) {
     const entity = selectors.getById(getState(), id)
-    await client.del(`/odata/${entity.__entityType}(${id})`)
+    await api.del(`/odata/${entity.__entityType}(${id})`)
 
     return dispatch({
       type: ActionTypes.REMOVE,
@@ -42,7 +40,7 @@ export function load (id) {
   return async function (dispatch, getState) {
     let entity = selectors.getById(getState(), id)
     if (!entity.__isLoaded && !entity.__isNew) {
-      entity = (await client.get(`/odata/${entity.__entityType}(${id})`)).value[ 0 ]
+      entity = (await api.get(`/odata/${entity.__entityType}(${id})`)).value[ 0 ]
     }
     dispatch({
       type: ActionTypes.LOAD,
@@ -53,7 +51,7 @@ export function load (id) {
 
 export function loadReferences (entityType) {
   return async function (dispatch) {
-    let response = await client.get(`/odata/${entityType}?$select=name,shortid`)
+    let response = await api.get(`/odata/${entityType}?$select=name,shortid`)
     dispatch({
       type: ActionTypes.LOAD_REFERENCES,
       entities: response.value,
@@ -70,7 +68,7 @@ export function save (id) {
       if (entity.__isNew) {
         const oldId = entity._id
         delete entity._id
-        const response = await client.post(`/odata/${entity.__entityType}`, { data: entity })
+        const response = await api.post(`/odata/${entity.__entityType}`, { data: entity })
         entity._id = response._id
         dispatch({
           type: ActionTypes.SAVE_NEW,
@@ -79,7 +77,7 @@ export function save (id) {
         })
         entity._id = response._id
       } else {
-        await client.patch(`/odata/${entity.__entityType}(${entity._id})`, { data: entity })
+        await api.patch(`/odata/${entity.__entityType}(${entity._id})`, { data: entity })
         dispatch({
           type: ActionTypes.SAVE,
           _id: entity._id

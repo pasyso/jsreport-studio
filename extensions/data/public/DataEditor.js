@@ -1,6 +1,6 @@
-const React = studio.react
-const AceEditor = studio.AceEditor
-const { Component } = studio.react
+const React = Studio.react
+const AceEditor = Studio.AceEditor
+const { Component } = Studio.react
 
 export default class DataEditor extends Component {
   static propTypes = {

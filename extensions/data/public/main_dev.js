@@ -1,11 +1,11 @@
 import DataEditor from './DataEditor.js'
 import Properties from './DataProperties.js'
 
-studio.entityTypes.push('data')
-studio.properties.push(Properties)
-studio.detailComponents.data = DataEditor
+Studio.entityTypes.push('data')
+Studio.properties.push(Properties)
+Studio.registerTabEditorComponent('data', DataEditor)
 
-studio.onPreview = function (request, entities) {
+Studio.onPreview = function (request, entities) {
   if (!request.template.data || !request.template.data.shortid) {
     return
   }

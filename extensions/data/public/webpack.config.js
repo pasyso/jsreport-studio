@@ -11,7 +11,7 @@ module.exports = {
   externals: [
     function (context, request, callback) {
       if (/babel-runtime/.test(request)) {
-        return callback(null, 'studio.runtime[\'' + request.substring('babel-runtime/'.length) + '\']')
+        return callback(null, 'Studio.runtime[\'' + request.substring('babel-runtime/'.length) + '\']')
       }
       callback()
     }

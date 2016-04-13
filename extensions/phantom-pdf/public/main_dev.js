@@ -1,8 +1,9 @@
 import PhantomEditor from './PhantomEditor.js'
 import Properties from './PhantomProperties.js'
 import PhantomTitle from './PhantomTitle.js'
+import * as Constants from './constants.js'
 
-studio.properties.push(Properties)
+Studio.properties.push(Properties)
 
-studio.detailComponents.phantom = PhantomEditor
-studio.titleComponents.phantom = PhantomTitle
+Studio.registerTabEditorComponent(Constants.PHANTOM_TAB_EDITOR, PhantomEditor)
+Studio.registerTabTitleComponent(Constants.PHANTOM_TAB_TITLE, PhantomTitle)

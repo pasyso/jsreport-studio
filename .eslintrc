@@ -9,9 +9,10 @@
     "arrow-parens": 0
   },
   "globals" : {
-    "studio": 1,
+    "Studio": 1,
     "describe": 1,
     "it": 1,
+    "beforeEach": 1,
     "__DEVELOPMENT__": 1
   }
 }

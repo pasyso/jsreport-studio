@@ -1,26 +1,16 @@
 {
-  "name": "react-redux-universal-hot-example",
-  "description": "Example of an isomorphic (universal) webapp using react redux and hot reloading",
-  "author": "Erik Rasmussen <rasmussenerik@gmail.com> (http://github.com/erikras)",
+  "name": "jsreport-studio",
+  "description": "jsreport templates editor and designer",
+  "author": "Jan Blaha",
   "license": "MIT",
-  "version": "0.9.0",
+  "version": "0.0.1",
   "repository": {
     "type": "git",
-    "url": "https://github.com/erikras/react-redux-universal-hot-example"
+    "url": "https://github.com/jsreport/jsreport-studio"
   },
-  "homepage": "https://github.com/erikras/react-redux-universal-hot-example",
+  "homepage": "https://github.com/jsreport/jsreport-studio",
   "keywords": [
-    "react",
-    "isomorphic",
-    "universal",
-    "webpack",
-    "express",
-    "hot reloading",
-    "react-hot-reloader",
-    "redux",
-    "starter",
-    "boilerplate",
-    "babel"
+    "jsreport"
   ],
   "main": "src/server.js",
   "standard": {
@@ -28,36 +18,10 @@
   },
   "scripts": {
     "test": "mocha test --compilers js:babel-register --recursive",
+    "test:watch": "npm test -- --watch",
     "build": "set NODE_ENV=production&&webpack --verbose --colors --display-error-details --config webpack/prod.config.js"
   },
   "betterScripts": {
-    "start-prod": {
-      "command": "node ./src/server.js",
-      "env": {
-        "NODE_PATH": "./src",
-        "NODE_ENV": "production",
-        "PORT": 8080,
-        "APIPORT": 3030
-      }
-    },
-    "start-dev": {
-      "command": "node ./src/server.js",
-      "env": {
-        "NODE_PATH": "./src",
-        "NODE_ENV": "development",
-        "PORT": 3000,
-        "APIPORT": 3030
-      }
-    },
-    "watch-client": {
-      "command": "node webpack/webpack-dev-server.js",
-      "env": {
-        "UV_THREADPOOL_SIZE": 100,
-        "NODE_PATH": "./src",
-        "PORT": 3000,
-        "APIPORT": 3030
-      }
-    },
     "build": {
       "command": "webpack --verbose --colors --display-error-details --config webpack/prod.config.js",
       "env": {
@@ -101,6 +65,7 @@
     "react-transform-hmr": "^1.0.4",
     "redux": "^3.0.4",
     "redux-batched-actions": "^0.1.2",
+    "redux-mock-store": "^1.0.2",
     "redux-thunk": "^2.0.1",
     "resolve-url-loader": "^1.4.3",
     "serve-favicon": "^2.3.0",

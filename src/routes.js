@@ -1,19 +1,16 @@
 import React from 'react'
 import {IndexRoute, Route} from 'react-router'
-import {
-    App,
-    Studio
-  } from 'containers'
+import App from './containers/App/App.js'
 
 export default (aroutes) => {
   const routes = aroutes || []
 
   return (
     <Route path='/' component={App}>
-      <IndexRoute component={Studio}/>
-      <Route path='studio' component={Studio}>
-        <Route path=':entityType' component={Studio}>
-          <Route path=':shortid' component={Studio} />
+      <IndexRoute component={App}/>
+      <Route path='studio' component={App}>
+        <Route path=':entityType' component={App}>
+          <Route path=':shortid' component={App} />
         </Route>
       </Route>
       {routes.map((r) => <Route path={r.path} component={r.component} key={r.path} />)}
