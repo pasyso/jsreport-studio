@@ -10,6 +10,7 @@ function addInput (form, name, value) {
 
 export default function (request, target) {
   delete request.template._id
+  request.template.content = request.template.content || ' '
 
   request.options = request.options || {}
   request.options.preview = true

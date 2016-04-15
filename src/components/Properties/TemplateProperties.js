@@ -1,4 +1,5 @@
 import React, {Component} from 'react'
+import { engines, recipes } from '../../lib/configuration'
 
 export default class TemplateProperties extends Component {
   static propTypes = {
@@ -11,7 +12,7 @@ export default class TemplateProperties extends Component {
     const { entity, onChange } = this.props
 
     return <select value={entity.engine} onChange={(v) => onChange({_id: entity._id, engine: v.target.value})}>
-      {Studio.engines.map((e) => <option key={e} value={e}>{e}</option>)}
+      {engines.map((e) => <option key={e} value={e}>{e}</option>)}
     </select>
   }
 
@@ -19,7 +20,7 @@ export default class TemplateProperties extends Component {
     const { entity, onChange } = this.props
 
     return <select value={entity.recipe} onChange={(v) => onChange({_id: entity._id, recipe: v.target.value})}>
-      {Studio.recipes.map((e) => <option key={e} value={e}>{e}</option>)}
+      {recipes.map((e) => <option key={e} value={e}>{e}</option>)}
     </select>
   }
 

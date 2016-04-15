@@ -9,7 +9,7 @@ function loadScript (url) {
     }
 
     script.src = url
-    document.getElementsByTagName('head')[ 0 ].appendChild(script)
+    document.getElementsByTagName('head')[0].appendChild(script)
   })
 }
 

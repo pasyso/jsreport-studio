@@ -8,7 +8,6 @@ export default reducer.export()
 reducer.handleAction(ActionTypes.LOAD, (state, action) => ({
   ...state,
   [action.entity._id]: Object.assign({}, state[ action.entity._id ], action.entity, {
-    __isDirty: false,
     __isLoaded: true
   })
 }))

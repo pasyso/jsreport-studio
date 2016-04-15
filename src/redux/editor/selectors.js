@@ -32,7 +32,7 @@ export const canRemove = (state) => {
 export const canSave = (state) => {
   const entity = getActiveEntity(state)
 
-  return entity ? entity.__isDirty : false
+  return entity ? !!entity.__isDirty : false
 }
 
 export const canSaveAll = (state) => {

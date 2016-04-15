@@ -3,6 +3,8 @@ import * as ActionTypes from './constants.js'
 import uid from '../../helpers/uid.js'
 import * as selectors from './selectors.js'
 import { push } from 'react-router-redux'
+import shortid from 'shortid'
+import { engines, recipes } from '../../lib/configuration.js'
 
 export function closeTab (id) {
   return (dispatch) => dispatch({
@@ -39,7 +41,14 @@ export function openTab (tab) {
 export function openNewTab (entityType) {
   return (dispatch) => {
     let id = uid()
-    dispatch(entities.actions.add({ _id: id, __entityType: entityType, name: 'New ' + entityType }))
+    let entity = { _id: id, __entityType: entityType, shortid: shortid.generate(), name: 'New ' + entityType }
+
+    if (entityType === 'templates') {
+      entity.recipe = recipes.includes('phantom-pdf') ? 'phantom-pdf' : recipes[0]
+      entity.engine = engines.includes('handlebars') ? 'handlebars' : engines[0]
+    }
+
+    dispatch(entities.actions.add(entity))
     dispatch({
       type: ActionTypes.OPEN_NEW_TAB,
       tab: {

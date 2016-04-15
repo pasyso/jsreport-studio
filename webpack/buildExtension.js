@@ -1,11 +1,10 @@
 var webpack = require('webpack')
 
-module.exports = {
+webpack({
   entry: {
     main: './main_dev.js'
   },
   output: {
-    path: __dirname,
     filename: 'main.js'
   },
   externals: [
@@ -23,13 +22,26 @@ module.exports = {
         exclude: /node_modules/,
         loader: 'babel-loader',
         query: {
-          presets: ['react', 'es2015', 'stage-0'],
-          plugins: ['transform-runtime']
+          presets: [ 'react', 'es2015', 'stage-0' ],
+          plugins: [ 'transform-runtime' ]
         }
       }
     ]
-  },
-  plugins: [
-    new webpack.IgnorePlugin(/foo/)
-  ]
-};
+  }
+}, function (err, stats) {
+  if (err) {
+    console.err(err)
+    return process.exit(1)
+  }
+
+  var jsonStats = stats.toJson()
+
+  if (jsonStats.errors.length > 0) {
+    console.error(jsonStats.errors)
+    process.exit(1)
+  }
+
+  console.log(stats.toString({ colors: true, chunks: true, cached: false }))
+
+  console.log('webpack build ok')
+})

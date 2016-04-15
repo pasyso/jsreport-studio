@@ -1,10 +1,8 @@
 import React from 'react'
-import TemplateEditor from './components/Editor/TemplateEditor.js'
 import TemplateProperties from './components/Properties/TemplateProperties.js'
 import Startup from './containers/Startup/Startup.js'
 import api from './helpers/api.js'
-import AceEditor from 'react-ace'
-import * as editor from 'redux/editor'
+import * as editor from './redux/editor'
 
 class Studio {
   init (store) {
@@ -16,10 +14,10 @@ class Studio {
     this.properties = [ TemplateProperties ]
     this.api = api
     this.tabTitleComponents = {}
-    this.tabEditorComponents = { templates: TemplateEditor, startup: Startup }
+    this.tabEditorComponents = { templates: require('./components/Editor/TemplateEditor.js'), startup: Startup }
     this.references = {}
     this.initializeListeners = []
-    this.AceEditor = AceEditor
+    this.AceEditor = require('react-ace')
     this.entityTypes = [ 'templates' ]
 
     // add babel runtime to the global so extensions can replace their runtimes with this and decrease its package size

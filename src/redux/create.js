@@ -8,12 +8,12 @@ const logger = createLogger()
 
 export default function createStore (history) {
   const reduxRouterMiddleware = routerMiddleware(history)
-  const middleware = [ thunk, reduxRouterMiddleware, logger ]
+  const middleware = [ thunk, reduxRouterMiddleware ]
 
   let finalCreateStore
   if (__DEVELOPMENT__) {
     const invariant = require('redux-immutable-state-invariant')()
-    finalCreateStore = applyMiddleware(invariant, ...middleware)(_createStore)
+    finalCreateStore = applyMiddleware(invariant, ...middleware, logger)(_createStore)
   } else {
     finalCreateStore = applyMiddleware(...middleware)(_createStore)
   }
