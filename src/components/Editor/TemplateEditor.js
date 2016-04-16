@@ -1,8 +1,7 @@
 import React, {Component} from 'react'
-import AceEditor from 'react-ace'
+import TextEditor from './TextEditor.js'
 import 'brace/mode/handlebars'
 import 'brace/mode/javascript'
-import 'brace/theme/chrome'
 import 'brace/theme/chrome'
 import 'brace/ext/searchbox'
 import _debounce from 'lodash/debounce'
@@ -20,12 +19,8 @@ export default class TemplateEditor extends Component {
   }
 
   resize () {
-    this.refs.ace.editor.resize()
-    this.refs.aceHelpers.editor.resize()
-  }
-
-  componentDidUpdate () {
-    this.refs.ace.editor.renderer.setScrollMargin(5, 0)
+    this.refs.ace.resize()
+    this.refs.aceHelpers.resize()
   }
 
   handleSplitChanged () {
@@ -39,28 +34,22 @@ export default class TemplateEditor extends Component {
       <SplitPane
         split='horizontal' resizerClassName='resizer-horizontal' onChange={() => this.handleSplitChanged()}
         defaultSize={(window.innerHeight * 0.4) + 'px'}>
-        <AceEditor
-          key={entity._id}
-          mode='handlebars'
-          theme='chrome'
+        <TextEditor
           ref='ace'
-          onChange={(v) => onUpdate(Object.assign({}, entity, {content: v}))}
+          key={entity._id}
           name={entity._id}
-          width='100%'
-          className='ace'
+          mode='handlebars'
+          onUpdate={(v) => onUpdate(Object.assign({}, entity, {content: v}))}
           value={entity.content}
-          editorProps={{$blockScrolling: true}}/>
-        <AceEditor
+          />
+        <TextEditor
+          name={entity._id + '_helpers'}
           key={entity._id + '_helpers'}
           mode='javascript'
-          theme='chrome'
           ref='aceHelpers'
-          onChange={(v) => onUpdate(Object.assign({}, entity, {helpers: v}))}
-          name={entity._id + '_helpers'}
-          width='100%'
-          className='ace'
+          onUpdate={(v) => onUpdate(Object.assign({}, entity, {helpers: v}))}
           value={entity.helpers}
-          editorProps={{$blockScrolling: true}}/>
+          />
       </SplitPane>
     )
   }

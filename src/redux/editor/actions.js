@@ -8,7 +8,9 @@ import { engines, recipes } from '../../lib/configuration.js'
 
 export function closeTab (id) {
   return (dispatch, getState) => {
-    if (selectors.getActiveEntity(getState())) {
+    const activeEntity = selectors.getActiveEntity(getState())
+
+    if (activeEntity && activeEntity._id === id) {
       dispatch({
         type: entities.ActionTypes.UNLOAD,
         _id: id

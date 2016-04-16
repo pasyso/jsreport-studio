@@ -1,5 +1,5 @@
 const React = Studio.react
-const AceEditor = Studio.AceEditor
+const TextEditor = Studio.TextEditor
 const { Component } = Studio.react
 
 export default class DataEditor extends Component {
@@ -9,23 +9,19 @@ export default class DataEditor extends Component {
   }
 
   resize () {
-    this.refs.ace.editor.resize()
+    this.refs.editor.resize()
   }
 
   render () {
     const { entity, onUpdate } = this.props
 
-    return (<AceEditor
-      key={entity._id}
-      mode='javascript'
-      theme='chrome'
-      ref='ace'
+    return (<TextEditor
       name={entity._id}
-      width='100%'
-      className='ace'
+      mode='javascript'
+      ref='editor'
       value={entity.dataJson}
-      onChange={(v) => onUpdate(Object.assign({}, entity, {dataJson: v}))}
-      editorProps={{$blockScrolling: true}}/>)
+      onUpdate={(v) => onUpdate(Object.assign({}, entity, {dataJson: v}))}
+      />)
   }
 }
 
