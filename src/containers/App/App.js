@@ -45,22 +45,14 @@ export default class App extends Component {
     loaded: PropTypes.bool
   };
 
-  constructor () {
-    super()
-    this.handleSplitChanged = _debounce(this.handleSplitChanged, 150, { leading: true })
-  }
-
   componentDidMount () {
+    this.update = _debounce(this.props.update, 500, { leading: true })
     if (this.props.params.shortid) {
       this.props.openTab({ shortid: this.props.params.shortid, entityType: this.props.params.entityType })
       return
     }
 
     return this.props.openTab({ key: 'StartupPage', editorComponentKey: 'startup', title: 'Statup' })
-  }
-
-  componentDidUpdate () {
-    this.props.updateHistory()
   }
 
   handleRun () {
@@ -102,15 +94,16 @@ export default class App extends Component {
                 resizerClassName='resizer' defaultSize='80%' onChange={() => this.handleSplitChanged()}
                 onDragFinished={() => this.handleSplitDragFinished()}>
                 <SplitPane resizerClassName='resizer-horizontal' split='horizontal' defaultSize='400px'>
-                  <EntityTree activeEntity={activeEntity} entities={references} onClick={(_id) => openTab({ _id: _id})} onNewClick={openNewTab}/>
-                  <Properties entity={activeEntity} entities={entities} onChange={(e) => update(e)}/>
+                  <EntityTree activeEntity={activeEntity} entities={references} onClick={(_id) => openTab({_id: _id})}
+                              onNewClick={openNewTab}/>
+                  <Properties entity={activeEntity} entities={entities} onChange={(e) => this.update(e)}/>
                 </SplitPane>
                 <SplitPane
                   onChange={() => this.handleSplitChanged()} onDragFinished={() => this.handleSplitDragFinished()}
                   resizerClassName='resizer'>
                   <EditorTabs
                     activeTabKey={activeTab} ref='editorTabs' activateTab={activateTab} closeTab={closeTab}
-                    onUpdate={update} tabs={tabsWithEntities}/>
+                    onUpdate={(v) => this.update(v)} tabs={tabsWithEntities}/>
                   <Preview ref='preview'/>
                 </SplitPane>
               </SplitPane>
