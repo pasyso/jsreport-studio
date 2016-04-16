@@ -3,6 +3,8 @@ import AceEditor from 'react-ace'
 import 'brace/mode/handlebars'
 import 'brace/mode/javascript'
 import 'brace/theme/chrome'
+import 'brace/theme/chrome'
+import 'brace/ext/searchbox'
 import _debounce from 'lodash/debounce'
 import SplitPane from '../../components/common/SplitPane/SplitPane.js'
 
