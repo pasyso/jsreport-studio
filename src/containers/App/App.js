@@ -94,9 +94,10 @@ export default class App extends Component {
                 resizerClassName='resizer' defaultSize='80%' onChange={() => this.handleSplitChanged()}
                 onDragFinished={() => this.handleSplitDragFinished()}>
                 <SplitPane resizerClassName='resizer-horizontal' split='horizontal' defaultSize='400px'>
-                  <EntityTree activeEntity={activeEntity} entities={references} onClick={(_id) => openTab({_id: _id})}
-                              onNewClick={openNewTab}/>
-                  <Properties entity={activeEntity} entities={entities} onChange={(e) => this.update(e)}/>
+                  <EntityTree
+                    activeEntity={activeEntity} entities={references} onClick={(_id) => openTab({_id: _id})}
+                    onNewClick={openNewTab}/>
+                  <Properties entity={activeEntity} entities={entities} onChange={update}/>
                 </SplitPane>
                 <SplitPane
                   onChange={() => this.handleSplitChanged()} onDragFinished={() => this.handleSplitDragFinished()}
