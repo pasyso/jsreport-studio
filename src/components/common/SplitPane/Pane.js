@@ -25,6 +25,8 @@ export default React.createClass({
       style.flex = 'none'
     }
 
+    style.minHeight = 0
+
     return (<div className={classes.join(' ')} style={style}>{this.props.children}</div>)
   }
 })

@@ -2,33 +2,90 @@
 
 .treeListContainer {
   flex: 1;
-  padding-top:0.5rem;
+  padding: 0.5rem;
   background-color: $secondaryBackgroundColor;
+  display: flex;
+  flex-direction: column;
+
+}
+
+.search > input {
+  border: none;
+  border-bottom: solid 0.2rem $secondaryColor;
+  transition: border 0.3s;
+  padding: 0.2rem;
+}
+
+.search > input:focus {
+  border-bottom: solid 0.2rem $primarySelectionBackgroundColor;
+}
+
+.search:before {
+  content: "\f002";
+  margin-right: 0.3rem;
+  color: $secondaryColor;
+  font-family: FontAwesome;
 }
 
 .nodeBox {
-  margin-top:0.5rem;
+  margin-top: 0.8rem;
+  flex: 1;
+}
+
+.nodesBox {
+  overflow: auto;
+  height: auto;
+  flex: 1;
 }
 
 .nodeTitle {
-  padding-left: 1rem;
+  padding-left: 0.3rem;
   margin-right: 0.3rem;
-  font-size: 1rem;
+  font-size: 0.9rem;
+  cursor: pointer;
 }
 
 .nodeTitle:before {
-  content: "\f07b";
+  font-size: 1rem;
   font-family: FontAwesome;
   color: darkkhaki;
   margin-right: 0.3rem;
 }
 
+.nodeTitle:not(.collapsed):before {
+  content: "\f0da";
+}
+
+.nodeTitle.collapsed:before {
+  content: "\f0d7";
+  color: $primarySelectionBackgroundColor;
+}
+
+.nodeTitle:hover:before {
+  color: $primarySelectionBackgroundColor;
+}
+
+.nodeContainer:not(.collapsed) {
+  max-height: 999px;
+  transition: 0.15s;
+}
+
+.nodeContainer.collapsed {
+  max-height: 0;
+  overflow: hidden;
+  transition: 0.15s;
+}
 
 .link {
   padding: 0.2rem;
   padding-left: 1.5rem;
-  font-size: 1rem;
+  font-size: 0.9rem;
   cursor: pointer;
+}
+
+.link.active {
+  background: $primarySelectionBackgroundColor;
+  color: $primarySelectionColor;
 }
 
 .link:hover {
@@ -37,8 +94,9 @@
 }
 
 .link:before {
-  content: "\f016";
+  content: "\f1fe";
   margin-right: 0.3rem;
+  color: #F16220;
   font-family: FontAwesome;
 }
 
@@ -47,11 +105,15 @@
 }
 
 .add:after {
-  content: "\f0fe";
+  content: "\f067";
   font-family: FontAwesome;
   color: $secondaryColor;
   padding: 0.1rem;
   font-size: 1rem;
+}
+
+.add:hover:after {
+  color: $primaryHoverBackgroundColor;
 }
 
 

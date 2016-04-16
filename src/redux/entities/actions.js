@@ -51,7 +51,7 @@ export function load (id) {
 
 export function loadReferences (entityType) {
   return async function (dispatch) {
-    let response = await api.get(`/odata/${entityType}?$select=name,shortid`)
+    let response = await api.get(`/odata/${entityType}?$select=name,shortid&$orderby=name`)
     dispatch({
       type: ActionTypes.LOAD_REFERENCES,
       entities: response.value,

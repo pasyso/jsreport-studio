@@ -84,7 +84,7 @@ export default class App extends Component {
     const { tabsWithEntities, references, saveAll, canRun, canSave, canRemove, canSaveAll, activeTab, entities,
       remove, openTab, activateTab, openNewTab, activeEntity, update, save, closeTab } = this.props
 
-    console.log('render', this.props)
+    //console.log('render', this.props)
 
     return (
       <div className='container'>
@@ -102,7 +102,7 @@ export default class App extends Component {
                 resizerClassName='resizer' defaultSize='80%' onChange={() => this.handleSplitChanged()}
                 onDragFinished={() => this.handleSplitDragFinished()}>
                 <SplitPane resizerClassName='resizer-horizontal' split='horizontal' defaultSize='400px'>
-                  <EntityTree entities={references} onClick={(_id) => openTab({ _id: _id})} onNewClick={openNewTab}/>
+                  <EntityTree activeEntity={activeEntity} entities={references} onClick={(_id) => openTab({ _id: _id})} onNewClick={openNewTab}/>
                   <Properties entity={activeEntity} entities={entities} onChange={(e) => update(e)}/>
                 </SplitPane>
                 <SplitPane

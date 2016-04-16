@@ -22,7 +22,7 @@ export default class TabPane extends Component {
   render () {
     const { activeTabKey, activateTab, closeTab } = this.props
 
-    return <div className={'block ' + style.tabPane}>
+    return <div className={'block ' + style.tabPane} style={{minHeight: 0, height: 'auto'}}>
       <div className={'block-row' + ' ' + style.tabTitles}>
         {React.Children.map(this.props.children,
           (t) => <div className={style.tabContainer}>
@@ -34,7 +34,7 @@ export default class TabPane extends Component {
           </div>
         )}
       </div>
-      <div className={'block' + ' ' + style.tab}>
+      <div className={'block' + ' ' + style.tab} style={{minHeight: 0, height: 'auto'}}>
         {React.Children.map(this.props.children, (t) => <TabContent
           key={t.key} active={t.key === activeTabKey}>{t.props.children}</TabContent>)}
       </div>
