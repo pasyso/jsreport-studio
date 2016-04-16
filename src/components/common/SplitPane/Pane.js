@@ -26,6 +26,7 @@ export default React.createClass({
     }
 
     style.minHeight = 0
+    style.minWidth = 0
 
     return (<div className={classes.join(' ')} style={style}>{this.props.children}</div>)
   }

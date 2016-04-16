@@ -5,7 +5,6 @@
   background-color: $secondaryBackgroundColor;
   display: flex;
   flex-direction: column;
-
 }
 
 .search {
@@ -37,6 +36,7 @@
 
 .nodesBox {
   overflow: auto;
+  width: auto;
   height: auto;
   flex: 1;
 }
