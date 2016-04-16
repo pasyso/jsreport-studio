@@ -15,7 +15,8 @@ export default class Properties extends Component {
     }
 
     return (
-      <div>
+      <div className='form-group'>
+        <label>data</label>
         <select
           value={entity.data ? entity.data.shortid : ''}
           onChange={(v) => onChange({_id: entity._id, data: { shortid: v.target.value }})}>

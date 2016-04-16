@@ -2,11 +2,14 @@
 
 .treeListContainer {
   flex: 1;
-  padding: 0.5rem;
   background-color: $secondaryBackgroundColor;
   display: flex;
   flex-direction: column;
 
+}
+
+.search {
+  padding: 0.5rem;
 }
 
 .search > input {
@@ -46,6 +49,7 @@
 }
 
 .nodeTitle:before {
+  margin-left: 0.5rem;
   font-size: 1rem;
   font-family: FontAwesome;
   color: darkkhaki;

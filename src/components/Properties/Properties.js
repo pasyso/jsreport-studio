@@ -13,8 +13,11 @@ export default class Properties extends Component {
     const { entity, onChange, entities } = this.props
 
     return <div>
-      <div>name: <input
-        type='text' value={entity.name} onChange={(v) => onChange({_id: entity._id, name: v.target.value})}/></div>
+      <div className='form-group'>
+        <label>name</label>
+        <input
+          type='text' value={entity.name} onChange={(v) => onChange({_id: entity._id, name: v.target.value})}/>
+      </div>
       <div> {Studio.properties.map((p, i) => React.createElement(p, {
         key: i,
         entity: entity,
@@ -28,8 +31,10 @@ export default class Properties extends Component {
     const { entity } = this.props
 
     return <div className={style.propertiesContainer}>
-      Properties
+      <div className={style.title}>Properties</div>
+      <div className={style.propertiesNodesContainer}>
       {entity ? this.renderProperties(entity) : ''}
+      </div>
     </div>
   }
 }

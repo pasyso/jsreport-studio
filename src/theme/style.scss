@@ -38,6 +38,41 @@ html, body {
   height: auto !important;
 }
 
+.form-group {
+  margin: 0.5rem 0;
+}
+
+.form-group > * {
+  display: block;
+  width: 100%;
+  margin-top: 0.3rem;
+}
+
+select {
+  border: none;
+  padding: 0.5rem;
+  border-bottom: solid 0.2rem $secondaryColor;
+  transition: border 0.3s;
+  padding: 0.2rem;
+}
+
+select:hover {
+  border-bottom: solid 0.2rem $primarySelectionBackgroundColor;
+}
+
+input[type=text] {
+  border: none;
+  padding: 0.5rem;
+  border-bottom: solid 0.2rem $secondaryColor;
+  transition: border 0.3s;
+  padding: 0.2rem;
+}
+
+input[type=text]:hover {
+  border-bottom: solid 0.2rem $primarySelectionBackgroundColor;
+}
+
+
 .resizer {
   background: #000;
   opacity: .2;
@@ -81,127 +116,3 @@ html, body {
 .resizer:hover {
   transition: all 2s ease;
 }
-
-/* Overline From Center */
-.hvr-overline-from-center {
-  display: inline-block;
-  vertical-align: middle;
-  -webkit-transform: translateZ(0);
-  transform: translateZ(0);
-  box-shadow: 0 0 1px rgba(0, 0, 0, 0);
-  -webkit-backface-visibility: hidden;
-  backface-visibility: hidden;
-  -moz-osx-font-smoothing: grayscale;
-  position: relative;
-  overflow: hidden;
-}
-.hvr-overline-from-center:before {
-  content: "";
-  position: absolute;
-  z-index: -1;
-  left: 50%;
-  right: 50%;
-  top: 0;
-  background: #2098d1;
-  height: 4px;
-  -webkit-transition-property: left, right;
-  transition-property: left, right;
-  -webkit-transition-duration: 0.3s;
-  transition-duration: 0.3s;
-  -webkit-transition-timing-function: ease-out;
-  transition-timing-function: ease-out;
-}
-.hvr-overline-from-center:hover:before, .hvr-overline-from-center:focus:before, .hvr-overline-from-center:active:before {
-  left: 0;
-  right: 0;
-}
-
-/* Underline From Left */
-.hvr-underline-from-left {
-  display: inline-block;
-  vertical-align: middle;
-  -webkit-transform: translateZ(0);
-  transform: translateZ(0);
-  box-shadow: 0 0 1px rgba(0, 0, 0, 0);
-  -webkit-backface-visibility: hidden;
-  backface-visibility: hidden;
-  -moz-osx-font-smoothing: grayscale;
-  position: relative;
-  overflow: hidden;
-}
-.hvr-underline-from-left:before {
-  content: "";
-  position: absolute;
-  z-index: -1;
-  left: 0;
-  right: 100%;
-  bottom: 0;
-  background: #2098d1;
-  height: 4px;
-  -webkit-transition-property: right;
-  transition-property: right;
-  -webkit-transition-duration: 0.3s;
-  transition-duration: 0.3s;
-  -webkit-transition-timing-function: ease-out;
-  transition-timing-function: ease-out;
-}
-.hvr-underline-from-left:hover:before, .hvr-underline-from-left:focus:before, .hvr-underline-from-left:active:before {
-  right: 0;
-}
-
-//@import "variables";
-//
-//@import "../../node_modules/bootstrap/scss/variables";
-//@import "../../node_modules/bootstrap/scss/mixins";
-//@import "../../node_modules/bootstrap/scss/nav";
-//@import "../../node_modules/bootstrap/scss/navbar";
-//
-//@import "../../node_modules/bootstrap/scss/variables";
-//@import "../../node_modules/bootstrap/scss/mixins";
-//
-//// Reset and dependencies
-//@import "../../node_modules/bootstrap/scss/normalize";
-//@import "../../node_modules/bootstrap/scss/print";
-//
-//// Core CSS
-//@import "../../node_modules/bootstrap/scss/reboot";
-//@import "../../node_modules/bootstrap/scss/type";
-//@import "../../node_modules/bootstrap/scss/images";
-//@import "../../node_modules/bootstrap/scss/code";
-//@import "../../node_modules/bootstrap/scss/grid";
-//@import "../../node_modules/bootstrap/scss/tables";
-//@import "../../node_modules/bootstrap/scss/forms";
-//@import "../../node_modules/bootstrap/scss/buttons";
-//
-//// Components
-//@import "../../node_modules/bootstrap/scss/animation";
-//@import "../../node_modules/bootstrap/scss/dropdown";
-//@import "../../node_modules/bootstrap/scss/button-group";
-//@import "../../node_modules/bootstrap/scss/input-group";
-//@import "../../node_modules/bootstrap/scss/custom-forms";
-//@import "../../node_modules/bootstrap/scss/nav";
-//@import "../../node_modules/bootstrap/scss/navbar";
-//@import "../../node_modules/bootstrap/scss/card";
-//@import "../../node_modules/bootstrap/scss/breadcrumb";
-//@import "../../node_modules/bootstrap/scss/pagination";
-//@import "../../node_modules/bootstrap/scss/pager";
-//@import "../../node_modules/bootstrap/scss/labels";
-//@import "../../node_modules/bootstrap/scss/jumbotron";
-//@import "../../node_modules/bootstrap/scss/alert";
-//@import "../../node_modules/bootstrap/scss/progress";
-//@import "../../node_modules/bootstrap/scss/media";
-//@import "../../node_modules/bootstrap/scss/list-group";
-//@import "../../node_modules/bootstrap/scss/responsive-embed";
-//@import "../../node_modules/bootstrap/scss/close";
-//
-//// Components w/ JavaScript
-//@import "../../node_modules/bootstrap/scss/modal";
-//@import "../../node_modules/bootstrap/scss/tooltip";
-//@import "../../node_modules/bootstrap/scss/popover";
-//@import "../../node_modules/bootstrap/scss/carousel";
-//
-//// Utility classes
-//@import "../../node_modules/bootstrap/scss/utilities";
-//@import "../../node_modules/bootstrap/scss/utilities-background";
-//@import "../../node_modules/bootstrap/scss/utilities-spacing";
-//@import "../../node_modules/bootstrap/scss/utilities-responsive";

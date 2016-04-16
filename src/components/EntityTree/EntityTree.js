@@ -23,9 +23,10 @@ export default class EntityTree extends Component {
     const { activeEntity } = this.props
 
     return <div
+      onClick={() => this.props.onClick(entity._id)}
       key={entity._id}
       className={style.link + ' ' + ((activeEntity && entity._id === activeEntity._id) ? style.active : 'foo')}>
-      <a onClick={() => this.props.onClick(entity._id)}>{entity.name + (entity.__isDirty ? '*' : '')}</a>
+      <a>{entity.name + (entity.__isDirty ? '*' : '')}</a>
     </div>
   }
 

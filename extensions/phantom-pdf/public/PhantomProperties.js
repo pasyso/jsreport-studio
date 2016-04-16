@@ -26,11 +26,18 @@ export default class Properties extends Component {
 
     return (
       <div>
-        Phantom settings....
         <div>
-          <div>margin: <input type='text' placeholder='1cm' value={phantom.margin || ''} onChange={(v) => changePhantom({margin: v.target.value})}/></div>
-          <button onClick={() => this.openHeaderFooter('header')}>open header</button>
-          <button onClick={() => this.openHeaderFooter('footer')}>open footer</button>
+          <div className='form-group'><label>margin</label>
+            <input type='text' placeholder='1cm' value={phantom.margin || ''} onChange={(v) => changePhantom({margin: v.target.value})}/>
+          </div>
+          <div className='form-group'>
+            <label>header</label>
+            <button onClick={() => this.openHeaderFooter('header')}>open in tab...</button>
+          </div>
+          <div className='form-group'>
+            <label>footer</label>
+            <button onClick={() => this.openHeaderFooter('footer')}>open in tab...</button>
+          </div>
         </div>
       </div>
     )

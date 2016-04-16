@@ -31,8 +31,8 @@ export default class TemplateProperties extends Component {
 
     return (
       <div>
-        <div>engine: {this.renderEngines()}</div>
-        <div>recipe: {this.renderRecipes()}</div>
+        <div className='form-group'><label>engine</label> {this.renderEngines()}</div>
+        <div className='form-group'><label>recipe</label> {this.renderRecipes()}</div>
       </div>
     )
   }
