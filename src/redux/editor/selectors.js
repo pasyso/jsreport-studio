@@ -26,7 +26,7 @@ export const canRun = (state) => {
 export const canRemove = (state) => {
   const entity = getActiveEntity(state)
 
-  return entity ? !entity.__isNew : false
+  return !!entity
 }
 
 export const canSave = (state) => {

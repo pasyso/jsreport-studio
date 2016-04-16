@@ -55,6 +55,10 @@ export default class App extends Component {
     return this.props.openTab({ key: 'StartupPage', editorComponentKey: 'startup', title: 'Statup' })
   }
 
+  componentDidUpdate () {
+    this.props.updateHistory()
+  }
+
   handleRun () {
     let template = Object.assign({}, this.props.activeEntity)
     let request = { template: template }
@@ -76,7 +80,7 @@ export default class App extends Component {
     const { tabsWithEntities, references, saveAll, canRun, canSave, canRemove, canSaveAll, activeTab, entities,
       remove, openTab, activateTab, openNewTab, activeEntity, update, save, closeTab } = this.props
 
-    //console.log('render', this.props)
+    // console.log('render', this.props)
 
     return (
       <div className='container'>
@@ -93,7 +97,9 @@ export default class App extends Component {
               <SplitPane
                 resizerClassName='resizer' defaultSize='80%' onChange={() => this.handleSplitChanged()}
                 onDragFinished={() => this.handleSplitDragFinished()}>
-                <SplitPane resizerClassName='resizer-horizontal' split='horizontal' defaultSize='400px'>
+                <SplitPane
+                  resizerClassName='resizer-horizontal' split='horizontal'
+                  defaultSize={(window.innerHeight * 0.4) + 'px'}>
                   <EntityTree
                     activeEntity={activeEntity} entities={references} onClick={(_id) => openTab({_id: _id})}
                     onNewClick={openNewTab}/>

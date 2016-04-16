@@ -7,10 +7,19 @@ import shortid from 'shortid'
 import { engines, recipes } from '../../lib/configuration.js'
 
 export function closeTab (id) {
-  return (dispatch) => dispatch({
-    type: ActionTypes.CLOSE_TAB,
-    key: id
-  })
+  return (dispatch, getState) => {
+    if (selectors.getActiveEntity(getState())) {
+      dispatch({
+        type: entities.ActionTypes.UNLOAD,
+        _id: id
+      })
+    }
+
+    dispatch({
+      type: ActionTypes.CLOSE_TAB,
+      key: id
+    })
+  }
 }
 
 export function openTab (tab) {

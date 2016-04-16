@@ -36,8 +36,9 @@ export default class TemplateEditor extends Component {
     const { entity, onUpdate } = this.props
 
     return (
-      <SplitPane split='horizontal' resizerClassName='resizer-horizontal' onChange={() => this.handleSplitChanged()}
-                 defaultSize='400px'>
+      <SplitPane
+        split='horizontal' resizerClassName='resizer-horizontal' onChange={() => this.handleSplitChanged()}
+        defaultSize={(window.innerHeight * 0.4) + 'px'}>
         <AceEditor
           key={entity._id}
           mode='handlebars'

@@ -49,6 +49,15 @@ export function load (id) {
   }
 }
 
+export function unload (id) {
+  return async function (dispatch) {
+    dispatch({
+      type: ActionTypes.UNLOAD,
+      _id: id
+    })
+  }
+}
+
 export function loadReferences (entityType) {
   return async function (dispatch) {
     let response = await api.get(`/odata/${entityType}?$select=name,shortid&$orderby=name`)

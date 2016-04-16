@@ -53,3 +53,8 @@ reducer.handleAction(ActionTypes.SAVE, (state, action) => ({
 }))
 
 reducer.handleAction(ActionTypes.REMOVE, (state, action) => _omit({ ...state }, action._id))
+
+reducer.handleAction(ActionTypes.UNLOAD, (state, action) => ({
+  ...state,
+  [action._id]: Object.assign({}, state[ action._id ], { __isDirty: false, __isLoaded: false })
+}))
