@@ -18,7 +18,7 @@ class Studio {
     this.references = {}
     this.initializeListeners = []
     this.AceEditor = require('react-ace')
-    this.entityTypes = [ 'templates' ]
+    this.entitySets = { templates: { name: 'templates' } }
 
     // add babel runtime to the global so extensions can replace their runtimes with this and decrease its package size
     this.runtime[ 'core-js/object/get-prototype-of' ] = require('babel-runtime/core-js/object/get-prototype-of')
@@ -31,6 +31,10 @@ class Studio {
 
   openTab (tab) {
     this.store.dispatch(editor.actions.openTab(tab))
+  }
+
+  registerEntitySet (entitySet) {
+    this.entitySets[entitySet.name] = entitySet
   }
 
   registerTabTitleComponent (key, component) {

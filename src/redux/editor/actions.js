@@ -47,12 +47,12 @@ export function openTab (tab) {
   }
 }
 
-export function openNewTab (entityType) {
+export function openNewTab (entitySet) {
   return (dispatch) => {
     let id = uid()
-    let entity = { _id: id, __entityType: entityType, shortid: shortid.generate(), name: 'New ' + entityType }
+    let entity = { _id: id, __entitySet: entitySet, shortid: shortid.generate(), name: 'New ' + entitySet }
 
-    if (entityType === 'templates') {
+    if (entitySet === 'templates') {
       entity.recipe = recipes.includes('phantom-pdf') ? 'phantom-pdf' : recipes[0]
       entity.engine = engines.includes('handlebars') ? 'handlebars' : engines[0]
     }
@@ -83,7 +83,7 @@ export function updateHistory () {
     const entity = selectors.getActiveEntity(getState())
     let path
     if (entity && entity.shortid) {
-      path = `/studio/${entity.__entityType}/${entity.shortid}`
+      path = `/studio/${entity.__entitySet}/${entity.shortid}`
     } else {
       path = '/'
     }

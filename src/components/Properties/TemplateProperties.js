@@ -25,7 +25,7 @@ export default class TemplateProperties extends Component {
   }
 
   render () {
-    if (this.props.entity.__entityType !== 'templates') {
+    if (this.props.entity.__entitySet !== 'templates') {
       return <div></div>
     }
 

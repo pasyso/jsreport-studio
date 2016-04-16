@@ -24,7 +24,7 @@ init(store)
 const start = async () => {
   await fetchExtensions()
   await Promise.all(
-    [ ...Studio.entityTypes.map((t) => entities.actions.loadReferences(t)(store.dispatch)),
+    [ ...Object.keys(Studio.entitySets).map((t) => entities.actions.loadReferences(t)(store.dispatch)),
       loadConfiguration()
     ]
   )

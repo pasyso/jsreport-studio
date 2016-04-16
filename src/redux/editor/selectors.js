@@ -20,7 +20,7 @@ export const getActiveEntity = (state) => {
 export const canRun = (state) => {
   const entity = getActiveEntity(state)
 
-  return entity ? entity.__entityType === 'templates' : false
+  return entity ? entity.__entitySet === 'templates' : false
 }
 
 export const canRemove = (state) => {

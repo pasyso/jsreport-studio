@@ -9,7 +9,7 @@ export default (aroutes) => {
     <Route path='/' component={App}>
       <IndexRoute component={App}/>
       <Route path='studio' component={App}>
-        <Route path=':entityType' component={App}>
+        <Route path=':entitySet' component={App}>
           <Route path=':shortid' component={App} />
         </Route>
       </Route>

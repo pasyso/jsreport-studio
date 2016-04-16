@@ -15,8 +15,8 @@ export const getReferences = (state) => {
   let result = {}
   Object.keys(state.entities).filter((e) => state.entities[ e ]).forEach((eid) => {
     const entity = state.entities[ eid ]
-    result[ entity.__entityType ] = result[ entity.__entityType ] || []
-    result[ entity.__entityType ].push(entity)
+    result[ entity.__entitySet ] = result[ entity.__entitySet ] || []
+    result[ entity.__entitySet ].push(entity)
   })
 
   return result

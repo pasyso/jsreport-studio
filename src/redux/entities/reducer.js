@@ -41,7 +41,7 @@ reducer.handleAction(ActionTypes.SAVE_NEW, (state, action) => _omit({
 reducer.handleAction(ActionTypes.LOAD_REFERENCES, (state, action) => {
   let newStateRef = Object.assign({}, state)
   action.entities.forEach((e) => {
-    e.__entityType = action.entityType
+    e.__entitySet = action.entitySet
     newStateRef[ e._id ] = e
   })
   return newStateRef

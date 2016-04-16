@@ -1,6 +1,7 @@
 import React, {Component} from 'react'
 import ReactList from 'react-list'
 import style from './EntityTree.scss'
+import Studio from '../../Studio.js'
 
 export default class EntityTree extends Component {
   static propTypes = {
@@ -25,7 +26,8 @@ export default class EntityTree extends Component {
     return <div
       onClick={() => this.props.onClick(entity._id)}
       key={entity._id}
-      className={style.link + ' ' + ((activeEntity && entity._id === activeEntity._id) ? style.active : 'foo')}>
+      className={style.link + ' ' + ((activeEntity && entity._id === activeEntity._id) ? style.active : '')}>
+      <i className={style.entityIcon + ' fa ' + (Studio.entitySets[entity.__entitySet].faIcon || style.entityDefaultIcon)}></i>
       <a>{entity.name + (entity.__isDirty ? '*' : '')}</a>
     </div>
   }
@@ -35,10 +37,9 @@ export default class EntityTree extends Component {
   }
 
   renderObjectSubTree (k, entities) {
-    return <div key={k} className={style.nodeBox}>
-      <span
-        className={style.nodeTitle + ' ' + (this.state[k] ? style.collapsed : '')}
-        onClick={() => this.collapse(k)}>{k}</span>
+    return <div key={k} className={style.nodeBox}><span
+      className={style.nodeTitle + ' ' + (this.state[k] ? style.collapsed : '')}
+      onClick={() => this.collapse(k)}>{k}</span>
       <a key={k + 'new'} onClick={() => this.props.onNewClick(k)} className={style.add}></a>
 
       <div className={style.nodeContainer + ' ' + (this.state[k] ? style.collapsed : '')}>
@@ -70,7 +71,8 @@ export default class EntityTree extends Component {
 
     return <div className={style.treeListContainer}>
       <div>
-        <div className={style.search}><input type='text' onChange={(ev) => this.setFilter(ev.target.value)}></input></div>
+        <div className={style.search}><input type='text' onChange={(ev) => this.setFilter(ev.target.value)}></input>
+        </div>
       </div>
       <div className={style.nodesBox}>
         {Object.keys(entities).map((k) => this.renderObjectSubTree(k, entities[k]))}

@@ -97,11 +97,15 @@
   color: $primaryHoverColor;
 }
 
-.link:before {
-  content: "\f1fe";
+.entityIcon {
   margin-right: 0.3rem;
   color: #F16220;
+
+}
+
+.entityDefaultIcon:after {
   font-family: FontAwesome;
+  content: "\f1fe";
 }
 
 .add {

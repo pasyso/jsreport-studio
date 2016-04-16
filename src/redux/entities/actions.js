@@ -16,7 +16,7 @@ export function update (entity) {
 export function remove (id) {
   return async function (dispatch, getState) {
     const entity = selectors.getById(getState(), id)
-    await api.del(`/odata/${entity.__entityType}(${id})`)
+    await api.del(`/odata/${entity.__entitySet}(${id})`)
 
     return dispatch({
       type: ActionTypes.REMOVE,
@@ -40,7 +40,7 @@ export function load (id) {
   return async function (dispatch, getState) {
     let entity = selectors.getById(getState(), id)
     if (!entity.__isLoaded && !entity.__isNew) {
-      entity = (await api.get(`/odata/${entity.__entityType}(${id})`)).value[ 0 ]
+      entity = (await api.get(`/odata/${entity.__entitySet}(${id})`)).value[ 0 ]
     }
     dispatch({
       type: ActionTypes.LOAD,
@@ -58,13 +58,13 @@ export function unload (id) {
   }
 }
 
-export function loadReferences (entityType) {
+export function loadReferences (entitySet) {
   return async function (dispatch) {
-    let response = await api.get(`/odata/${entityType}?$select=name,shortid&$orderby=name`)
+    let response = await api.get(`/odata/${entitySet}?$select=name,shortid&$orderby=name`)
     dispatch({
       type: ActionTypes.LOAD_REFERENCES,
       entities: response.value,
-      entityType: entityType
+      entitySet: entitySet
     })
   }
 }
@@ -77,7 +77,7 @@ export function save (id) {
       if (entity.__isNew) {
         const oldId = entity._id
         delete entity._id
-        const response = await api.post(`/odata/${entity.__entityType}`, { data: entity })
+        const response = await api.post(`/odata/${entity.__entitySet}`, { data: entity })
         entity._id = response._id
         dispatch({
           type: ActionTypes.SAVE_NEW,
@@ -86,7 +86,7 @@ export function save (id) {
         })
         entity._id = response._id
       } else {
-        await api.patch(`/odata/${entity.__entityType}(${entity._id})`, { data: entity })
+        await api.patch(`/odata/${entity.__entitySet}(${entity._id})`, { data: entity })
         dispatch({
           type: ActionTypes.SAVE,
           _id: entity._id

@@ -11,11 +11,11 @@ describeAsyncStore('entities.actions.loadReference', ({ store, api }) => {
     state.entities[ '2' ]._id.should.be.eql('2')
   })
 
-  itAsync('should add __entityType __isLoad=false', async () => {
+  itAsync('should add __entitySet __isLoad=false', async () => {
     api.get((p) => ({ value: [ { _id: '1' } ] }))
 
     const state = await store.dispatchAsync(actions.loadReferences('foo'))
-    state.entities[ '1' ].__entityType.should.be.eql('foo')
+    state.entities[ '1' ].__entitySet.should.be.eql('foo')
     should(state.entities[ '1' ].__isLoad).not.be.ok
   })
 })

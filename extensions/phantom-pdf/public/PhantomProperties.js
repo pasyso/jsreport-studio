@@ -20,7 +20,7 @@ export default class Properties extends Component {
 
     const changePhantom = (change) => onChange(Object.assign({}, entity, { phantom: Object.assign({}, entity.phantom, change) }))
 
-    if (entity.__entityType !== 'templates' || entity.recipe !== 'phantom-pdf') {
+    if (entity.__entitySet !== 'templates' || entity.recipe !== 'phantom-pdf') {
       return <div></div>
     }
 

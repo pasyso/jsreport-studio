@@ -1,7 +1,7 @@
 import DataEditor from './DataEditor.js'
 import Properties from './DataProperties.js'
 
-Studio.entityTypes.push('data')
+Studio.registerEntitySet({ name: 'data', faIcon: 'fa-database' })
 Studio.properties.push(Properties)
 Studio.registerTabEditorComponent('data', DataEditor)
 

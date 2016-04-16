@@ -29,7 +29,7 @@ export default class EditorTabs extends Component {
 
   renderEntityTab (t, onUpdate) {
     return <Tab key={t.tab.key} title={this.createTitle(t)}>
-      {React.createElement(Studio.tabEditorComponents[ t.tab.editorComponentKey || t.entity.__entityType ], {
+      {React.createElement(Studio.tabEditorComponents[ t.tab.editorComponentKey || t.entity.__entitySet ], {
         entity: t.entity,
         tab: t.tab,
         ref: t.tab.key,

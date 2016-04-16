@@ -48,7 +48,7 @@ export default class App extends Component {
   componentDidMount () {
     this.update = _debounce(this.props.update, 500, { leading: true })
     if (this.props.params.shortid) {
-      this.props.openTab({ shortid: this.props.params.shortid, entityType: this.props.params.entityType })
+      this.props.openTab({ shortid: this.props.params.shortid, entitySet: this.props.params.entitySet })
       return
     }
 
