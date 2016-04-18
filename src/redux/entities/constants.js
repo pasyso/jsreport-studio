@@ -6,3 +6,7 @@ export const UPDATE = 'ENTITIES_UPDATE'
 export const LOAD_REFERENCES = 'LOAD_REFERENCES'
 export const REMOVE = 'ENTITIES_REMOVE'
 export const UNLOAD = 'ENTITIES_UNLOAD'
+
+export const API_START = 'ENTITIES_API_START'
+export const API_DONE = 'ENTITIES_API_DONE'
+export const API_FAILED = 'ENTITIES_API_FAILED'

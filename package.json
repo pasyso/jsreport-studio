@@ -79,6 +79,7 @@
     "mocha": "^2.4.5",
     "node-sass": "^3.4.2",
     "react-ace": "^3.2.0",
+    "react-modal": "^1.1.1",
     "react-transform-catch-errors": "^1.0.0",
     "react-transform-hmr": "^1.0.1",
     "redbox-react": "^1.1.1",

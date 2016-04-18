@@ -3,14 +3,14 @@ const { Component } = Studio.react
 
 export default class Properties extends Component {
   selectDataItems (entities) {
-    return Object.keys(entities).filter((k) => entities[k].__entityType === 'data').map((k) => entities[k])
+    return Object.keys(entities).filter((k) => entities[k].__entitySet === 'data').map((k) => entities[k])
   }
 
   render () {
     const { entity, entities, onChange } = this.props
     const dataItems = this.selectDataItems(entities)
 
-    if (entity.__entityType !== 'templates') {
+    if (entity.__entitySet !== 'templates') {
       return <div></div>
     }
 

@@ -10,7 +10,8 @@ export default class Toolbar extends Component {
     onSaveAll: React.PropTypes.func.isRequired,
     canSaveAll: React.PropTypes.bool.isRequired,
     onRemove: React.PropTypes.func.isRequired,
-    canRemove: React.PropTypes.bool.isRequired
+    canRemove: React.PropTypes.bool.isRequired,
+    isPending: React.PropTypes.bool.isRequired
   }
 
   renderButton (onClick, enabled, text, imageClass) {
@@ -20,13 +21,16 @@ export default class Toolbar extends Component {
   }
 
   render () {
-    const { onRun, canRun, onSave, canSave, onSaveAll, canSaveAll, onRemove, canRemove } = this.props
+    const { onRun, canRun, onSave, canSave, onSaveAll, canSaveAll, isPending, onRemove, canRemove } = this.props
 
     return <div className={style.toolbar}>
       {this.renderButton(onRun, canRun, 'Run', style.run)}
       {this.renderButton(onSave, canSave, 'Save', style.save)}
       {this.renderButton(onSaveAll, canSaveAll, 'SaveAll', style.saveAll)}
       {this.renderButton(onRemove, canRemove, 'Delete', style.delete)}
+      <div className={style.spinner}>
+        {isPending ? <i className='fa fa-spinner fa-spin fa-fw'></i> : ''}
+      </div>
     </div>
   }
 }

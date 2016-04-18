@@ -75,7 +75,7 @@ export default class EntityTree extends Component {
         </div>
       </div>
       <div className={style.nodesBox}>
-        {Object.keys(entities).map((k) => this.renderObjectSubTree(k, entities[k]))}
+        {Object.keys(Studio.entitySets).map((k) => this.renderObjectSubTree(k, entities[k] || []))}
       </div>
     </div>
   }

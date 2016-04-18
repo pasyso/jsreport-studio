@@ -13,24 +13,22 @@ import preview from '../../helpers/preview'
 import SplitPane from '../../components/common/SplitPane/SplitPane.js'
 import EditorTabs from '../../components/Tabs/EditorTabs.js'
 import Studio from 'Studio.js'
+import Modal from '../Modal/Modal.js'
+import { actions as modalActions } from '../../redux/modal'
 
 @connect((state) => ({
   entities: state.entities,
   references: entities.selectors.getReferences(state),
   activeTab: state.editor.activeTab,
-  isSaving: state.editor.isSaving,
+  isPending: state.editor.isPending,
   canRun: selectors.canRun(state),
   canSave: selectors.canSave(state),
   canSaveAll: selectors.canSaveAll(state),
   canRemove: selectors.canRemove(state),
   tabsWithEntities: selectors.getTabWithEntities(state),
   activeEntity: selectors.getActiveEntity(state)
-}), { ...actions })
+}), { ...actions, ...modalActions })
 export default class App extends Component {
-  static propTypes = {
-    children: PropTypes.object.isRequired
-  }
-
   static contextTypes = {
     store: PropTypes.object.isRequired
   }
@@ -44,6 +42,11 @@ export default class App extends Component {
     loading: PropTypes.bool,
     loaded: PropTypes.bool
   };
+
+  constructor () {
+    super()
+    this.state = { modalIsOpen: true }
+  }
 
   componentDidMount () {
     this.update = _debounce(this.props.update, 500, { leading: true })
@@ -72,25 +75,25 @@ export default class App extends Component {
   }
 
   handleSplitDragFinished () {
-    // wait for debounce
-    setTimeout(() => this.refs.preview.resizeEnded(), 200)
+    this.refs.preview.resizeEnded()
   }
 
   render () {
-    const { tabsWithEntities, references, saveAll, canRun, canSave, canRemove, canSaveAll, activeTab, entities,
-      remove, openTab, activateTab, openNewTab, activeEntity, update, save, closeTab } = this.props
+    const { tabsWithEntities, references, saveAll, isPending, canRun, canSave, canRemove, canSaveAll, activeTab, entities,
+      remove, openTab, openComponent, activateTab, openNewTab, activeEntity, update, save, closeTab } = this.props
 
-    // console.log('render', this.props)
+    console.log('render main')
 
     return (
       <div className='container'>
         <Helmet/>
+        <Modal/>
 
         <div className={style.appContent + ' container'}>
           <div className='block'>
             <Toolbar
               canRun={canRun} canSave={canSave} canSaveAll={canSaveAll} canRemove={canRemove} onSave={save}
-              onSaveAll={saveAll}
+              onSaveAll={saveAll} isPending={isPending}
               onRemove={remove} onRun={() => this.handleRun()}/>
 
             <div className='block'>
@@ -102,7 +105,7 @@ export default class App extends Component {
                   defaultSize={(window.innerHeight * 0.4) + 'px'}>
                   <EntityTree
                     activeEntity={activeEntity} entities={references} onClick={(_id) => openTab({_id: _id})}
-                    onNewClick={openNewTab}/>
+                    onNewClick={(es) => openComponent('NEW_ENTITY_MODAL', {entitySet: es})}/>
                   <Properties entity={activeEntity} entities={entities} onChange={update}/>
                 </SplitPane>
                 <SplitPane

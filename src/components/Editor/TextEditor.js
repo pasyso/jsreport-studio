@@ -5,7 +5,7 @@ import 'brace/theme/chrome'
 
 export default class TextEditor extends Component {
   static propTypes = {
-    value: React.PropTypes.string.isRequired,
+    value: React.PropTypes.string,
     onUpdate: React.PropTypes.func.isRequired,
     mode: React.PropTypes.string.isRequired,
     name: React.PropTypes.string.isRequired
@@ -31,7 +31,7 @@ export default class TextEditor extends Component {
       onChange={(v) => onUpdate(v)}
       className='ace'
       width='100%'
-      value={value}
+      value={value || ''}
       editorProps={{$blockScrolling: true}}/>)
   }
 }

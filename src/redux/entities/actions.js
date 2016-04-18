@@ -39,19 +39,31 @@ export function add (entity) {
 export function load (id) {
   return async function (dispatch, getState) {
     let entity = selectors.getById(getState(), id)
-    if (!entity.__isLoaded && !entity.__isNew) {
-      entity = (await api.get(`/odata/${entity.__entitySet}(${id})`)).value[ 0 ]
+
+    if (entity.__isLoaded || entity.__isNew) {
+      return
     }
-    dispatch({
-      type: ActionTypes.LOAD,
-      entity: entity
-    })
+
+    dispatch({ type: ActionTypes.API_START })
+    try {
+      entity = (await api.get(`/odata/${entity.__entitySet}(${id})`)).value[0]
+
+      dispatch({ type: ActionTypes.API_DONE })
+
+      dispatch({
+        type: ActionTypes.LOAD,
+        entity: entity
+      })
+    } catch (e) {
+      dispatch({ type: ActionTypes.API_FAILED, error: e })
+      throw e
+    }
   }
 }
 
 export function unload (id) {
-  return async function (dispatch) {
-    dispatch({
+  return async function (dispatch, getState) {
+    return dispatch({
       type: ActionTypes.UNLOAD,
       _id: id
     })
@@ -73,12 +85,14 @@ export function save (id) {
   return async function (dispatch, getState) {
     try {
       const entity = Object.assign({}, selectors.getById(getState(), id))
+      dispatch({ type: ActionTypes.API_START })
 
       if (entity.__isNew) {
         const oldId = entity._id
         delete entity._id
         const response = await api.post(`/odata/${entity.__entitySet}`, { data: entity })
         entity._id = response._id
+        dispatch({ type: ActionTypes.API_DONE })
         dispatch({
           type: ActionTypes.SAVE_NEW,
           oldId: oldId,
@@ -87,6 +101,7 @@ export function save (id) {
         entity._id = response._id
       } else {
         await api.patch(`/odata/${entity.__entitySet}(${entity._id})`, { data: entity })
+        dispatch({ type: ActionTypes.API_DONE })
         dispatch({
           type: ActionTypes.SAVE,
           _id: entity._id
@@ -95,7 +110,8 @@ export function save (id) {
 
       return entity
     } catch (e) {
-      console.error(e)
+      dispatch({ type: ActionTypes.API_FAILED, error: e })
+      throw e
     }
   }
 }

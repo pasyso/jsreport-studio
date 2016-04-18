@@ -7,14 +7,11 @@ import shortid from 'shortid'
 import { engines, recipes } from '../../lib/configuration.js'
 
 export function closeTab (id) {
-  return (dispatch, getState) => {
+  return async (dispatch, getState) => {
     const activeEntity = selectors.getActiveEntity(getState())
 
     if (activeEntity && activeEntity._id === id) {
-      dispatch({
-        type: entities.ActionTypes.UNLOAD,
-        _id: id
-      })
+      await entities.actions.unload(id)(dispatch, getState)
     }
 
     dispatch({
@@ -49,10 +46,10 @@ export function openTab (tab) {
   }
 }
 
-export function openNewTab (entitySet) {
+export function openNewTab ({ entitySet, name }) {
   return (dispatch) => {
     let id = uid()
-    let entity = { _id: id, __entitySet: entitySet, shortid: shortid.generate(), name: 'New ' + entitySet }
+    let entity = { _id: id, __entitySet: entitySet, shortid: shortid.generate(), name: name }
 
     if (entitySet === 'templates') {
       entity.recipe = recipes.includes('phantom-pdf') ? 'phantom-pdf' : recipes[0]

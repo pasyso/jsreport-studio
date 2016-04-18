@@ -4,6 +4,7 @@ import createReducer from '../createReducer.js'
 
 const reducer = createReducer({
   tabs: [],
+  isPending: false,
   activeTab: null
 })
 export default reducer.export()
@@ -45,6 +46,7 @@ reducer.handleAction(EntityActionTypes.SAVE_NEW, (state, action) => {
   tab._id = tab.key
 
   return {
+    ...state,
     tabs: [
       ...state.tabs.slice(0, index),
       tab,
@@ -53,12 +55,17 @@ reducer.handleAction(EntityActionTypes.SAVE_NEW, (state, action) => {
   }
 })
 
-reducer.handleAction(ActionTypes.SAVE_STARTED, (state, action) => ({
+reducer.handleAction(EntityActionTypes.API_START, (state, action) => ({
   ...state,
-  isSaving: true
+  isPending: true
 }))
 
-reducer.handleAction(ActionTypes.SAVE_SUCCESS, (state, action) => ({
+reducer.handleAction(EntityActionTypes.API_DONE, (state, action) => ({
   ...state,
-  isSaving: false
+  isPending: false
+}))
+
+reducer.handleAction(EntityActionTypes.API_FAILED, (state, action) => ({
+  ...state,
+  isPending: false
 }))

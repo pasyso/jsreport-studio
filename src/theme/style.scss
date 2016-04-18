@@ -78,7 +78,7 @@ input[type=text]:hover {
 .resizer {
   background: #000;
   opacity: .2;
-  z-index: 1;
+  /*z-index: 1000;*/
   box-sizing: border-box;
   background-clip: padding-box;
   width: 11px;
@@ -91,7 +91,7 @@ input[type=text]:hover {
 .resizer-horizontal {
   background: #000;
   opacity: .2;
-  z-index: 1;
+  /*z-index: 1000;*/
   box-sizing: border-box;
   background-clip: padding-box;
   height: 11px;

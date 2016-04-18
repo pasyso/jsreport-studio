@@ -4,6 +4,7 @@ import Startup from './containers/Startup/Startup.js'
 import api from './helpers/api.js'
 import TextEditor from './components/Editor/TextEditor.js'
 import * as editor from './redux/editor'
+import NewEntityModal from './components/NewEntityModal/NewEntityModal.js'
 
 class Studio {
   init (store) {
@@ -19,7 +20,10 @@ class Studio {
     this.references = {}
     this.initializeListeners = []
     this.TextEditor = TextEditor
-    this.entitySets = { templates: { name: 'templates' } }
+    this.entitySets = { templates: { name: 'templates', visibleName: 'template' } }
+    this.modals = {
+      NEW_ENTITY_MODAL: NewEntityModal
+    }
 
     // add babel runtime to the global so extensions can replace their runtimes with this and decrease its package size
     this.runtime[ 'core-js/object/get-prototype-of' ] = require('babel-runtime/core-js/object/get-prototype-of')
