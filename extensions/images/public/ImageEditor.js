@@ -11,12 +11,7 @@ export default class DataEditor extends Component {
   render () {
     const { entity, onUpdate } = this.props
 
-    return (<TextEditor
-      name={entity._id}
-      mode='ejs'
-      value={entity.dataJson}
-      onUpdate={(v) => onUpdate(Object.assign({}, entity, {dataJson: v}))}
-      />)
+    return (<div>This is image</div>)
   }
 }
 

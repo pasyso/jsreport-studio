@@ -6,14 +6,15 @@ import Preview from '../../components/Preview/Preview.js'
 import EntityTree from '../../components/EntityTree/EntityTree.js'
 import Properties from '../../components/Properties/Properties.js'
 import style from './App.scss'
+import Studio from '../../Studio.js'
 import Toolbar from '../../components/Toolbar/Toolbar.js'
 import _debounce from 'lodash/debounce'
 import Helmet from 'react-helmet'
 import preview from '../../helpers/preview'
 import SplitPane from '../../components/common/SplitPane/SplitPane.js'
 import EditorTabs from '../../components/Tabs/EditorTabs.js'
-import Studio from 'Studio.js'
 import Modal from '../Modal/Modal.js'
+import { NEW_ENTITY_MODAL, DELETE_CONFIRMATION_MODAL } from '../../components/Modals'
 import { actions as modalActions } from '../../redux/modal'
 
 @connect((state) => ({
@@ -70,7 +71,7 @@ export default class App extends Component {
   }
 
   handleSplitChanged () {
-    this.refs.editorTabs.resize()
+    Studio.triggerSplitResize()
     this.refs.preview.resizeStarted()
   }
 
@@ -80,7 +81,7 @@ export default class App extends Component {
 
   render () {
     const { tabsWithEntities, references, saveAll, isPending, canRun, canSave, canRemove, canSaveAll, activeTab, entities,
-      remove, openTab, openComponent, activateTab, openNewTab, activeEntity, update, save, closeTab } = this.props
+      remove, openTab, openComponent, activateTab, activeEntity, update, save, closeTab } = this.props
 
     console.log('render main')
 
@@ -94,7 +95,7 @@ export default class App extends Component {
             <Toolbar
               canRun={canRun} canSave={canSave} canSaveAll={canSaveAll} canRemove={canRemove} onSave={save}
               onSaveAll={saveAll} isPending={isPending}
-              onRemove={remove} onRun={() => this.handleRun()}/>
+              onRemove={() => openComponent(DELETE_CONFIRMATION_MODAL, {_id: activeEntity._id})} onRun={() => this.handleRun()}/>
 
             <div className='block'>
               <SplitPane
@@ -105,7 +106,7 @@ export default class App extends Component {
                   defaultSize={(window.innerHeight * 0.4) + 'px'}>
                   <EntityTree
                     activeEntity={activeEntity} entities={references} onClick={(_id) => openTab({_id: _id})}
-                    onNewClick={(es) => openComponent('NEW_ENTITY_MODAL', {entitySet: es})}/>
+                    onNewClick={(es) => openComponent(NEW_ENTITY_MODAL, {entitySet: es})}/>
                   <Properties entity={activeEntity} entities={entities} onChange={update}/>
                 </SplitPane>
                 <SplitPane

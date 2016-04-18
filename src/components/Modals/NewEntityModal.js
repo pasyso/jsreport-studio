@@ -1,13 +1,9 @@
 import React, {Component, PropTypes} from 'react'
-import ReactDOM from 'react-dom'
 import {connect} from 'react-redux'
 import {actions} from '../../redux/editor'
 import Studio from '../../Studio.js'
 
 @connect((state) => ({
-  isOpen: state.modal.isOpen,
-  text: state.modal.text,
-  componentKey: state.modal.componentKey
 }), { ...actions })
 
 export default class Modal extends Component {
@@ -29,6 +25,7 @@ export default class Modal extends Component {
   }
 
   render () {
+    console.log('render new entity model')
     const { entitySet } = this.props.options
 
     return <div>

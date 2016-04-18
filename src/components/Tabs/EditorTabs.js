@@ -12,12 +12,6 @@ export default class EditorTabs extends Component {
     tabs: React.PropTypes.array.isRequired
   }
 
-  resize () {
-    if (this.props.activeTabKey && this.refs[ this.props.activeTabKey ] && this.refs[ this.props.activeTabKey ].resize) {
-      this.refs[ this.props.activeTabKey ].resize()
-    }
-  }
-
   createTitle (t) {
     return <span>
       {t.tab.titleComponentKey ? React.createElement(Studio.tabTitleComponents[ t.tab.titleComponentKey ], {

@@ -118,3 +118,30 @@ input[type=text]:hover {
 .resizer:hover {
   transition: all 2s ease;
 }
+
+.button-bar {
+  display: flex;
+  margin-top: 2rem;
+  flex-direction: row-reverse;
+}
+
+
+
+.button {
+  margin-left: 1rem;
+  flex: 0.2;
+  border: none;
+  color: $primarySelectionColor;
+  padding: 0.5rem;
+  text-align: center;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.button.confirmation {
+  background-color: #4CAF50;
+}
+
+.button.danger {
+  background-color: #da532c;
+}

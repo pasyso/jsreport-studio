@@ -2,6 +2,7 @@ import React, { Component } from 'react'
 import AceEditor from 'react-ace'
 import 'brace/mode/handlebars'
 import 'brace/theme/chrome'
+import Studio from '../../Studio.js'
 
 export default class TextEditor extends Component {
   static propTypes = {
@@ -11,12 +12,13 @@ export default class TextEditor extends Component {
     name: React.PropTypes.string.isRequired
   }
 
-  resize () {
-    this.refs.ace.editor.resize()
-  }
-
   componentDidMount () {
     this.refs.ace.editor.renderer.setScrollMargin(5, 0)
+    this.unsubscribe = Studio.subscribeToSplitResize(() => this.refs.ace.editor.resize())
+  }
+
+  componentWillUnmount () {
+    this.unsubscribe()
   }
 
   render () {

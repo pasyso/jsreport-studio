@@ -5,6 +5,7 @@ import 'brace/mode/javascript'
 import 'brace/theme/chrome'
 import 'brace/ext/searchbox'
 import _debounce from 'lodash/debounce'
+import Studio from '../../Studio.js'
 import SplitPane from '../../components/common/SplitPane/SplitPane.js'
 
 export default class TemplateEditor extends Component {
@@ -18,13 +19,8 @@ export default class TemplateEditor extends Component {
     this.handleSplitChanged = _debounce(this.handleSplitChanged, 150, { leading: true })
   }
 
-  resize () {
-    this.refs.ace.resize()
-    this.refs.aceHelpers.resize()
-  }
-
   handleSplitChanged () {
-    this.resize()
+    Studio.triggerSplitResize()
   }
 
   render () {
@@ -35,7 +31,6 @@ export default class TemplateEditor extends Component {
         split='horizontal' resizerClassName='resizer-horizontal' onChange={() => this.handleSplitChanged()}
         defaultSize={(window.innerHeight * 0.4) + 'px'}>
         <TextEditor
-          ref='ace'
           key={entity._id}
           name={entity._id}
           mode='handlebars'
@@ -46,7 +41,6 @@ export default class TemplateEditor extends Component {
           name={entity._id + '_helpers'}
           key={entity._id + '_helpers'}
           mode='javascript'
-          ref='aceHelpers'
           onUpdate={(v) => onUpdate(Object.assign({}, entity, {helpers: v}))}
           value={entity.helpers}
           />

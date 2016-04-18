@@ -9,7 +9,7 @@
   //width: 100%;
 }
 
-.btn {
+:global .toolbar-button {
   padding: 0.7rem;
   font-size: 1rem;
   cursor: pointer;
@@ -18,30 +18,31 @@
   -ms-user-select: none;
 }
 
-.btn.disabled {
+:global .toolbar-button > i:nth-child(1) {
+   margin-right:0.3rem;
+}
+
+:global .toolbar-button.disabled {
   color: $secondaryColor
 }
 
-.btn:hover:not(.disabled) {
+:global .toolbar-button:hover:not(.disabled) {
   background: $primaryHoverBackgroundColor;
   color: $primaryHoverColor;
 }
 
 .run:before {
   content: "\f04b";
-  margin-right:0.2rem;
   font-family: FontAwesome;
 }
 
 .save:before {
   content: "\f0c7";
-  margin-right:0.2rem;
   font-family: FontAwesome;
 }
 
 .saveAll:before {
   content: "\f0c7";
-  margin-right:0.2rem;
   font-family: FontAwesome;
 }
 
@@ -55,6 +56,5 @@
 
 .delete:before {
   content: "\f014";
-  margin-right:0.2rem;
   font-family: FontAwesome;
 }

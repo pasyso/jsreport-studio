@@ -9,15 +9,11 @@ export function openText (text) {
   }
 }
 
-export function openComponent (componentKey, options) {
-  return (dispatch, getState) => {
-    dispatch({
-      type: ActionTypes.OPEN,
-      componentKey: componentKey,
-      options: options
-    })
-  }
-}
+export const openComponent = (componentKey, options) => ({
+  type: ActionTypes.OPEN,
+  componentKey: componentKey,
+  options: options
+})
 
 export function close () {
   return (dispatch, getState) => {
