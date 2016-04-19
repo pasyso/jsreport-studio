@@ -19,7 +19,8 @@ export default class Preview extends Component {
     return <div className='block'>
       <div id='overlay' style={{display: 'none'}}></div>
       <iframe
-        id='preview' frameBorder='0' onLoad={this.props.onLoad} name='previewFrame' allowTransparency='true' allowFullScreen='true'
+        id='preview' frameBorder='0' onLoad={this.props.onLoad} name='previewFrame' allowTransparency='true'
+        allowFullScreen='true' ref='frame'
         className='block-item'></iframe>
     </div>
   }

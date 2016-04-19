@@ -71,7 +71,11 @@ export default class App extends Component {
   }
 
   handleRun () {
-    this.props.start()
+    console.log(navigator.userAgent)
+    if (!/Trident/i.test(navigator.userAgent) && !/MSIE/i.test(navigator.userAgent) && !/Edge/i.test(navigator.userAgent)) {
+      this.props.start()
+    }
+
     let template = Object.assign({}, this.props.activeEntity)
     let request = { template: template }
     Studio.onPreview(request, Object.assign({}, this.props.entities))

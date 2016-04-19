@@ -48,6 +48,7 @@ export default function (request, target) {
   }
 
   document.body.appendChild(mapForm)
+
   mapForm.submit()
 }
 
