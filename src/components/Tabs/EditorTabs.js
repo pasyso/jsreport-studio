@@ -5,24 +5,13 @@ import Studio from 'Studio.js'
 
 export default class EditorTabs extends Component {
   static propTypes = {
-    activateTab: React.PropTypes.func.isRequired,
-    closeTab: React.PropTypes.func.isRequired,
     onUpdate: React.PropTypes.func.isRequired,
     activeTabKey: React.PropTypes.string,
     tabs: React.PropTypes.array.isRequired
   }
 
-  createTitle (t) {
-    return <span>
-      {t.tab.titleComponentKey ? React.createElement(Studio.tabTitleComponents[ t.tab.titleComponentKey ], {
-        entity: t.entity,
-        tab: t.tab
-      }) : (<span>{t.tab.title || (t.entity.name + (t.entity.__isDirty ? '*' : ''))}</span>)}
-    </span>
-  }
-
   renderEntityTab (t, onUpdate) {
-    return <Tab key={t.tab.key} title={this.createTitle(t)}>
+    return <Tab key={t.tab.key} >
       {React.createElement(Studio.tabEditorComponents[ t.tab.editorComponentKey || t.entity.__entitySet ], {
         entity: t.entity,
         tab: t.tab,
@@ -33,10 +22,10 @@ export default class EditorTabs extends Component {
   }
 
   render () {
-    const { activeTabKey, activateTab, closeTab, onUpdate, tabs } = this.props
+    const { activeTabKey, onUpdate, tabs } = this.props
 
     return <TabPane
-      activeTabKey={activeTabKey} activateTab={activateTab} closeTab={closeTab}>{tabs.map((t) =>
+      activeTabKey={activeTabKey}>{tabs.map((t) =>
         this.renderEntityTab(t, onUpdate)
     )}
     </TabPane>

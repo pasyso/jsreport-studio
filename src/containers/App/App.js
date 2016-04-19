@@ -13,6 +13,7 @@ import Helmet from 'react-helmet'
 import preview from '../../helpers/preview'
 import SplitPane from '../../components/common/SplitPane/SplitPane.js'
 import EditorTabs from '../../components/Tabs/EditorTabs.js'
+import TabTitles from '../../components/Tabs/TabTitles.js'
 import Modal from '../Modal/Modal.js'
 import { NEW_ENTITY_MODAL, DELETE_CONFIRMATION_MODAL } from '../../components/Modals'
 import { actions as modalActions } from '../../redux/modal'
@@ -96,7 +97,8 @@ export default class App extends Component {
             <Toolbar
               canRun={canRun} canSave={canSave} canSaveAll={canSaveAll} canRemove={canRemove} onSave={save}
               onSaveAll={saveAll} isPending={isPending} activeTab={activeTabWithEntity} onUpdate={update}
-              onRemove={() => openComponent(DELETE_CONFIRMATION_MODAL, {_id: activeEntity._id})} onRun={() => this.handleRun()}/>
+              onRemove={() => openComponent(DELETE_CONFIRMATION_MODAL, {_id: activeEntity._id})}
+              onRun={() => this.handleRun()}/>
 
             <div className='block'>
               <SplitPane
@@ -110,14 +112,17 @@ export default class App extends Component {
                     onNewClick={(es) => Studio.entitySets[es].onNew ? Studio.entitySets[es].onNew() : openComponent(NEW_ENTITY_MODAL, {entitySet: es})}/>
                   <Properties entity={activeEntity} entities={entities} onChange={update}/>
                 </SplitPane>
-                <SplitPane
-                  onChange={() => this.handleSplitChanged()} onDragFinished={() => this.handleSplitDragFinished()}
-                  resizerClassName='resizer'>
-                  <EditorTabs
-                    activeTabKey={activeTabKey} ref='editorTabs' activateTab={activateTab} closeTab={closeTab}
-                    onUpdate={(v) => this.update(v)} tabs={tabsWithEntities}/>
-                  <Preview ref='preview'/>
-                </SplitPane>
+
+                <div className='block'>
+                  <TabTitles activeTabKey={activeTabKey} activateTab={activateTab} tabs={tabsWithEntities} closeTab={closeTab}/>
+                  <SplitPane
+                    onChange={() => this.handleSplitChanged()} onDragFinished={() => this.handleSplitDragFinished()}
+                    resizerClassName='resizer'>
+                    <EditorTabs
+                      activeTabKey={activeTabKey} onUpdate={(v) => this.update(v)} tabs={tabsWithEntities}/>
+                    <Preview ref='preview'/>
+                  </SplitPane>
+                </div>
               </SplitPane>
             </div>
           </div>
