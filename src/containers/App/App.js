@@ -1,3 +1,5 @@
+//noinspection
+
 import React, {Component, PropTypes} from 'react'
 import {connect} from 'react-redux'
 import { actions, selectors } from 'redux/editor'
@@ -17,20 +19,23 @@ import TabTitles from '../../components/Tabs/TabTitles.js'
 import Modal from '../Modal/Modal.js'
 import { NEW_ENTITY_MODAL, DELETE_CONFIRMATION_MODAL } from '../../components/Modals'
 import { actions as modalActions } from '../../redux/modal'
+import * as progress from '../../redux/progress'
+
+const progressActions = progress.actions
 
 @connect((state) => ({
   entities: state.entities,
   references: entities.selectors.getReferences(state),
   activeTabKey: state.editor.activeTab,
   activeTabWithEntity: selectors.getActiveTabWithEntity(state),
-  isPending: state.editor.isPending,
+  isPending: progress.selectors.getIsPending(state),
   canRun: selectors.canRun(state),
   canSave: selectors.canSave(state),
   canSaveAll: selectors.canSaveAll(state),
   canRemove: selectors.canRemove(state),
   tabsWithEntities: selectors.getTabWithEntities(state),
   activeEntity: selectors.getActiveEntity(state)
-}), { ...actions, ...modalActions })
+}), { ...actions, ...modalActions, ...progressActions })
 export default class App extends Component {
   static contextTypes = {
     store: PropTypes.object.isRequired
@@ -66,6 +71,7 @@ export default class App extends Component {
   }
 
   handleRun () {
+    this.props.start()
     let template = Object.assign({}, this.props.activeEntity)
     let request = { template: template }
     Studio.onPreview(request, Object.assign({}, this.props.entities))
@@ -83,7 +89,7 @@ export default class App extends Component {
 
   render () {
     const { tabsWithEntities, references, saveAll, isPending, canRun, canSave, canRemove, canSaveAll, activeTabWithEntity, entities,
-      remove, openTab, openComponent, activateTab, activeTabKey, activeEntity, update, save, closeTab } = this.props
+      openTab, openComponent, end, activateTab, activeTabKey, activeEntity, update, save, closeTab } = this.props
 
     console.log('render main')
 
@@ -120,7 +126,7 @@ export default class App extends Component {
                     resizerClassName='resizer'>
                     <EditorTabs
                       activeTabKey={activeTabKey} onUpdate={(v) => this.update(v)} tabs={tabsWithEntities}/>
-                    <Preview ref='preview'/>
+                    <Preview ref='preview' onLoad={end}/>
                   </SplitPane>
                 </div>
               </SplitPane>

@@ -12,6 +12,11 @@ webpack({
       if (/babel-runtime/.test(request)) {
         return callback(null, 'Studio.runtime[\'' + request.substring('babel-runtime/'.length) + '\']')
       }
+
+      if (/react/.test(request)) {
+        return callback(null, 'Studio.react')
+      }
+
       callback()
     }
   ],

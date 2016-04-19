@@ -4,7 +4,6 @@ import createReducer from '../createReducer.js'
 
 const reducer = createReducer({
   tabs: [],
-  isPending: false,
   activeTab: null
 })
 export default reducer.export()
@@ -54,18 +53,3 @@ reducer.handleAction(EntityActionTypes.SAVE_NEW, (state, action) => {
     activeTab: action.entity._id
   }
 })
-
-reducer.handleAction(EntityActionTypes.API_START, (state, action) => ({
-  ...state,
-  isPending: true
-}))
-
-reducer.handleAction(EntityActionTypes.API_DONE, (state, action) => ({
-  ...state,
-  isPending: false
-}))
-
-reducer.handleAction(EntityActionTypes.API_FAILED, (state, action) => ({
-  ...state,
-  isPending: false
-}))

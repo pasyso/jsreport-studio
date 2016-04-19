@@ -18,8 +18,8 @@ export default class Toolbar extends Component {
     activeTab: React.PropTypes.object
   }
 
-  renderButton (onClick, enabled, text, imageClass) {
-    return <div className={'toolbar-button ' + ' ' + (enabled ? '' : 'disabled')} onClick={enabled ? onClick : () => {}}>
+  renderButton (onClick, enabled, text, imageClass, tooltip) {
+    return <div title={tooltip} className={'toolbar-button ' + ' ' + (enabled ? '' : 'disabled')} onClick={enabled ? onClick : () => {}}>
       <i className={imageClass} /><span>{text}</span></div>
   }
 
@@ -36,9 +36,9 @@ export default class Toolbar extends Component {
 
     return <div className={style.toolbar}>
       <div style={{backgroundImage: 'url(' + logo + ')'}} className={style.logo} />
-      {this.renderButton(onRun, canRun, 'Run', 'fa fa-play')}
-      {this.renderButton(onSave, canSave, 'Save', 'fa fa-floppy-o')}
-      {this.renderButton(onSaveAll, canSaveAll, 'SaveAll', 'fa fa-floppy-o')}
+      {this.renderButton(onRun, canRun, 'Run', 'fa fa-play', 'Preview report in the right pane (F8)')}
+      {this.renderButton(onSave, canSave, 'Save', 'fa fa-floppy-o', 'Save current tab (CTRL+S)')}
+      {this.renderButton(onSaveAll, canSaveAll, 'SaveAll', 'fa fa-floppy-o', 'Save all tabs')}
       {this.renderButton(onRemove, canRemove, 'Delete', 'fa fa-trash')}
       {this.renderToolbarComponents()}
       <div className={style.spinner}>

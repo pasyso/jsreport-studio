@@ -3,10 +3,6 @@ import TabContent from './TabContent'
 import style from './Tabs.scss'
 
 export default class TabPane extends Component {
-  static propTypes = {
-    activateTab: React.PropTypes.func.isRequired
-  }
-
   render () {
     const { activeTabKey } = this.props
 

@@ -1,6 +1,5 @@
-const React = Studio.react
+import React, { Component } from 'react'
 const TextEditor = Studio.TextEditor
-const { Component } = Studio.react
 
 export default class DataEditor extends Component {
   static propTypes = {
