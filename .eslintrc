@@ -10,6 +10,8 @@
   },
   "globals" : {
     "Studio": 1,
+    "FileReader": 1,
+    "alert": 1,
     "describe": 1,
     "it": 1,
     "beforeEach": 1,

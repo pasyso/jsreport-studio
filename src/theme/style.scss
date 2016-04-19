@@ -31,6 +31,10 @@ html, body {
   flex-direction: column;
 }
 
+:focus {
+  outline: 0;
+}
+
 .block-item {
   flex: 1;
 }
@@ -58,7 +62,7 @@ select {
   padding: 0.2rem;
 }
 
-select:hover {
+select:hover, select:focus, select:active {
   border-bottom: solid 0.2rem $primarySelectionBackgroundColor;
 }
 
@@ -70,7 +74,7 @@ input[type=text] {
   padding: 0.2rem;
 }
 
-input[type=text]:hover {
+input[type=text]:hover, input[type=text]:focus, input[type=text]:active {
   border-bottom: solid 0.2rem $primarySelectionBackgroundColor;
 }
 
@@ -136,6 +140,15 @@ input[type=text]:hover {
   text-align: center;
   text-decoration: none;
   cursor: pointer;
+  transform: translateZ(0);
+  box-shadow: 0 0 1px rgba(0, 0, 0, 0);
+  backface-visibility: hidden;
+  transition-duration: 0.3s;
+  transition-property: box-shadow;
+}
+
+.button:hover, .button:focus, button:active {
+  box-shadow: 0 0 8px rgba(0, 0, 0, 0.6);
 }
 
 .button.confirmation {

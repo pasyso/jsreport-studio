@@ -23,7 +23,7 @@ export function closeTab (id) {
 
 export function openTab (tab) {
   return async function (dispatch, getState) {
-    if (tab.shortid) {
+    if (tab.shortid && !tab._id) {
       tab._id = entities.selectors.getByShortid(getState(), tab.shortid)._id
     }
 

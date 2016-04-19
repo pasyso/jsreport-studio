@@ -27,6 +27,13 @@ reducer.handleAction(ActionTypes.ADD, (state, action) => ({
   })
 }))
 
+reducer.handleAction(ActionTypes.ADD_EXISTING, (state, action) => ({
+  ...state,
+  [action.entity._id]: Object.assign({}, action.entity, {
+    __name: action.entity.name
+  })
+}))
+
 reducer.handleAction(ActionTypes.SAVE, (state, action) => ({
   ...state,
   [action._id]: Object.assign({}, state[action._id], { __isDirty: false })

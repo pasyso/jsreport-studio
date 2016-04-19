@@ -36,11 +36,22 @@ export function add (entity) {
   })
 }
 
-export function load (id) {
+export function addExisting (entity) {
+  if (!entity || !entity._id) {
+    throw new Error('Invalid entity submitted to add')
+  }
+
+  return (dispatch) => dispatch({
+    type: ActionTypes.ADD_EXISTING,
+    entity: entity
+  })
+}
+
+export function load (id, force) {
   return async function (dispatch, getState) {
     let entity = selectors.getById(getState(), id)
 
-    if (entity.__isLoaded || entity.__isNew) {
+    if (!force && (entity.__isLoaded || entity.__isNew)) {
       return
     }
 

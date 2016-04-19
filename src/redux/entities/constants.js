@@ -1,5 +1,6 @@
 export const LOAD = 'ENTITIES_LOAD'
 export const ADD = 'ENTITIES_ADD'
+export const ADD_EXISTING = 'ENTITIES_ADD_EXISTING'
 export const SAVE = 'ENTITIES_SAVE'
 export const SAVE_NEW = 'ENTITIES_SAVE_NEW'
 export const UPDATE = 'ENTITIES_UPDATE'

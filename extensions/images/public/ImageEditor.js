@@ -1,17 +1,25 @@
 const React = Studio.react
-const TextEditor = Studio.TextEditor
 const { Component } = Studio.react
 
-export default class DataEditor extends Component {
+export default class ImageEditor extends Component {
   static propTypes = {
-    entity: React.PropTypes.object.isRequired,
-    onUpdate: React.PropTypes.func.isRequired
+    entity: React.PropTypes.object.isRequired
   }
 
   render () {
-    const { entity, onUpdate } = this.props
+    const { entity } = this.props
 
-    return (<div>This is image</div>)
+    return (<div>
+      <div>
+        <div>Embed into template using: </div>
+        <code>
+          &lt;img src='{'{#image ' + entity.name + "}'"}/&gt;
+        </code>
+      </div>
+      <div style={{overflow: 'auto'}}>
+        <img src={'data:image/png;base64,' + entity.content} style={{display: 'block', margin: '3rem auto'}} />
+      </div>
+    </div>)
   }
 }
 

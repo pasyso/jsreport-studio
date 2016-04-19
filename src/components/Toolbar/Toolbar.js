@@ -1,9 +1,11 @@
 import React, {Component} from 'react'
 import style from './Toolbar.scss'
 import Studio from '../../Studio.js'
+import logo from './js-logo.png'
 
 export default class Toolbar extends Component {
   static propTypes = {
+    onUpdate: React.PropTypes.func.isRequired,
     onRun: React.PropTypes.func.isRequired,
     canRun: React.PropTypes.bool.isRequired,
     onSave: React.PropTypes.func.isRequired,
@@ -24,7 +26,8 @@ export default class Toolbar extends Component {
   renderToolbarComponents () {
     return <div>{Studio.toolbarComponents.map((p, i) => React.createElement(p, {
       key: i,
-      tab: this.props.activeTab
+      tab: this.props.activeTab,
+      onUpdate: this.props.onUpdate
     }))}</div>
   }
 
@@ -32,6 +35,7 @@ export default class Toolbar extends Component {
     const { onRun, canRun, onSave, canSave, onSaveAll, canSaveAll, isPending, onRemove, canRemove } = this.props
 
     return <div className={style.toolbar}>
+      <div style={{backgroundImage: 'url(' + logo + ')'}} className={style.logo} />
       {this.renderButton(onRun, canRun, 'Run', 'fa fa-play')}
       {this.renderButton(onSave, canSave, 'Save', 'fa fa-floppy-o')}
       {this.renderButton(onSaveAll, canSaveAll, 'SaveAll', 'fa fa-floppy-o')}

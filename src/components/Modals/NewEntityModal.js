@@ -25,7 +25,6 @@ export default class Modal extends Component {
   }
 
   render () {
-    console.log('render new entity model')
     const { entitySet } = this.props.options
 
     return <div>

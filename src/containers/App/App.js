@@ -20,7 +20,8 @@ import { actions as modalActions } from '../../redux/modal'
 @connect((state) => ({
   entities: state.entities,
   references: entities.selectors.getReferences(state),
-  activeTab: state.editor.activeTab,
+  activeTabKey: state.editor.activeTab,
+  activeTabWithEntity: selectors.getActiveTabWithEntity(state),
   isPending: state.editor.isPending,
   canRun: selectors.canRun(state),
   canSave: selectors.canSave(state),
@@ -80,8 +81,8 @@ export default class App extends Component {
   }
 
   render () {
-    const { tabsWithEntities, references, saveAll, isPending, canRun, canSave, canRemove, canSaveAll, activeTab, entities,
-      remove, openTab, openComponent, activateTab, activeEntity, update, save, closeTab } = this.props
+    const { tabsWithEntities, references, saveAll, isPending, canRun, canSave, canRemove, canSaveAll, activeTabWithEntity, entities,
+      remove, openTab, openComponent, activateTab, activeTabKey, activeEntity, update, save, closeTab } = this.props
 
     console.log('render main')
 
@@ -94,7 +95,7 @@ export default class App extends Component {
           <div className='block'>
             <Toolbar
               canRun={canRun} canSave={canSave} canSaveAll={canSaveAll} canRemove={canRemove} onSave={save}
-              onSaveAll={saveAll} isPending={isPending}
+              onSaveAll={saveAll} isPending={isPending} activeTab={activeTabWithEntity} onUpdate={update}
               onRemove={() => openComponent(DELETE_CONFIRMATION_MODAL, {_id: activeEntity._id})} onRun={() => this.handleRun()}/>
 
             <div className='block'>
@@ -106,14 +107,14 @@ export default class App extends Component {
                   defaultSize={(window.innerHeight * 0.4) + 'px'}>
                   <EntityTree
                     activeEntity={activeEntity} entities={references} onClick={(_id) => openTab({_id: _id})}
-                    onNewClick={(es) => openComponent(NEW_ENTITY_MODAL, {entitySet: es})}/>
+                    onNewClick={(es) => Studio.entitySets[es].onNew ? Studio.entitySets[es].onNew() : openComponent(NEW_ENTITY_MODAL, {entitySet: es})}/>
                   <Properties entity={activeEntity} entities={entities} onChange={update}/>
                 </SplitPane>
                 <SplitPane
                   onChange={() => this.handleSplitChanged()} onDragFinished={() => this.handleSplitDragFinished()}
                   resizerClassName='resizer'>
                   <EditorTabs
-                    activeTabKey={activeTab} ref='editorTabs' activateTab={activateTab} closeTab={closeTab}
+                    activeTabKey={activeTabKey} ref='editorTabs' activateTab={activateTab} closeTab={closeTab}
                     onUpdate={(v) => this.update(v)} tabs={tabsWithEntities}/>
                   <Preview ref='preview'/>
                 </SplitPane>

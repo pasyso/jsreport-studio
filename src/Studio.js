@@ -1,9 +1,11 @@
 import React from 'react'
+import ReactDom from 'react-dom'
 import TemplateProperties from './components/Properties/TemplateProperties.js'
 import Startup from './containers/Startup/Startup.js'
 import api from './helpers/api.js'
 import TextEditor from './components/Editor/TextEditor.js'
 import * as editor from './redux/editor'
+import * as entities from './redux/entities'
 import modals from './components/Modals'
 
 class Studio {
@@ -13,6 +15,7 @@ class Studio {
     this.routes = []
     this.runtime = {}
     this.react = React
+    this.ReactDom = ReactDom
     this.properties = [TemplateProperties]
     this.api = api
     this.tabTitleComponents = {}
@@ -39,6 +42,10 @@ class Studio {
     this.store.dispatch(editor.actions.openTab(tab))
   }
 
+  openNewTab (tab) {
+    this.store.dispatch(editor.actions.openNewTab(tab))
+  }
+
   registerEntitySet (entitySet) {
     this.entitySets[entitySet.name] = entitySet
   }
@@ -62,6 +69,14 @@ class Studio {
 
   triggerSplitResize () {
     this.splitResizeSubscribers.forEach((fn) => fn())
+  }
+
+  reloadEntity (id) {
+    this.store.dispatch(entities.actions.load(id, true))
+  }
+
+  addExistingEntity (entity) {
+    this.store.dispatch(entities.actions.addExisting(entity))
   }
 }
 
