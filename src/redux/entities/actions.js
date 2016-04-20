@@ -2,6 +2,17 @@ import * as ActionTypes from './constants.js'
 import api from '../../helpers/api.js'
 import * as selectors from './selectors.js'
 
+const prune = (entity) => {
+  let pruned = {}
+  Object.keys(entity).forEach((k) => {
+    if (k.indexOf('__') !== 0) {
+      pruned[k] = entity[k]
+    }
+  })
+
+  return pruned
+}
+
 export function update (entity) {
   if (!entity || !entity._id) {
     throw new Error('Invalid entity submitted to update')
@@ -101,7 +112,7 @@ export function save (id) {
       if (entity.__isNew) {
         const oldId = entity._id
         delete entity._id
-        const response = await api.post(`/odata/${entity.__entitySet}`, { data: entity })
+        const response = await api.post(`/odata/${entity.__entitySet}`, { data: prune(entity) })
         entity._id = response._id
         dispatch({ type: ActionTypes.API_DONE })
         dispatch({
@@ -111,7 +122,7 @@ export function save (id) {
         })
         entity._id = response._id
       } else {
-        await api.patch(`/odata/${entity.__entitySet}(${entity._id})`, { data: entity })
+        await api.patch(`/odata/${entity.__entitySet}(${entity._id})`, { data: prune(entity) })
         dispatch({ type: ActionTypes.API_DONE })
         dispatch({
           type: ActionTypes.SAVE,

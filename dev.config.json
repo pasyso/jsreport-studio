@@ -9,9 +9,6 @@
         "databaseName" : "multitenant"
     },
     "httpPort": 3000,
-    "scheduling": {
-        "enabled": false
-    },
     "electron": {
         "strategy": "electron-server"
     },

@@ -67,6 +67,12 @@ class Studio {
     return () => { this.splitResizeSubscribers = this.splitResizeSubscribers.filter((s) => s !== fn) }
   }
 
+  preview (frameSrc) {
+    if (this.previewSubscriber) {
+      this.previewSubscriber(frameSrc)
+    }
+  }
+
   triggerSplitResize () {
     this.splitResizeSubscribers.forEach((fn) => fn())
   }

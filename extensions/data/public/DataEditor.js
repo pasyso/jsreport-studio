@@ -12,7 +12,7 @@ export default class DataEditor extends Component {
 
     return (<TextEditor
       name={entity._id}
-      mode='ejs'
+      mode='javascript'
       value={entity.dataJson}
       onUpdate={(v) => onUpdate(Object.assign({}, entity, {dataJson: v}))}
       />)

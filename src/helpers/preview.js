@@ -14,6 +14,7 @@ export default function (request, target) {
 
   request.options = request.options || {}
   request.options.preview = true
+  request.options.reports = { save: true }
 
   const mapForm = document.createElement('form')
   mapForm.target = target

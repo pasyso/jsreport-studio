@@ -5,6 +5,15 @@ export default class Preview extends Component {
     onLoad: React.PropTypes.func.isRequired
   }
 
+  constructor () {
+    super()
+    this.state = {src: null}
+  }
+
+  componentDidMount () {
+    Studio.previewSubscriber = (src) => this.setState({ src: src })
+  }
+
   resizeStarted () {
     document.getElementById('overlay').style.display = 'block'
     document.getElementById('preview').style.display = 'none'
@@ -16,11 +25,13 @@ export default class Preview extends Component {
   }
 
   render () {
+    const { src } = this.state
+
     return <div className='block'>
       <div id='overlay' style={{display: 'none'}}></div>
       <iframe
         id='preview' frameBorder='0' onLoad={this.props.onLoad} name='previewFrame' allowTransparency='true'
-        allowFullScreen='true' ref='frame'
+        allowFullScreen='true' ref='frame' width='100%' height='100%' src={src}
         className='block-item'></iframe>
     </div>
   }

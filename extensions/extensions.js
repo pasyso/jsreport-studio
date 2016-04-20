@@ -1,6 +1,6 @@
 var path = require('path')
 
-module.exports = [ {
+module.exports = [{
   name: 'data',
   directory: path.join(__dirname, 'data')
 }, {
@@ -9,4 +9,10 @@ module.exports = [ {
 }, {
   name: 'images',
   directory: path.join(__dirname, 'images')
+}, {
+  name: 'reports',
+  directory: path.join(__dirname, 'reports')
+}, {
+  name: 'schedules',
+  directory: path.join(__dirname, 'scheduling')
 }]
