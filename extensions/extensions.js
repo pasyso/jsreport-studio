@@ -18,4 +18,7 @@ module.exports = [{
 }, {
   name: 'authentication',
   directory: path.join(__dirname, 'authentication')
+}, {
+  name: 'authorization',
+  directory: path.join(__dirname, 'authorization')
 }]
