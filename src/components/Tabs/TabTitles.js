@@ -19,7 +19,7 @@ export default class EditorTabs extends Component {
           {t.tab.titleComponentKey ? React.createElement(Studio.tabTitleComponents[t.tab.titleComponentKey], {
             entity: t.entity,
             tab: t.tab
-          }) : (<span>{t.tab.title || (t.entity.name + (t.entity.__isDirty ? '*' : ''))}</span>)}</span>
+          }) : (<span>{t.tab.title || (t.entity[Studio.entitySets[t.entity.__entitySet].nameAttribute] + (t.entity.__isDirty ? '*' : ''))}</span>)}</span>
 
       <div
         className={style.tabClose} key={'x' + t.key}

@@ -1,6 +1,6 @@
 @import "../../theme/variables";
 
-.propertiesContainer {
+.propertiesPanel {
   flex: 1;
   display: flex;
   flex-direction: column;
@@ -15,9 +15,43 @@
   padding: 0.3rem;
 }
 
-.propertiesNodesContainer {
-  padding: 0.5em;
-  flex: 1;
+.propertiesContainer {
   overflow: auto;
-  background-color: $secondaryBackgroundColor;
+}
+
+:global .properties-section {
+  box-shadow: 0 0.1rem 0.1rem 0 rgba(0, 0, 0, 0.2);
+  border-radius: 0.1rem;
+  margin: 0.3rem 0.3rem;
+  flex: 1;
+}
+
+
+.content {
+  background-color: #F6F6F6;
+  box-shadow: 1rem 1rem 1rem 0 rgba(0, 0, 0, 0.3);
+  color: #1d1d1d;
+  display: block;
+  float: left;
+  height: auto;
+  position: fixed;
+  width: auto;
+  z-index: 1050;
+  padding: 1rem;
+  border-top: 0.27rem solid #ffc40d;
+  min-width: 30%;
+  border-radius: 0.1rem;
+  top: 30%;
+  left: 50%;
+  transform: translateX(-50%) translateY(-50%);
+}
+
+
+
+.propertiesNodes {
+  padding: 0.5em;
+  overflow: auto;
+  flex: 1;
+  flex-wrap: wrap;
+  display:flex;
 }

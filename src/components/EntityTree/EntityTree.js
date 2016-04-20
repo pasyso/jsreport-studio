@@ -28,7 +28,7 @@ export default class EntityTree extends Component {
       key={entity._id}
       className={style.link + ' ' + ((activeEntity && entity._id === activeEntity._id) ? style.active : '')}>
       <i className={style.entityIcon + ' fa ' + (Studio.entitySets[entity.__entitySet].faIcon || style.entityDefaultIcon)}></i>
-      <a>{entity.name + (entity.__isDirty ? '*' : '')}</a>
+      <a>{entity[Studio.entitySets[entity.__entitySet].nameAttribute] + (entity.__isDirty ? '*' : '')}</a>
     </div>
   }
 

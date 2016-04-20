@@ -15,4 +15,7 @@ module.exports = [{
 }, {
   name: 'schedules',
   directory: path.join(__dirname, 'scheduling')
+}, {
+  name: 'authentication',
+  directory: path.join(__dirname, 'authentication')
 }]

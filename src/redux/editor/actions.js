@@ -49,7 +49,7 @@ export function openTab (tab) {
 export function openNewTab ({ entitySet, name }) {
   return (dispatch) => {
     let id = uid()
-    let entity = { _id: id, __entitySet: entitySet, shortid: shortid.generate(), name: name }
+    let entity = { _id: id, __entitySet: entitySet, shortid: shortid.generate(), [Studio.entitySets[entitySet].nameAttribute]: name }
 
     if (entitySet === 'templates') {
       entity.recipe = recipes.includes('phantom-pdf') ? 'phantom-pdf' : recipes[0]

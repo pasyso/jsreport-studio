@@ -30,7 +30,7 @@ export default class TemplateProperties extends Component {
     }
 
     return (
-      <div>
+      <div className='properties-section'>
         <div className='form-group'><label>engine</label> {this.renderEngines()}</div>
         <div className='form-group'><label>recipe</label> {this.renderRecipes()}</div>
       </div>

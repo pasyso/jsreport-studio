@@ -23,7 +23,8 @@ class Studio {
     this.references = {}
     this.initializeListeners = []
     this.TextEditor = TextEditor
-    this.entitySets = { templates: { name: 'templates', visibleName: 'template' } }
+    this.entitySets = {}
+    this.registerEntitySet({ name: 'templates', visibleName: 'template' })
     this.toolbarComponents = []
     this.modals = modals
 
@@ -47,6 +48,7 @@ class Studio {
   }
 
   registerEntitySet (entitySet) {
+    entitySet.nameAttribute = entitySet.nameAttribute || 'name'
     this.entitySets[entitySet.name] = entitySet
   }
 
@@ -60,6 +62,10 @@ class Studio {
 
   registerTabEditorComponent (key, component) {
     this.tabEditorComponents[key] = component
+  }
+
+  getEntityName (entity) {
+    return entity[this.entitySets[entity.__entitySet].nameAttribute]
   }
 
   subscribeToSplitResize (fn) {

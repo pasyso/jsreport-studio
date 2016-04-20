@@ -12,28 +12,32 @@ export default class Properties extends Component {
   renderProperties () {
     const { entity, onChange, entities } = this.props
 
-    return <div>
-      <div className='form-group'>
-        <label>name</label>
-        <input
-          type='text' value={entity.name} onChange={(v) => onChange({_id: entity._id, name: v.target.value})}/>
+    const nameAttribute = Studio.entitySets[entity.__entitySet].nameAttribute
+
+    return <div className={style.propertiesNodes}>
+      <div className='properties-section'>
+        <div className='form-group'>
+          <label>{nameAttribute}</label>
+          <input
+            type='text' value={entity[nameAttribute] || ''} onChange={(v) => onChange({_id: entity._id, [nameAttribute]: v.target.value})}/>
+        </div>
       </div>
-      <div> {Studio.properties.map((p, i) => React.createElement(p, {
+      {Studio.properties.map((p, i) => React.createElement(p, {
         key: i,
         entity: entity,
         entities: entities,
         onChange: onChange
-      }))}</div>
+      }))}
     </div>
   }
 
   render () {
     const { entity } = this.props
 
-    return <div className={style.propertiesContainer}>
+    return <div className={style.propertiesPanel}>
       <div className={style.title}>Properties</div>
-      <div className={style.propertiesNodesContainer}>
-      {entity ? this.renderProperties(entity) : ''}
+      <div className={style.propertiesContainer}>
+        {entity ? this.renderProperties(entity) : ''}
       </div>
     </div>
   }

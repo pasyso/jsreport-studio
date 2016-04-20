@@ -94,7 +94,8 @@ export function unload (id) {
 
 export function loadReferences (entitySet) {
   return async function (dispatch) {
-    let response = await api.get(`/odata/${entitySet}?$select=name,shortid&$orderby=name`)
+    const nameAttribute = Studio.entitySets[entitySet].nameAttribute
+    let response = await api.get(`/odata/${entitySet}?$select=${nameAttribute},shortid&$orderby=${nameAttribute}`)
     dispatch({
       type: ActionTypes.LOAD_REFERENCES,
       entities: response.value,

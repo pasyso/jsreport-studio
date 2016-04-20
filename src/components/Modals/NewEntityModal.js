@@ -3,8 +3,7 @@ import {connect} from 'react-redux'
 import {actions} from '../../redux/editor'
 import Studio from '../../Studio.js'
 
-@connect((state) => ({
-}), { ...actions })
+@connect((state) => ({}), { ...actions })
 
 export default class Modal extends Component {
   static propTypes = {
@@ -15,7 +14,10 @@ export default class Modal extends Component {
   handleKeyPress (e) {
     if (e.key === 'Enter') {
       this.props.close()
-      this.props.openNewTab({ entitySet: this.props.options.entitySet, name: e.target.value })
+      this.props.openNewTab({
+        entitySet: this.props.options.entitySet,
+        name: e.target.value
+      })
     }
   }
 

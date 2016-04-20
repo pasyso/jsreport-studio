@@ -9,7 +9,7 @@ reducer.handleAction(ActionTypes.LOAD, (state, action) => ({
   ...state,
   [action.entity._id]: Object.assign({}, state[action.entity._id], action.entity, {
     __isLoaded: true,
-    __name: action.entity.name
+    __name: action.entity[Studio.entitySets[state[action.entity._id].__entitySet].nameAttribute]
   })
 }))
 
@@ -23,14 +23,14 @@ reducer.handleAction(ActionTypes.ADD, (state, action) => ({
   [action.entity._id]: Object.assign({}, state[action.entity._id], action.entity, {
     __isDirty: true,
     __isNew: true,
-    __name: action.entity.name
+    __name: Studio.getEntityName(action.entity)
   })
 }))
 
 reducer.handleAction(ActionTypes.ADD_EXISTING, (state, action) => ({
   ...state,
   [action.entity._id]: Object.assign({}, action.entity, {
-    __name: action.entity.name
+    __name: Studio.getEntityName(action.entity)
   })
 }))
 
@@ -51,7 +51,7 @@ reducer.handleAction(ActionTypes.LOAD_REFERENCES, (state, action) => {
   let newStateRef = Object.assign({}, state)
   action.entities.forEach((e) => {
     e.__entitySet = action.entitySet
-    e.__name = e.name
+    e.__name = e[Studio.entitySets[action.entitySet].nameAttribute]
     newStateRef[e._id] = e
   })
   return newStateRef
@@ -72,7 +72,7 @@ reducer.handleAction(ActionTypes.UNLOAD, (state, action) => ({
     __entitySet: state[action._id].__entitySet,
     __isNew: state[action._id].__isNew,
     __name: state[action._id].__name,
-    name: state[action._id].__name,
+    [Studio.entitySets[state[action._id].__entitySet].nameAttribute]: state[action._id].__name,
     shortid: state[action._id].shortid,
     _id: action._id
   }
