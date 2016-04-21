@@ -23,8 +23,8 @@ export default class Toolbar extends Component {
       <i className={imageClass} /><span>{text}</span></div>
   }
 
-  renderToolbarComponents () {
-    return <div>{Studio.toolbarComponents.map((p, i) => React.createElement(p, {
+  renderToolbarComponents (position) {
+    return <div>{Studio.toolbarComponents[position].map((p, i) => React.createElement(p, {
       key: i,
       tab: this.props.activeTab,
       onUpdate: this.props.onUpdate
@@ -35,15 +35,15 @@ export default class Toolbar extends Component {
     const { onRun, canRun, onSave, canSave, onSaveAll, canSaveAll, isPending, onRemove, canRemove } = this.props
 
     return <div className={style.toolbar}>
-      <div style={{backgroundImage: 'url(' + logo + ')'}} className={style.logo} />
       {this.renderButton(onRun, canRun, 'Run', 'fa fa-play', 'Preview report in the right pane (F8)')}
       {this.renderButton(onSave, canSave, 'Save', 'fa fa-floppy-o', 'Save current tab (CTRL+S)')}
       {this.renderButton(onSaveAll, canSaveAll, 'SaveAll', 'fa fa-floppy-o', 'Save all tabs')}
       {this.renderButton(onRemove, canRemove, 'Delete', 'fa fa-trash')}
-      {this.renderToolbarComponents()}
+      {this.renderToolbarComponents('left')}
       <div className={style.spinner}>
         {isPending ? <i className='fa fa-spinner fa-spin fa-fw'></i> : ''}
       </div>
+      {this.renderToolbarComponents('right')}
     </div>
   }
 }

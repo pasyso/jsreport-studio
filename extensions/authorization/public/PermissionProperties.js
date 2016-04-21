@@ -20,7 +20,7 @@ export default class PermissionProperties extends Component {
           res.push(el.options[i].value)
         }
       }
-      console.log(res)
+
       return res
     }
 

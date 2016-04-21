@@ -6,7 +6,8 @@ import api from './helpers/api.js'
 import TextEditor from './components/Editor/TextEditor.js'
 import * as editor from './redux/editor'
 import * as entities from './redux/entities'
-import modals from './components/Modals'
+import * as modal from './redux/modal'
+import modalComponents from './components/Modals'
 
 class Studio {
   init (store) {
@@ -25,8 +26,8 @@ class Studio {
     this.TextEditor = TextEditor
     this.entitySets = {}
     this.registerEntitySet({ name: 'templates', visibleName: 'template' })
-    this.toolbarComponents = []
-    this.modals = modals
+    this.toolbarComponents = { right: [], left: [] }
+    this.modals = modalComponents
 
     this.splitResizeSubscribers = []
 
@@ -53,7 +54,11 @@ class Studio {
   }
 
   registerToolbarComponent (toolbarComponent) {
-    this.toolbarComponents.push(toolbarComponent)
+    this.toolbarComponents.left.push(toolbarComponent)
+  }
+
+  registerRightToolbarComponent (toolbarComponent) {
+    this.toolbarComponents.right.push(toolbarComponent)
   }
 
   registerTabTitleComponent (key, component) {
@@ -79,12 +84,28 @@ class Studio {
     }
   }
 
+  registerModal (key, component) {
+    this.modals[key] = component
+  }
+
+  openModal (key, options) {
+    this.store.dispatch(modal.actions.openComponent(key, options))
+  }
+
   triggerSplitResize () {
     this.splitResizeSubscribers.forEach((fn) => fn())
   }
 
   reloadEntity (id) {
     this.store.dispatch(entities.actions.load(id, true))
+  }
+
+  addEntity (entity) {
+    this.store.dispatch(entities.actions.add(entity))
+  }
+
+  saveEntity (id) {
+    this.store.dispatch(entities.actions.save(id))
   }
 
   addExistingEntity (entity) {

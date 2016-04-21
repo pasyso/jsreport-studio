@@ -16,3 +16,13 @@ $tertiaryBackgroundColor: #EFEFF2;
 
 $secondaryHoverColor: #c6c6c6;
 $secondaryHoverBackgroundColor: #73a2ff;
+
+
+@mixin no-select() {
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  -khtml-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}

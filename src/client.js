@@ -23,8 +23,12 @@ init(store)
 
 const start = async () => {
   await fetchExtensions()
+
+  await Promise.all([...Studio.initializeListeners.map((l) => l())])
+
   await Promise.all(
-    [ ...Object.keys(Studio.entitySets).map((t) => entities.actions.loadReferences(t)(store.dispatch)),
+    [
+      ...Object.keys(Studio.entitySets).map((t) => entities.actions.loadReferences(t)(store.dispatch)),
       loadConfiguration()
     ]
   )

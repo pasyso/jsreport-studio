@@ -56,7 +56,7 @@ export default class EntityTree extends Component {
 
     let result = {}
     Object.keys(entities).forEach((k) => {
-      result[k] = entities[k].filter((e) => e.name.indexOf(filter) !== -1)
+      result[k] = entities[k].filter((e) => Studio.getEntityName(e).indexOf(filter) !== -1)
     })
 
     return result

@@ -21,7 +21,6 @@ export default class ImageUploadButton extends Component {
   }
 
   upload (e) {
-    console.log('there', this.forNew)
     if (!e.target.files.length) {
       return
     }

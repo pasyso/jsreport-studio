@@ -12,6 +12,12 @@ const createError = (err, body) => {
     return e
   }
 
+  if (body && body.message) {
+    let e = new Error(body.message)
+    e.stack = body.stack
+    return e
+  }
+
   return err || new Error('API call failed')
 }
 
