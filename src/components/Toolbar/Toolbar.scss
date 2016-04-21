@@ -5,6 +5,7 @@
   color: $tertiaryColor;
   display: flex;
   align-items: center;
+  min-height: 3rem;
 }
 
 :global .toolbar-button {

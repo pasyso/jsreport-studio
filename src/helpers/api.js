@@ -1,5 +1,6 @@
 import superagent from 'superagent'
 import Promise from 'bluebird'
+import parse from './parseJSON.js'
 
 const methods = ['get', 'post', 'put', 'patch', 'del']
 
@@ -37,7 +38,7 @@ methods.forEach((m) => {
       request.send(data)
     }
 
-    request.end((err, { body } = {}) => err ? reject(createError(err, body)) : resolve(body))
+    request.end((err, { body } = {}) => err ? reject(createError(err, body)) : resolve(parse(JSON.stringify(body))))
   })
 })
 

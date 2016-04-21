@@ -32,7 +32,7 @@ export default class ScheduleProperties extends Component {
         </div>
         <div className='form-group'>
           <label>Enabled</label>
-          <input type='checkbox' checked={entity.enabled} value={entity.enabled || ''} onChange={(v) => onChange({_id: entity._id, enabled: v.target.value === 'checked'})} />
+          <input type='checkbox' checked={entity.enabled !== false} onChange={(v) => onChange({_id: entity._id, enabled: v.target.checked})} />
         </div>
       </div>
     )

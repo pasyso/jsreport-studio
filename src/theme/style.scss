@@ -144,7 +144,7 @@ input:hover, input:focus, input:active {
 }
 
 .button:hover, .button:focus, button:active {
-  box-shadow: 0 0 8px rgba(0, 0, 0, 0.6);
+  box-shadow: 0 0 0.5rem rgba(0, 0, 0, 0.6);
 }
 
 .button.confirmation {
@@ -154,3 +154,4 @@ input:hover, input:focus, input:active {
 .button.danger {
   background-color: #da532c;
 }
+
