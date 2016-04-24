@@ -32,7 +32,7 @@ export default class ScheduleEditor extends Component {
     }
 
     this.loading = true
-    const response = await Studio.api.get(`/odata/tasks?$count=true&$top=${this.top}&$skip=${this.skip}&$filter=scheduleShortid eq '${this.props.entity.shortid}'`)
+    const response = await Studio.api.get(`/odata/tasks?$orderby=finishDate desc&$count=true&$top=${this.top}&$skip=${this.skip}&$filter=scheduleShortid eq '${this.props.entity.shortid}'`)
     this.skip += this.top
     this.loading = false
     this.setState({ tasks: this.state.tasks.concat(response.value), count: response['@odata.count'] })
@@ -82,7 +82,7 @@ export default class ScheduleEditor extends Component {
         <small>{entity.nextRun.toLocaleString()}</small>
       </div>
       <div className='block-item list' style={{ overflow: 'auto' }}>
-        <ReactList itemsRenderer={this.renderItems} itemRenderer={(index) => this.tryRenderItem(index)} length={count}/>
+        <ReactList type='uniform' itemsRenderer={this.renderItems} itemRenderer={(index) => this.tryRenderItem(index)} length={count}/>
       </div>
     </div>
   }
