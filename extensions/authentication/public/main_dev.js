@@ -1,7 +1,8 @@
 import UserEditor from './UserEditor.js'
 import ChangePasswordModal from './ChangePasswordModal.js'
 import NewUserModal from './NewUserModal.js'
-import AuthenticationButton from './AuthenticationButton.js'
+import LogoutSettingsButton from './LogoutSettingsButton.js'
+import ChangePasswordSettingsButton from './ChangePasswordSettingsButton.js'
 import ChangePasswordButton from './ChangePasswordButton.js'
 
 Studio.initializeListeners.push(async () => {
@@ -20,7 +21,8 @@ Studio.initializeListeners.push(async () => {
     Studio.registerToolbarComponent(ChangePasswordButton)
   }
 
-  Studio.registerRightToolbarComponent(AuthenticationButton)
+  Studio.registerSettingsToolbarComponent(LogoutSettingsButton)
+  Studio.registerSettingsToolbarComponent(ChangePasswordSettingsButton)
   Studio.registerModal('CHANGE_PASSWORD_MODAL', ChangePasswordModal)
   Studio.registerModal('NEW_USER_MODAL', NewUserModal)
 })

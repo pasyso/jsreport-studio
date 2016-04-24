@@ -13,8 +13,8 @@ export default class ReportsButton extends Component {
   }
 
   render () {
-    return <div className='toolbar-button' onClick={() => this.openReports()}>
-      <i className='fa fa-cloud-upload'/>Reports
+    return <div onClick={() => this.openReports()}>
+      <i className='fa fa-folder-open-o'/> Reports
     </div>
   }
 }

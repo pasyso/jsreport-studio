@@ -11,7 +11,7 @@ export default class ChangePasswordButton extends Component {
 
   render () {
     if (!this.props.tab || !this.props.tab.entity || this.props.tab.entity.__entitySet !== 'users') {
-      return <div/>
+      return <span/>
     }
 
     return <div>

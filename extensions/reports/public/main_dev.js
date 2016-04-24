@@ -1,5 +1,11 @@
 import ReportEditor from './ReportEditor'
 import ReportsButton from './ReportsButton'
+import DownloadButton from './DownloadButton.js'
+import DeleteButton from './DeleteButton.js'
 
 Studio.registerTabEditorComponent('reports', ReportEditor)
-//Studio.registerToolbarComponent(ReportsButton)
+Studio.registerSettingsToolbarComponent(ReportsButton)
+
+
+Studio.registerToolbarComponent(DownloadButton)
+Studio.registerToolbarComponent(DeleteButton)

@@ -18,17 +18,39 @@ export default class Toolbar extends Component {
     activeTab: React.PropTypes.object
   }
 
+  constructor () {
+    super()
+    this.state = {}
+    this.tryHide = this.tryHide.bind(this)
+  }
+
+  componentDidMount () {
+    window.addEventListener('click', this.tryHide)
+  }
+
+  componentWillUnmount () {
+    window.removeEventListener('click', this.tryHide)
+  }
+
+  tryHide () {
+    if (this.state.expanded) {
+      this.setState({ expanded: false })
+    }
+  }
+
   renderButton (onClick, enabled, text, imageClass, tooltip) {
-    return <div title={tooltip} className={'toolbar-button ' + ' ' + (enabled ? '' : 'disabled')} onClick={enabled ? onClick : () => {}}>
-      <i className={imageClass} /><span>{text}</span></div>
+    return <div
+      title={tooltip} className={'toolbar-button ' + ' ' + (enabled ? '' : 'disabled')}
+      onClick={enabled ? onClick : () => {}}>
+      <i className={imageClass}/><span>{text}</span></div>
   }
 
   renderToolbarComponents (position) {
-    return <div>{Studio.toolbarComponents[position].map((p, i) => React.createElement(p, {
+    return Studio.toolbarComponents[position].map((p, i) => React.createElement(p, {
       key: i,
       tab: this.props.activeTab,
       onUpdate: this.props.onUpdate
-    }))}</div>
+    }))
   }
 
   render () {
@@ -44,6 +66,15 @@ export default class Toolbar extends Component {
         {isPending ? <i className='fa fa-spinner fa-spin fa-fw'></i> : ''}
       </div>
       {this.renderToolbarComponents('right')}
+      <div
+        className='toolbar-button'
+        onClick={(e) => { e.stopPropagation(); this.setState({ expanded: !this.state.expanded }) }}>
+        <i className='fa fa-cog'/>
+
+        <div className={style.popup} style={{display: this.state.expanded ? 'block' : 'none'}}>
+          {this.renderToolbarComponents('settings')}
+        </div>
+      </div>
     </div>
   }
 }

@@ -1,11 +1,13 @@
 @import "../../theme/common";
 
 .tabPane {
-  background-color: $secondaryBackgroundColor
+  background-color: $secondaryBackgroundColor;
 }
 
 .tabTitles {
-  min-height: 1.9rem;
+  display: flex;
+  flex-wrap: wrap;
+  background-color: $secondaryBackgroundColor;
   border-bottom: 0.2rem $primaryHoverBackgroundColor solid;
 }
 
@@ -14,7 +16,8 @@
 }
 
 .tabTitle {
-  display: inline-block;
+  flex: 0;
+  display:flex;
   background-color: $secondaryBackgroundColor;
   padding: 0.3rem;
   cursor: pointer;

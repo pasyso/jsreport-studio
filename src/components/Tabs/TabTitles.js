@@ -28,7 +28,7 @@ export default class EditorTabs extends Component {
   }
 
   render () {
-    return <div className={'block-row' + ' ' + style.tabTitles}>
+    return <div className={style.tabTitles}>
       {this.props.tabs.map((t) => this.renderTitle(t))}
     </div>
   }

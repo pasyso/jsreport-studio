@@ -67,3 +67,21 @@
   //width: 152px;
   height: 2.2rem;
 }
+
+.popup {
+  background-color: #424c57;
+  color: white;
+  position: absolute;
+  right: 0;
+  padding: 0.5rem;
+  top: 2.4rem;
+  z-index: 200
+}
+
+.popup > div  {
+  padding: 0.5rem;
+}
+
+.popup > div:hover {
+  background-color: $primaryHoverBackgroundColor;
+}

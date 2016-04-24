@@ -26,7 +26,7 @@ class Studio {
     this.TextEditor = TextEditor
     this.entitySets = {}
     this.registerEntitySet({ name: 'templates', visibleName: 'template' })
-    this.toolbarComponents = { right: [], left: [] }
+    this.toolbarComponents = { right: [], left: [], settings: [] }
     this.modals = modalComponents
 
     this.splitResizeSubscribers = []
@@ -59,6 +59,10 @@ class Studio {
 
   registerRightToolbarComponent (toolbarComponent) {
     this.toolbarComponents.right.push(toolbarComponent)
+  }
+
+  registerSettingsToolbarComponent (toolbarComponent) {
+    this.toolbarComponents.settings.push(toolbarComponent)
   }
 
   registerTabTitleComponent (key, component) {
