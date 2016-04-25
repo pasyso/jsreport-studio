@@ -1,6 +1,5 @@
 import style from './ImageEditor.scss'
-const React = Studio.react
-const { Component } = Studio.react
+import React, { Component } from 'react'
 
 export default class ImageEditor extends Component {
   static propTypes = {

@@ -1,4 +1,5 @@
 import React, {Component, PropTypes} from 'react'
+import Studio from 'jsreport-studio'
 
 export default class ChangePasswordModal extends Component {
   static propTypes = {

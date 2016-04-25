@@ -1,5 +1,5 @@
-const React = Studio.react
-const { Component } = Studio.react
+import React, { Component } from 'react'
+import Studio from 'jsreport-studio'
 
 export default class ChangePasswordSettingsButton extends Component {
   render () {

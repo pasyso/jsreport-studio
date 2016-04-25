@@ -1,7 +1,6 @@
-const React = Studio.react
-const ReactDom = Studio.ReactDom
-const { Component } = Studio.react
+import React, { Component } from 'react'
 import superagent from 'superagent'
+import Studio from 'jsreport-studio'
 
 let _imageUploadButton
 
@@ -12,7 +11,6 @@ export default class ImageUploadButton extends Component {
   }
 
   static OpenUpload () {
-    console.trace('here')
     _imageUploadButton.openFileDialog(true)
   }
 

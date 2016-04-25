@@ -50,26 +50,30 @@
 
 	var _PhantomEditor2 = _interopRequireDefault(_PhantomEditor);
 
-	var _PhantomProperties = __webpack_require__(9);
+	var _PhantomProperties = __webpack_require__(11);
 
 	var _PhantomProperties2 = _interopRequireDefault(_PhantomProperties);
 
-	var _PhantomTitle = __webpack_require__(11);
+	var _PhantomTitle = __webpack_require__(13);
 
 	var _PhantomTitle2 = _interopRequireDefault(_PhantomTitle);
 
-	var _constants = __webpack_require__(10);
+	var _constants = __webpack_require__(12);
 
 	var Constants = _interopRequireWildcard(_constants);
+
+	var _jsreportStudio = __webpack_require__(10);
+
+	var _jsreportStudio2 = _interopRequireDefault(_jsreportStudio);
 
 	function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj.default = obj; return newObj; } }
 
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-	Studio.properties.push(_PhantomProperties2.default);
+	_jsreportStudio2.default.properties.push(_PhantomProperties2.default);
 
-	Studio.registerTabEditorComponent(Constants.PHANTOM_TAB_EDITOR, _PhantomEditor2.default);
-	Studio.registerTabTitleComponent(Constants.PHANTOM_TAB_TITLE, _PhantomTitle2.default);
+	_jsreportStudio2.default.registerTabEditorComponent(Constants.PHANTOM_TAB_EDITOR, _PhantomEditor2.default);
+	_jsreportStudio2.default.registerTabTitleComponent(Constants.PHANTOM_TAB_TITLE, _PhantomTitle2.default);
 
 /***/ },
 /* 1 */
@@ -109,11 +113,13 @@
 
 	var _inherits3 = _interopRequireDefault(_inherits2);
 
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+	var _react = __webpack_require__(9);
 
-	var React = Studio.react;
-	var AceEditor = Studio.AceEditor;
-	var Component = Studio.react.Component;
+	var _react2 = _interopRequireDefault(_react);
+
+	var _jsreportStudio = __webpack_require__(10);
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 	var DataEditor = function (_Component) {
 	  (0, _inherits3.default)(DataEditor, _Component);
@@ -124,41 +130,31 @@
 	  }
 
 	  (0, _createClass3.default)(DataEditor, [{
-	    key: 'resize',
-	    value: function resize() {
-	      this.refs.ace.editor.resize();
-	    }
-	  }, {
 	    key: 'render',
 	    value: function render() {
 	      var _props = this.props;
 	      var entity = _props.entity;
-	      var onUpdate = _props.onUpdate;
+	      var _onUpdate = _props.onUpdate;
 	      var tab = _props.tab;
 
 
-	      return React.createElement(AceEditor, {
-	        key: entity._id + '_phantom' + tab.headerOrFooter,
-	        mode: 'handlebars',
-	        theme: 'chrome',
-	        ref: 'ace',
+	      return _react2.default.createElement(_jsreportStudio.TextEditor, {
 	        name: entity._id + '_phantom' + tab.headerOrFooter,
-	        width: '100%',
-	        className: 'ace',
+	        mode: 'handlebars',
 	        value: entity.phantom ? entity.phantom[tab.headerOrFooter] : '',
-	        onChange: function onChange(v) {
-	          return onUpdate((0, _assign2.default)({}, entity, { phantom: (0, _assign2.default)({}, entity.phantom, (0, _defineProperty3.default)({}, tab.headerOrFooter, v)) }));
-	        },
-	        editorProps: { $blockScrolling: true } });
+	        onUpdate: function onUpdate(v) {
+	          return _onUpdate((0, _assign2.default)({}, entity, { phantom: (0, _assign2.default)({}, entity.phantom, (0, _defineProperty3.default)({}, tab.headerOrFooter, v)) }));
+	        }
+	      });
 	    }
 	  }]);
 	  return DataEditor;
-	}(Component);
+	}(_react.Component);
 
 	DataEditor.propTypes = {
-	  entity: React.PropTypes.object.isRequired,
-	  tab: React.PropTypes.object.isRequired,
-	  onUpdate: React.PropTypes.func.isRequired
+	  entity: _react2.default.PropTypes.object.isRequired,
+	  tab: _react2.default.PropTypes.object.isRequired,
+	  onUpdate: _react2.default.PropTypes.func.isRequired
 	};
 	exports.default = DataEditor;
 
@@ -206,6 +202,18 @@
 
 /***/ },
 /* 9 */
+/***/ function(module, exports) {
+
+	module.exports = Studio.libraries['react'];
+
+/***/ },
+/* 10 */
+/***/ function(module, exports) {
+
+	module.exports = Studio;
+
+/***/ },
+/* 11 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -238,16 +246,21 @@
 
 	var _inherits3 = _interopRequireDefault(_inherits2);
 
-	var _constants = __webpack_require__(10);
+	var _constants = __webpack_require__(12);
 
 	var Constants = _interopRequireWildcard(_constants);
+
+	var _react = __webpack_require__(9);
+
+	var _react2 = _interopRequireDefault(_react);
+
+	var _jsreportStudio = __webpack_require__(10);
+
+	var _jsreportStudio2 = _interopRequireDefault(_jsreportStudio);
 
 	function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj.default = obj; return newObj; } }
 
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-	var React = Studio.react;
-	var Component = Studio.react.Component;
 
 	var Properties = function (_Component) {
 	  (0, _inherits3.default)(Properties, _Component);
@@ -260,7 +273,7 @@
 	  (0, _createClass3.default)(Properties, [{
 	    key: 'openHeaderFooter',
 	    value: function openHeaderFooter(type) {
-	      Studio.openTab({
+	      _jsreportStudio2.default.openTab({
 	        key: this.props.entity._id + '_phantom' + type,
 	        _id: this.props.entity._id,
 	        headerOrFooter: type,
@@ -283,50 +296,139 @@
 	        return onChange((0, _assign2.default)({}, entity, { phantom: (0, _assign2.default)({}, entity.phantom, change) }));
 	      };
 
-	      if (entity.__entityType !== 'templates' || entity.recipe !== 'phantom-pdf') {
-	        return React.createElement('div', null);
+	      if (entity.__entitySet !== 'templates' || entity.recipe !== 'phantom-pdf') {
+	        return _react2.default.createElement('div', null);
 	      }
 
-	      return React.createElement(
+	      return _react2.default.createElement(
 	        'div',
-	        null,
-	        'Phantom settings....',
-	        React.createElement(
+	        { className: 'properties-section' },
+	        _react2.default.createElement(
 	          'div',
-	          null,
-	          React.createElement(
-	            'div',
+	          { className: 'form-group' },
+	          _react2.default.createElement(
+	            'label',
 	            null,
-	            'margin: ',
-	            React.createElement('input', { type: 'text', placeholder: '1cm', value: phantom.margin || '', onChange: function onChange(v) {
-	                return changePhantom({ margin: v.target.value });
-	              } })
+	            'margin'
 	          ),
-	          React.createElement(
+	          _react2.default.createElement('input', {
+	            type: 'text', placeholder: '1cm', value: phantom.margin || '',
+	            onChange: function onChange(v) {
+	              return changePhantom({ margin: v.target.value });
+	            } })
+	        ),
+	        _react2.default.createElement(
+	          'div',
+	          { className: 'form-group' },
+	          _react2.default.createElement(
+	            'label',
+	            null,
+	            'header height'
+	          ),
+	          _react2.default.createElement('input', {
+	            type: 'text', placeholder: '1cm', value: phantom.headerHeight || '',
+	            onChange: function onChange(v) {
+	              return changePhantom({ headerHeight: v.target.value });
+	            } })
+	        ),
+	        _react2.default.createElement(
+	          'div',
+	          { className: 'form-group' },
+	          _react2.default.createElement(
+	            'label',
+	            null,
+	            'header'
+	          ),
+	          _react2.default.createElement(
 	            'button',
 	            { onClick: function onClick() {
 	                return _this2.openHeaderFooter('header');
 	              } },
-	            'open header'
+	            'open in tab...'
+	          )
+	        ),
+	        _react2.default.createElement(
+	          'div',
+	          { className: 'form-group' },
+	          _react2.default.createElement(
+	            'label',
+	            null,
+	            'footer height'
 	          ),
-	          React.createElement(
+	          _react2.default.createElement('input', {
+	            type: 'text', placeholder: '1cm', value: phantom.footerHeight || '',
+	            onChange: function onChange(v) {
+	              return changePhantom({ footerHeight: v.target.value });
+	            } })
+	        ),
+	        _react2.default.createElement(
+	          'div',
+	          { className: 'form-group' },
+	          _react2.default.createElement(
+	            'label',
+	            null,
+	            'footer'
+	          ),
+	          _react2.default.createElement(
 	            'button',
 	            { onClick: function onClick() {
 	                return _this2.openHeaderFooter('footer');
 	              } },
-	            'open footer'
+	            'open in tab...'
 	          )
+	        ),
+	        _react2.default.createElement(
+	          'div',
+	          { className: 'form-group' },
+	          _react2.default.createElement(
+	            'label',
+	            null,
+	            'paper width'
+	          ),
+	          _react2.default.createElement('input', {
+	            type: 'text', placeholder: '1cm', value: phantom.paperWidth || '',
+	            onChange: function onChange(v) {
+	              return changePhantom({ paperWidth: v.target.value });
+	            } })
+	        ),
+	        _react2.default.createElement(
+	          'div',
+	          { className: 'form-group' },
+	          _react2.default.createElement(
+	            'label',
+	            null,
+	            'paper height'
+	          ),
+	          _react2.default.createElement('input', {
+	            type: 'text', placeholder: '1cm', value: phantom.paperHeight || '',
+	            onChange: function onChange(v) {
+	              return changePhantom({ paperHeight: v.target.value });
+	            } })
+	        ),
+	        _react2.default.createElement(
+	          'div',
+	          { className: 'form-group' },
+	          _react2.default.createElement(
+	            'label',
+	            null,
+	            'print delay'
+	          ),
+	          _react2.default.createElement('input', {
+	            type: 'text', placeholder: '1000', value: phantom.paperWidth || '',
+	            onChange: function onChange(v) {
+	              return changePhantom({ printDelay: v.target.value });
+	            } })
 	        )
 	      );
 	    }
 	  }]);
 	  return Properties;
-	}(Component);
+	}(_react.Component);
 
 	exports.default = Properties;
 
 /***/ },
-/* 10 */
+/* 12 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -338,7 +440,7 @@
 	var PHANTOM_TAB_EDITOR = exports.PHANTOM_TAB_EDITOR = 'PHANTOM_TAB_EDITOR';
 
 /***/ },
-/* 11 */
+/* 13 */
 /***/ function(module, exports) {
 
 	'use strict';

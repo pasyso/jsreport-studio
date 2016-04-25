@@ -1,6 +1,4 @@
-const React = Studio.react
-const ReactDom = Studio.ReactDom
-const { Component } = Studio.react
+import React, { Component } from 'react'
 
 export default class ReportsButton extends Component {
   static propTypes = {

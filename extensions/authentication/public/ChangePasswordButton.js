@@ -1,7 +1,5 @@
-import style from './Authentication.scss'
-const React = Studio.react
-const ReactDom = Studio.ReactDom
-const { Component } = Studio.react
+import React, { Component } from 'react'
+import Studio from 'jsreport-studio'
 
 export default class ChangePasswordButton extends Component {
   static propTypes = {

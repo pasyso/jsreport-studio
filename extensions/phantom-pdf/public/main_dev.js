@@ -2,6 +2,7 @@ import PhantomEditor from './PhantomEditor.js'
 import Properties from './PhantomProperties.js'
 import PhantomTitle from './PhantomTitle.js'
 import * as Constants from './constants.js'
+import Studio from 'jsreport-studio'
 
 Studio.properties.push(Properties)
 

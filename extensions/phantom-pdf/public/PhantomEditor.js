@@ -1,6 +1,5 @@
-const React = Studio.react
-const TextEditor = Studio.TextEditor
-const { Component } = Studio.react
+import React, { Component } from 'react'
+import { TextEditor } from 'jsreport-studio'
 
 export default class DataEditor extends Component {
   static propTypes = {

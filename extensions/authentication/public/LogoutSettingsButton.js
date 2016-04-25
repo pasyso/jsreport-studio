@@ -1,5 +1,4 @@
-const React = Studio.react
-const { Component } = Studio.react
+import React, { Component } from 'react'
 
 export default class LogoutSettingsButton extends Component {
   render () {

@@ -1,6 +1,4 @@
-const React = Studio.react
-const ReactDom = Studio.ReactDom
-const { Component } = Studio.react
+import React, { Component } from 'react'
 import ReportEditor from './ReportEditor'
 
 export default class DeleteButton extends Component {

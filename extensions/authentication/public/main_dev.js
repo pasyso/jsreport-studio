@@ -4,9 +4,16 @@ import NewUserModal from './NewUserModal.js'
 import LogoutSettingsButton from './LogoutSettingsButton.js'
 import ChangePasswordSettingsButton from './ChangePasswordSettingsButton.js'
 import ChangePasswordButton from './ChangePasswordButton.js'
+import Studio from 'jsreport-studio'
 
 Studio.initializeListeners.push(async () => {
   const response = await Studio.api.get('/api/settings')
+
+  if (!response.tenant) {
+    // authentication not enabled in config
+    return
+  }
+
   Studio.authentication = { user: response.tenant }
 
   if (Studio.authentication.user.isAdmin) {

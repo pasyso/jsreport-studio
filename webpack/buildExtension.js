@@ -1,6 +1,6 @@
 var webpack = require('webpack')
 
-const exposedLibraries = ['react', 'react-dom']
+const exposedLibraries = ['react', 'react-dom', 'superagent', 'react-list']
 
 webpack({
   entry: {
@@ -36,9 +36,30 @@ webpack({
           presets: ['react', 'es2015', 'stage-0'],
           plugins: ['transform-runtime']
         }
+      },
+      {
+        test: /\.scss$/,
+        loader: 'style!css?modules&importLoaders=2&sourceMap&localIdentName=[local]___[hash:base64:5]!sass?outputStyle=expanded&sourceMap'
       }
     ]
-  }
+  },
+  plugins: [
+    //new webpack.DefinePlugin({
+    //  'process.env': {
+    //    'NODE_ENV': JSON.stringify('production')
+    //  },
+    //  __DEVELOPMENT__: false
+    //}),
+    //
+    //// optimizations
+    //new webpack.optimize.DedupePlugin(),
+    //new webpack.optimize.OccurenceOrderPlugin(),
+    //new webpack.optimize.UglifyJsPlugin({
+    //  compress: {
+    //    warnings: false
+    //  }
+    //})
+  ]
 }, function (err, stats) {
   if (err) {
     console.err(err)

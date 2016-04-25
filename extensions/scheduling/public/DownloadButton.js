@@ -1,6 +1,4 @@
-const React = Studio.react
-const ReactDom = Studio.ReactDom
-const { Component } = Studio.react
+import React, { Component } from 'react'
 import ScheduleEditor from './ScheduleEditor'
 
 export default class UploadButton extends Component {

@@ -1,7 +1,7 @@
 import ReactList from 'react-list'
 import style from './ReportEditor.scss'
-const React = Studio.react
-const { Component } = Studio.react
+import React, { Component} from 'react'
+import Studio from 'jsreport-studio'
 
 let _activeReport
 export default class ReportEditor extends Component {
