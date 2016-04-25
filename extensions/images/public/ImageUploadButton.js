@@ -28,7 +28,7 @@ export default class ImageUploadButton extends Component {
 
     reader.onloadend = () => {
       if (this.forNew) {
-        superagent.post('/api/image')
+        superagent.post(Studio.relativizeUrl('/api/image'))
           .attach('file.png', file)
           .end((err, res) => {
             if (err) {
@@ -46,7 +46,7 @@ export default class ImageUploadButton extends Component {
             Studio.openTab(Object.assign({}, entity))
           })
       } else {
-        superagent.post('/api/image/' + this.props.tab.entity.shortid)
+        superagent.post(Studio.relativizeUrl('/api/image/') + this.props.tab.entity.shortid)
           .attach('file.png', file)
           .end((err, res) => {
             if (err) {

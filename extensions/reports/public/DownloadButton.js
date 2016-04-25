@@ -1,5 +1,6 @@
 import React, { Component } from 'react'
 import ReportEditor from './ReportEditor'
+import { relativizeUrl } from 'jsreport-studio'
 
 export default class DownloadButton extends Component {
   static propTypes = {
@@ -9,7 +10,7 @@ export default class DownloadButton extends Component {
 
   download () {
     if (ReportEditor.ActiveReport) {
-      window.open(`/reports/${ReportEditor.ActiveReport._id}/content`, '_blank')
+      window.open(relativizeUrl(`/reports/${ReportEditor.ActiveReport._id}/content`), '_blank')
     }
   }
 

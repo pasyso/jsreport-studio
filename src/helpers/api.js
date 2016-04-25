@@ -1,6 +1,7 @@
 import superagent from 'superagent'
 import Promise from 'bluebird'
 import parse from './parseJSON.js'
+import relativizeUrl from './relativizeUrl'
 
 const methods = ['get', 'post', 'put', 'patch', 'del']
 
@@ -24,7 +25,7 @@ const createError = (err, body) => {
 
 methods.forEach((m) => {
   requestHandler[m] = (path, { params, data } = {}) => new Promise((resolve, reject) => {
-    const request = superagent[m](path)
+    const request = superagent[m](relativizeUrl(path))
 
     request.set('X-Requested-With', 'XMLHttpRequest')
     request.set('Expires', '-1')

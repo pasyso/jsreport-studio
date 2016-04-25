@@ -73,7 +73,8 @@ export default class ScheduleEditor extends Component {
       </div>
       <div className={style.date}>
         <div className={style.label}>finish</div>
-        <div className={style.value}>{task.finishDate ? task.finishDate.toLocaleString() : ''}</div></div>
+        <div className={style.value}>{task.finishDate ? task.finishDate.toLocaleString() : ''}</div>
+      </div>
     </div>
   }
 
@@ -93,8 +94,8 @@ export default class ScheduleEditor extends Component {
       </div>
       <div className={style.listContainer + ' block-item'}>
         <ReactList
-        type='uniform' itemsRenderer={this.renderItems} itemRenderer={(index) => this.tryRenderItem(index)}
-        length={count}/>
+          type='uniform' itemsRenderer={this.renderItems} itemRenderer={(index) => this.tryRenderItem(index)}
+          length={count}/>
       </div>
     </div>
   }

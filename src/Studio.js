@@ -10,6 +10,7 @@ import * as editor from './redux/editor'
 import * as entities from './redux/entities'
 import * as modal from './redux/modal'
 import modalComponents from './components/Modals'
+import relativizeUrl from './helpers/relativizeUrl.js'
 
 class Studio {
   init (store) {
@@ -23,6 +24,9 @@ class Studio {
       'react-list': ReactList,
       superagent: superagent
     }
+
+    this.relativizeUrl = relativizeUrl
+
     this.properties = [TemplateProperties]
     this.api = api
     this.tabTitleComponents = {}

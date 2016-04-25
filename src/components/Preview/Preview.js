@@ -1,4 +1,5 @@
 import React, {Component} from 'react'
+import relativizeUrl from '../../helpers/relativizeUrl.js'
 
 export default class Preview extends Component {
   static propTypes = {
@@ -11,7 +12,7 @@ export default class Preview extends Component {
   }
 
   componentDidMount () {
-    Studio.previewSubscriber = (src) => this.setState({ src: src })
+    Studio.previewSubscriber = (src) => this.setState({ src: relativizeUrl(src) })
   }
 
   resizeStarted () {
