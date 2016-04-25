@@ -130,6 +130,10 @@ class Studio {
   addExistingEntity (entity) {
     this.store.dispatch(entities.actions.addExisting(entity))
   }
+
+  getEntityByShortid (shortid) {
+    return entities.selectors.getByShortid(this.store.getState(), shortid)
+  }
 }
 
 const studio = new Studio()
