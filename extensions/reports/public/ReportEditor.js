@@ -82,7 +82,7 @@ export default class ReportEditor extends Component {
       <div className={style.header}>
         <h1><i className='fa fa-folder-open-o'/> Reports</h1>
       </div>
-      <div className='block-item list' style={{ overflow: 'auto' }}>
+      <div className={style.listContainer + ' block-item'}>
         <ReactList
           type='uniform' itemsRenderer={this.renderItems} itemRenderer={(index) => this.tryRenderItem(index)}
           length={count}/>

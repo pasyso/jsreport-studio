@@ -24,7 +24,12 @@ export function closeTab (id) {
 export function openTab (tab) {
   return async function (dispatch, getState) {
     if (tab.shortid && !tab._id) {
-      tab._id = entities.selectors.getByShortid(getState(), tab.shortid)._id
+      try {
+        tab._id = entities.selectors.getByShortid(getState(), tab.shortid)._id
+      } catch (e) {
+        dispatch(push('/'))
+        return
+      }
     }
 
     if (tab._id) {
@@ -49,7 +54,12 @@ export function openTab (tab) {
 export function openNewTab ({ entitySet, name }) {
   return (dispatch) => {
     let id = uid()
-    let entity = { _id: id, __entitySet: entitySet, shortid: shortid.generate(), [Studio.entitySets[entitySet].nameAttribute]: name }
+    let entity = {
+      _id: id,
+      __entitySet: entitySet,
+      shortid: shortid.generate(),
+      [Studio.entitySets[entitySet].nameAttribute]: name
+    }
 
     if (entitySet === 'templates') {
       entity.recipe = recipes.includes('phantom-pdf') ? 'phantom-pdf' : recipes[0]

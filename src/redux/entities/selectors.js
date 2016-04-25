@@ -8,7 +8,12 @@ export const getById = (state, id) => {
 
 export const getByShortid = (state, shortid) => {
   const entities = Object.keys(state.entities).map((e) => state.entities[ e ]).filter((e) => e.shortid === shortid)
-  return entities.length ? entities[0] : 0
+
+  if (!entities.length) {
+    throw new Error(`Unable to find entity with shprtod ${shortid}`)
+  }
+
+  return entities[0]
 }
 
 export const getReferences = (state) => {

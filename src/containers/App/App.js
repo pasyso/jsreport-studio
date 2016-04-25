@@ -71,7 +71,6 @@ export default class App extends Component {
   }
 
   handleRun () {
-    console.log(navigator.userAgent)
     if (!/Trident/i.test(navigator.userAgent) && !/MSIE/i.test(navigator.userAgent) && !/Edge/i.test(navigator.userAgent)) {
       this.props.start()
     }

@@ -5,6 +5,7 @@
 }
 
 .tabTitles {
+  flex: 0;
   display: flex;
   flex-wrap: wrap;
   background-color: $secondaryBackgroundColor;
@@ -17,6 +18,7 @@
 
 .tabTitle {
   flex: 0;
+  min-height: 2rem;
   display:flex;
   background-color: $secondaryBackgroundColor;
   padding: 0.3rem;

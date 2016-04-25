@@ -91,7 +91,7 @@ export default class ScheduleEditor extends Component {
           <small>{entity.nextRun.toLocaleString()}</small>
         </div>) : <div>Not planned yet. Fill CRON expression and report template in the properties.</div>}
       </div>
-      <div className='block-item list' style={{ overflow: 'auto' }}>
+      <div className={style.listContainer + ' block-item'}>
         <ReactList
         type='uniform' itemsRenderer={this.renderItems} itemRenderer={(index) => this.tryRenderItem(index)}
         length={count}/>

@@ -13,6 +13,15 @@
   justify-content: space-between;
 }
 
+.listContainer {
+  overflow: auto;
+  position: relative;
+}
+
+.listContainer > div {
+  position: absolute !important;
+}
+
 .item {
   display: flex;
   flex-direction: column;
