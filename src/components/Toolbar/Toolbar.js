@@ -22,14 +22,37 @@ export default class Toolbar extends Component {
     super()
     this.state = {}
     this.tryHide = this.tryHide.bind(this)
+    this.handleShortcut = this.handleShortcut.bind(this)
   }
 
   componentDidMount () {
     window.addEventListener('click', this.tryHide)
+    window.addEventListener('keydown', this.handleShortcut)
   }
 
   componentWillUnmount () {
     window.removeEventListener('click', this.tryHide)
+    window.removeEventListener('keydown', this.handleShortcut)
+  }
+
+  handleShortcut (e) {
+    if (e.ctrlKey && e.shiftKey && e.which === 83 && this.props.canSaveAll) {
+      e.preventDefault()
+      this.props.onSaveAll()
+      return false
+    }
+
+    if (e.ctrlKey && e.which === 83 && this.props.canSave) {
+      e.preventDefault()
+      this.props.onSave()
+      return false
+    }
+
+    if (e.which === 119 && this.props.canRun) {
+      e.preventDefault()
+      this.props.onRun()
+      return false
+    }
   }
 
   tryHide () {
@@ -59,7 +82,7 @@ export default class Toolbar extends Component {
     return <div className={style.toolbar}>
       {this.renderButton(onRun, canRun, 'Run', 'fa fa-play', 'Preview report in the right pane (F8)')}
       {this.renderButton(onSave, canSave, 'Save', 'fa fa-floppy-o', 'Save current tab (CTRL+S)')}
-      {this.renderButton(onSaveAll, canSaveAll, 'SaveAll', 'fa fa-floppy-o', 'Save all tabs')}
+      {this.renderButton(onSaveAll, canSaveAll, 'SaveAll', 'fa fa-floppy-o', 'Save all tabs (CTRL+SHIFT+S')}
       {this.renderButton(onRemove, canRemove, 'Delete', 'fa fa-trash')}
       {this.renderToolbarComponents('left')}
       <div className={style.spinner}>
