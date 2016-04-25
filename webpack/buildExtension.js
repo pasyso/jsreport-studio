@@ -1,5 +1,7 @@
 var webpack = require('webpack')
 
+const exposedLibraries = ['react', 'react-dom']
+
 webpack({
   entry: {
     main: './main_dev.js'
@@ -13,8 +15,12 @@ webpack({
         return callback(null, 'Studio.runtime[\'' + request.substring('babel-runtime/'.length) + '\']')
       }
 
-      if (/react/.test(request)) {
-        return callback(null, 'Studio.react')
+      if (exposedLibraries.indexOf(request) > -1) {
+        return callback(null, 'Studio.libraries[\'' + request + '\']')
+      }
+
+      if (request === 'jsreport-studio') {
+        return callback(null, 'Studio')
       }
 
       callback()
@@ -27,8 +33,8 @@ webpack({
         exclude: /node_modules/,
         loader: 'babel-loader',
         query: {
-          presets: [ 'react', 'es2015', 'stage-0' ],
-          plugins: [ 'transform-runtime' ]
+          presets: ['react', 'es2015', 'stage-0'],
+          plugins: ['transform-runtime']
         }
       }
     ]

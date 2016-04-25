@@ -1,5 +1,3 @@
-//noinspection
-
 import React, {Component, PropTypes} from 'react'
 import {connect} from 'react-redux'
 import { actions, selectors } from 'redux/editor'
@@ -8,6 +6,7 @@ import Preview from '../../components/Preview/Preview.js'
 import EntityTree from '../../components/EntityTree/EntityTree.js'
 import Properties from '../../components/Properties/Properties.js'
 import style from './App.scss'
+import Promise from 'bluebird'
 import Studio from '../../Studio.js'
 import Toolbar from '../../components/Toolbar/Toolbar.js'
 import _debounce from 'lodash/debounce'
@@ -70,14 +69,15 @@ export default class App extends Component {
     this.props.updateHistory()
   }
 
-  handleRun () {
+  async handleRun () {
     if (!/Trident/i.test(navigator.userAgent) && !/MSIE/i.test(navigator.userAgent) && !/Edge/i.test(navigator.userAgent)) {
       this.props.start()
     }
 
     let template = Object.assign({}, this.props.activeEntity)
     let request = { template: template }
-    Studio.onPreview(request, Object.assign({}, this.props.entities))
+    const entities = Object.assign({}, this.props.entities)
+    await Promise.all([...Studio.previewListeners.map((l) => l(request, entities))])
     preview(request, 'previewFrame')
   }
 

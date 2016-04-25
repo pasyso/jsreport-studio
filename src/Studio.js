@@ -15,14 +15,17 @@ class Studio {
     this.store = store
     this.routes = []
     this.runtime = {}
-    this.react = React
-    this.ReactDom = ReactDom
+    this.libraries = {
+      react: React,
+      'react-dom': ReactDom
+    }
     this.properties = [TemplateProperties]
     this.api = api
     this.tabTitleComponents = {}
     this.tabEditorComponents = { templates: require('./components/Editor/TemplateEditor.js'), startup: Startup }
     this.references = {}
     this.initializeListeners = []
+    this.previewListeners = []
     this.TextEditor = TextEditor
     this.entitySets = {}
     this.registerEntitySet({ name: 'templates', visibleName: 'template' })

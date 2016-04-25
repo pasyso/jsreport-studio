@@ -68,6 +68,15 @@ module.exports = {
     filename: 'client.js',
     publicPath: '/studio/assets/'
   },
+  externals: [
+    function (context, request, callback) {
+      if (request === 'jsreport-studio') {
+        return callback(null, 'Studio')
+      }
+
+      callback()
+    }
+  ],
   module: {
     loaders: [
       { test: /\.jsx?$/, exclude: /node_modules/, loaders: [ 'babel?' + JSON.stringify(babelLoaderQuery) ] },

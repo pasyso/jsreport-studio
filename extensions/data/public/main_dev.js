@@ -1,11 +1,12 @@
 import DataEditor from './DataEditor.js'
 import Properties from './DataProperties.js'
+import Studio from 'jsreport-studio'
 
 Studio.registerEntitySet({ name: 'data', faIcon: 'fa-database', visibleName: 'sample data' })
 Studio.properties.push(Properties)
 Studio.registerTabEditorComponent('data', DataEditor)
 
-Studio.onPreview = function (request, entities) {
+Studio.previewListeners.push((request, entities) => {
   if (!request.template.data || !request.template.data.shortid) {
     return
   }
@@ -17,4 +18,4 @@ Studio.onPreview = function (request, entities) {
   }
 
   request.data = dataDetails[0].dataJson
-}
+})

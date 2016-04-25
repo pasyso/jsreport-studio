@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-const TextEditor = Studio.TextEditor
+import { TextEditor } from 'jsreport-studio'
 
 export default class DataEditor extends Component {
   static propTypes = {
