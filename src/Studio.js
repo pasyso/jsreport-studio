@@ -51,6 +51,7 @@ class Studio {
     this.runtime['helpers/createClass'] = require('babel-runtime/helpers/createClass')
     this.runtime['helpers/possibleConstructorReturn'] = require('babel-runtime/helpers/possibleConstructorReturn')
     this.runtime['helpers/inherits'] = require('babel-runtime/helpers/inherits')
+    this.runtime['helpers/extends'] = require('babel-runtime/helpers/extends')
     this.runtime['helpers/asyncToGenerator'] = require('babel-runtime/helpers/asyncToGenerator')
     this.runtime['regenerator'] = require('babel-runtime/regenerator')
   }

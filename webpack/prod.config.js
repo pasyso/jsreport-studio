@@ -5,6 +5,7 @@ var path = require('path')
 var webpack = require('webpack')
 var CleanPlugin = require('clean-webpack-plugin')
 var strip = require('strip-loader')
+var HtmlWebpackPlugin = require('html-webpack-plugin')
 
 var projectRootPath = path.resolve(__dirname, '../')
 var assetsPath = path.resolve(projectRootPath, './static/dist')
@@ -25,7 +26,7 @@ module.exports = {
   },
   module: {
     loaders: [
-      { test: /\.jsx?$/, exclude: /node_modules/, loaders: [ strip.loader('debug'), 'babel' ] },
+      { test: /\.jsx?$/, exclude: /node_modules/, loaders: [strip.loader('debug'), 'babel'] },
       { test: /\.json$/, loader: 'json-loader' },
       {
         test: /\.less$/,
@@ -54,10 +55,11 @@ module.exports = {
       'src',
       'node_modules'
     ],
-    extensions: [ '', '.json', '.js', '.jsx' ]
+    extensions: ['', '.json', '.js', '.jsx']
   },
   plugins: [
-    new CleanPlugin([ assetsPath ], { root: projectRootPath }),
+    new CleanPlugin([assetsPath], { root: projectRootPath }),
+
     new webpack.DefinePlugin({
       'process.env': {
         'NODE_ENV': JSON.stringify('production')
@@ -75,6 +77,11 @@ module.exports = {
       compress: {
         warnings: false
       }
+    }),
+
+    new HtmlWebpackPlugin({
+      hash: true,
+      template: path.join(__dirname, '../static/index.html')
     })
   ]
 }

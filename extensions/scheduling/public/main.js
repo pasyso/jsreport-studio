@@ -961,6 +961,8 @@
 
 	var _ScheduleEditor2 = _interopRequireDefault(_ScheduleEditor);
 
+	var _jsreportStudio = __webpack_require__(18);
+
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 	var UploadButton = function (_Component) {
@@ -975,7 +977,7 @@
 	    key: 'download',
 	    value: function download() {
 	      if (_ScheduleEditor2.default.ActiveReport) {
-	        window.open('/reports/' + _ScheduleEditor2.default.ActiveReport._id + '/content', '_blank');
+	        window.open((0, _jsreportStudio.relativizeUrl)('/reports/' + _ScheduleEditor2.default.ActiveReport._id + '/content'), '_blank');
 	      }
 	    }
 	  }, {

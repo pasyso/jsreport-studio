@@ -1,5 +1,5 @@
 {
-  "name": "jsreport-data",
+  "name": "jsreport-scheduling",
   "scripts": {
     "build": "set NODE_ENV=production&&node ../../../webpack/buildExtension.js"
   }

@@ -46,17 +46,17 @@
 
 	'use strict';
 
-	var _keys = __webpack_require__(1);
+	var _extends2 = __webpack_require__(1);
 
-	var _keys2 = _interopRequireDefault(_keys);
+	var _extends3 = _interopRequireDefault(_extends2);
 
-	var _DataEditor = __webpack_require__(2);
+	var _ScriptEditor = __webpack_require__(2);
 
-	var _DataEditor2 = _interopRequireDefault(_DataEditor);
+	var _ScriptEditor2 = _interopRequireDefault(_ScriptEditor);
 
-	var _DataProperties = __webpack_require__(11);
+	var _ScriptProperties = __webpack_require__(11);
 
-	var _DataProperties2 = _interopRequireDefault(_DataProperties);
+	var _ScriptProperties2 = _interopRequireDefault(_ScriptProperties);
 
 	var _jsreportStudio = __webpack_require__(10);
 
@@ -64,33 +64,27 @@
 
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-	_jsreportStudio2.default.registerEntitySet({ name: 'data', faIcon: 'fa-database', visibleName: 'sample data' });
-	_jsreportStudio2.default.properties.push(_DataProperties2.default);
-	_jsreportStudio2.default.registerTabEditorComponent('data', _DataEditor2.default);
+	_jsreportStudio2.default.registerEntitySet({ name: 'scripts', faIcon: 'fa-cogs', visibleName: 'script' });
+	_jsreportStudio2.default.properties.push(_ScriptProperties2.default);
+	_jsreportStudio2.default.registerTabEditorComponent('scripts', _ScriptEditor2.default);
 
-	_jsreportStudio2.default.onPreview = function (request, entities) {
-	  if (!request.template.data || !request.template.data.shortid) {
+	_jsreportStudio2.default.previewListeners.push(function (request, entities) {
+	  if (!request.template.scripts) {
 	    return;
 	  }
 
-	  var dataDetails = (0, _keys2.default)(entities).map(function (e) {
-	    return entities[e];
-	  }).filter(function (d) {
-	    return d.shortid === request.template.data.shortid && d.__entitySet === 'data';
+	  request.template.scripts = request.template.scripts.map(function (s) {
+	    return (0, _extends3.default)({}, s, {
+	      content: _jsreportStudio2.default.getEntityByShortid(s.shortid).content
+	    });
 	  });
-
-	  if (!dataDetails.length) {
-	    return;
-	  }
-
-	  request.data = dataDetails[0].dataJson;
-	};
+	});
 
 /***/ },
 /* 1 */
 /***/ function(module, exports) {
 
-	module.exports = Studio.runtime['core-js/object/keys'];
+	module.exports = Studio.runtime['helpers/extends'];
 
 /***/ },
 /* 2 */
@@ -134,15 +128,15 @@
 
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-	var DataEditor = function (_Component) {
-	  (0, _inherits3.default)(DataEditor, _Component);
+	var ScriptEditor = function (_Component) {
+	  (0, _inherits3.default)(ScriptEditor, _Component);
 
-	  function DataEditor() {
-	    (0, _classCallCheck3.default)(this, DataEditor);
-	    return (0, _possibleConstructorReturn3.default)(this, (0, _getPrototypeOf2.default)(DataEditor).apply(this, arguments));
+	  function ScriptEditor() {
+	    (0, _classCallCheck3.default)(this, ScriptEditor);
+	    return (0, _possibleConstructorReturn3.default)(this, (0, _getPrototypeOf2.default)(ScriptEditor).apply(this, arguments));
 	  }
 
-	  (0, _createClass3.default)(DataEditor, [{
+	  (0, _createClass3.default)(ScriptEditor, [{
 	    key: 'render',
 	    value: function render() {
 	      var _props = this.props;
@@ -153,21 +147,21 @@
 	      return _react2.default.createElement(_jsreportStudio.TextEditor, {
 	        name: entity._id,
 	        mode: 'javascript',
-	        value: entity.dataJson,
+	        value: entity.content,
 	        onUpdate: function onUpdate(v) {
-	          return _onUpdate((0, _assign2.default)({}, entity, { dataJson: v }));
+	          return _onUpdate((0, _assign2.default)({}, entity, { content: v }));
 	        }
 	      });
 	    }
 	  }]);
-	  return DataEditor;
+	  return ScriptEditor;
 	}(_react.Component);
 
-	DataEditor.propTypes = {
+	ScriptEditor.propTypes = {
 	  entity: _react2.default.PropTypes.object.isRequired,
 	  onUpdate: _react2.default.PropTypes.func.isRequired
 	};
-	exports.default = DataEditor;
+	exports.default = ScriptEditor;
 
 /***/ },
 /* 3 */
@@ -227,7 +221,15 @@
 	  value: true
 	});
 
-	var _keys = __webpack_require__(1);
+	var _assign = __webpack_require__(3);
+
+	var _assign2 = _interopRequireDefault(_assign);
+
+	var _extends2 = __webpack_require__(1);
+
+	var _extends3 = _interopRequireDefault(_extends2);
+
+	var _keys = __webpack_require__(12);
 
 	var _keys2 = _interopRequireDefault(_keys);
 
@@ -257,22 +259,49 @@
 
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-	var Properties = function (_Component) {
-	  (0, _inherits3.default)(Properties, _Component);
+	var ScriptProperties = function (_Component) {
+	  (0, _inherits3.default)(ScriptProperties, _Component);
 
-	  function Properties() {
-	    (0, _classCallCheck3.default)(this, Properties);
-	    return (0, _possibleConstructorReturn3.default)(this, (0, _getPrototypeOf2.default)(Properties).apply(this, arguments));
+	  function ScriptProperties() {
+	    (0, _classCallCheck3.default)(this, ScriptProperties);
+	    return (0, _possibleConstructorReturn3.default)(this, (0, _getPrototypeOf2.default)(ScriptProperties).apply(this, arguments));
 	  }
 
-	  (0, _createClass3.default)(Properties, [{
-	    key: 'selectDataItems',
-	    value: function selectDataItems(entities) {
+	  (0, _createClass3.default)(ScriptProperties, [{
+	    key: 'selectScripts',
+	    value: function selectScripts(entities) {
 	      return (0, _keys2.default)(entities).filter(function (k) {
-	        return entities[k].__entitySet === 'data';
+	        return entities[k].__entitySet === 'scripts';
 	      }).map(function (k) {
 	        return entities[k];
 	      });
+	    }
+	  }, {
+	    key: 'renderOrder',
+	    value: function renderOrder() {
+	      var _this2 = this;
+
+	      var scripts = (this.props.entity.scripts || []).map(function (s) {
+	        return (0, _extends3.default)({}, s, {
+	          name: (0, _keys2.default)(_this2.props.entities).map(function (k) {
+	            return _this2.props.entities[k];
+	          }).filter(function (sc) {
+	            return sc.shortid === s.shortid;
+	          })[0].name
+	        });
+	      });
+
+	      return _react2.default.createElement(
+	        'ol',
+	        null,
+	        scripts.map(function (s) {
+	          return _react2.default.createElement(
+	            'li',
+	            { key: s.shortid },
+	            s.name
+	          );
+	        })
+	      );
 	    }
 	  }, {
 	    key: 'render',
@@ -282,11 +311,36 @@
 	      var entities = _props.entities;
 	      var _onChange = _props.onChange;
 
-	      var dataItems = this.selectDataItems(entities);
+	      var scripts = this.selectScripts(entities);
 
 	      if (entity.__entitySet !== 'templates') {
 	        return _react2.default.createElement('div', null);
 	      }
+
+	      var selectValues = function selectValues(event, ascripts) {
+	        var el = event.target;
+	        var scripts = (0, _assign2.default)([], ascripts);
+
+	        for (var i = 0; i < el.options.length; i++) {
+	          if (el.options[i].selected) {
+	            if (!scripts.filter(function (s) {
+	              return s.shortid === el.options[i].value;
+	            }).length) {
+	              scripts.push({ shortid: el.options[i].value });
+	            }
+	          } else {
+	            if (scripts.filter(function (s) {
+	              return s.shortid === el.options[i].value;
+	            }).length) {
+	              scripts = scripts.filter(function (s) {
+	                return s.shortid !== el.options[i].value;
+	              });
+	            }
+	          }
+	        }
+
+	        return scripts;
+	      };
 
 	      return _react2.default.createElement(
 	        'div',
@@ -297,25 +351,28 @@
 	          _react2.default.createElement(
 	            'label',
 	            null,
-	            'data'
+	            'scripts'
+	          ),
+	          _react2.default.createElement(
+	            'div',
+	            null,
+	            'Order:',
+	            this.renderOrder()
 	          ),
 	          _react2.default.createElement(
 	            'select',
 	            {
-	              value: entity.data ? entity.data.shortid : '',
+	              multiple: true, value: entity.scripts ? entity.scripts.map(function (s) {
+	                return s.shortid;
+	              }) : [],
 	              onChange: function onChange(v) {
-	                return _onChange({ _id: entity._id, data: v.target.value !== 'empty' ? { shortid: v.target.value } : null });
+	                return _onChange({ _id: entity._id, scripts: selectValues(v, entity.scripts) });
 	              } },
-	            _react2.default.createElement(
-	              'option',
-	              { key: 'empty', value: 'empty' },
-	              '- not selected -'
-	            ),
-	            dataItems.map(function (e) {
+	            scripts.map(function (s) {
 	              return _react2.default.createElement(
 	                'option',
-	                { key: e.shortid, value: e.shortid },
-	                e.name
+	                { key: s.shortid, value: s.shortid },
+	                s.name
 	              );
 	            })
 	          )
@@ -323,10 +380,16 @@
 	      );
 	    }
 	  }]);
-	  return Properties;
+	  return ScriptProperties;
 	}(_react.Component);
 
-	exports.default = Properties;
+	exports.default = ScriptProperties;
+
+/***/ },
+/* 12 */
+/***/ function(module, exports) {
+
+	module.exports = Studio.runtime['core-js/object/keys'];
 
 /***/ }
 /******/ ]);

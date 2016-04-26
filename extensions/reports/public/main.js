@@ -858,6 +858,8 @@
 
 	var _ReportEditor2 = _interopRequireDefault(_ReportEditor);
 
+	var _jsreportStudio = __webpack_require__(15);
+
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 	var DownloadButton = function (_Component) {
@@ -872,7 +874,7 @@
 	    key: 'download',
 	    value: function download() {
 	      if (_ReportEditor2.default.ActiveReport) {
-	        window.open('/reports/' + _ReportEditor2.default.ActiveReport._id + '/content', '_blank');
+	        window.open((0, _jsreportStudio.relativizeUrl)('/reports/' + _ReportEditor2.default.ActiveReport._id + '/content'), '_blank');
 	      }
 	    }
 	  }, {

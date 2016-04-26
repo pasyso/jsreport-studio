@@ -44,12 +44,12 @@ webpack({
     ]
   },
   plugins: [
-    //new webpack.DefinePlugin({
-    //  'process.env': {
-    //    'NODE_ENV': JSON.stringify('production')
-    //  },
-    //  __DEVELOPMENT__: false
-    //}),
+    new webpack.DefinePlugin({
+      'process.env': {
+        'NODE_ENV': JSON.stringify('production')
+      },
+      __DEVELOPMENT__: false
+    }),
     //
     //// optimizations
     //new webpack.optimize.DedupePlugin(),
