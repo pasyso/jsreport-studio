@@ -34,6 +34,7 @@ export function openTab (tab) {
 
     if (tab._id) {
       await entities.actions.load(tab._id)(dispatch, getState)
+      tab.entitySet = entities.selectors.getById(getState(), tab._id).__entitySet
     }
 
     tab.type = tab._id ? 'entity' : 'custom'
@@ -69,6 +70,7 @@ export function openNewTab ({ entitySet, name }) {
       tab: {
         _id: id,
         key: id,
+        entitySet: entitySet,
         type: 'entity'
       }
     })
@@ -79,8 +81,7 @@ export function activateTab (id) {
   return (dispatch, getState) => {
     dispatch({
       type: ActionTypes.ACTIVATE_TAB,
-      key: id,
-      entity: entities.selectors.getById(getState(), id, false)
+      key: id
     })
   }
 }
