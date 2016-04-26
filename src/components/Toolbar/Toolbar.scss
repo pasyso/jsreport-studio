@@ -1,7 +1,7 @@
 @import "../../theme/common";
 
 .toolbar {
-  background-color: $tertiaryBackgroundColor;
+  background-color: $tertiaryBackgroundColor;;
   color: $tertiaryColor;
   display: flex;
   align-items: center;
@@ -58,14 +58,13 @@
 }
 
 .logo {
-  background-color: $primaryHoverBackgroundColor;
+  background: linear-gradient(to left, $tertiaryBackgroundColor 0%, #323c47 100%);
   background-size: auto 100%;
   background-repeat: no-repeat;
+  padding: 0.4rem 2rem 0.4rem 0.2rem;
   display: inline-block;
-  //width: 100px;
-  //height: 2.2rem;
-  //width: 152px;
-  height: 2.2rem;
+  cursor: pointer;
+  height: 2.5rem;
 }
 
 .popup {
