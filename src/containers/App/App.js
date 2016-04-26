@@ -33,7 +33,8 @@ const progressActions = progress.actions
   canSaveAll: selectors.canSaveAll(state),
   canRemove: selectors.canRemove(state),
   tabsWithEntities: selectors.getTabWithEntities(state),
-  activeEntity: selectors.getActiveEntity(state)
+  activeEntity: selectors.getActiveEntity(state),
+  lastActiveTemplate: selectors.getLastActiveTemplate(state)
 }), { ...actions, ...modalActions, ...progressActions })
 export default class App extends Component {
   static contextTypes = {
@@ -74,7 +75,7 @@ export default class App extends Component {
       this.props.start()
     }
 
-    let template = Object.assign({}, this.props.activeEntity)
+    let template = Object.assign({}, this.props.lastActiveTemplate)
     let request = { template: template }
     const entities = Object.assign({}, this.props.entities)
     await Promise.all([...Studio.previewListeners.map((l) => l(request, entities))])

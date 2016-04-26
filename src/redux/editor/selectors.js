@@ -30,10 +30,16 @@ export const getActiveTabWithEntity = (state) => {
   }
 }
 
-export const canRun = (state) => {
-  const entity = getActiveEntity(state)
+export const getLastActiveTemplate = (state) => {
+  if (!state.editor.lastActiveTemplateKey) {
+    return null
+  }
 
-  return entity ? entity.__entitySet === 'templates' : false
+  return selectors.getById(state, state.editor.lastActiveTemplateKey)
+}
+
+export const canRun = (state) => {
+  return !!state.editor.lastActiveTemplateKey
 }
 
 export const canRemove = (state) => {

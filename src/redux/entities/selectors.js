@@ -1,5 +1,5 @@
-export const getById = (state, id) => {
-  if (!state.entities[ id ]) {
+export const getById = (state, id, shouldThrow = true) => {
+  if (!state.entities[ id ] && shouldThrow) {
     throw new Error(`Unable to find entity with id ${id}`)
   }
 

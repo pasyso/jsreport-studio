@@ -44,10 +44,7 @@ export function openTab (tab) {
       tab: tab
     })
 
-    dispatch({
-      type: ActionTypes.ACTIVATE_TAB,
-      key: tab.key
-    })
+    dispatch(activateTab(tab.key))
   }
 }
 
@@ -82,7 +79,8 @@ export function activateTab (id) {
   return (dispatch, getState) => {
     dispatch({
       type: ActionTypes.ACTIVATE_TAB,
-      key: id
+      key: id,
+      entity: entities.selectors.getById(getState(), id, false)
     })
   }
 }
