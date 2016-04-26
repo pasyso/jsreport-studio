@@ -43,6 +43,8 @@ const start = async () => {
     </Provider>,
     document.getElementById('content')
   )
+
+  document.getElementById('loader').style.display = 'none'
 }
 
 start()
