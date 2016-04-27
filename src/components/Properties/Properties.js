@@ -27,11 +27,11 @@ export default class Properties extends Component {
   }
 
   renderOne (def, key, entity, entities, onChange) {
-    return !def.shouldDisplay(entity) ? <div key={key}/> : <div key={key} className='property-box'>
+    return !def.shouldDisplay(entity) ? <div key={key}/> : <div key={key} className={style.propertyBox}>
       <div
-        className={'property-title ' + (this.state[key] ? 'expanded' : '')}
+        className={style.propertyTitle + ' ' + (this.state[key] ? style.expanded : '')}
         onClick={() => this.toggle(key)}>{this.renderTitle(def.title, entity, entities)}</div>
-      <div className={'property-content-box ' + (this.state[key] ? 'expanded' : '')}>
+      <div className={style.propertyContentBox + ' ' + (this.state[key] ? style.expanded : '')}>
         {React.createElement(def.component, {
           key: key,
           entity: entity,

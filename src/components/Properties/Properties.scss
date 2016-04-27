@@ -20,34 +20,34 @@
   overflow: auto;
 }
 
-:global .property-title {
+ .propertyTitle {
   cursor: pointer;
   padding: 0.5rem 0.5rem 0.5rem 1.2rem;
   background-color: $secondaryColor;
   color: $primaryColor;
 }
 
-:global .property-title.expanded {
+.propertyTitle.expanded {
   background-color: $primarySelectionBackgroundColor;
   color: $secondaryBackgroundColor;
 }
 
-:global .property-title:hover {
+.propertyTitle:hover {
   background-color: $primaryHoverBackgroundColor;
 }
 
-:global .property-box {
+.propertyBox {
   margin: 0.3rem 0.3rem;
   min-width: 9rem;
 }
 
-:global .property-content-box {
+.propertyContentBox {
   max-height: 0;
   overflow: hidden;
   transition: max-height 0.4s;
 }
 
-:global .property-content-box.expanded {
+.propertyContentBox.expanded {
   max-height: 1000px;
 }
 
