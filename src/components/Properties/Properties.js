@@ -16,7 +16,6 @@ export default class Properties extends Component {
 
   toggle (key) {
     this.setState({ [key]: !this.state[key] })
-    console.log(this.state)
   }
 
   renderTitle (title, entity, entities) {

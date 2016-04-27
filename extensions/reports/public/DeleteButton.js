@@ -1,5 +1,6 @@
 import React, { Component } from 'react'
 import ReportEditor from './ReportEditor'
+import Studio from 'jsreport-studio'
 
 export default class DeleteButton extends Component {
   static propTypes = {
@@ -7,18 +8,12 @@ export default class DeleteButton extends Component {
     onUpdate: React.PropTypes.func.isRequired
   }
 
-  remove () {
-    if (ReportEditor.ActiveReport) {
-      window.open(`/reports/${ReportEditor.ActiveReport._id}/content`, '_blank')
-    }
-  }
-
   render () {
-    if (!this.props.tab || (this.props.tab.key !== 'Reports') || !ReportEditor.ActiveReport) {
+    if (!this.props.tab || (this.props.tab.key !== 'Reports') || !ReportEditor.Instance || !ReportEditor.Instance.ActiveReport) {
       return <div/>
     }
 
-    return <div className='toolbar-button' onClick={() => this.remove()}>
+    return <div className='toolbar-button' onClick={() => ReportEditor.Instance.remove()}>
       <i className='fa fa-trash'/>Delete
     </div>
   }

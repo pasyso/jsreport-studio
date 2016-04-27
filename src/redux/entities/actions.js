@@ -27,12 +27,20 @@ export function update (entity) {
 export function remove (id) {
   return async function (dispatch, getState) {
     const entity = selectors.getById(getState(), id)
-    await api.del(`/odata/${entity.__entitySet}(${id})`)
 
-    return dispatch({
-      type: ActionTypes.REMOVE,
-      _id: id
-    })
+    dispatch({ type: ActionTypes.API_START })
+    try {
+      await api.del(`/odata/${entity.__entitySet}(${id})`)
+      dispatch({ type: ActionTypes.API_DONE })
+
+      return dispatch({
+        type: ActionTypes.REMOVE,
+        _id: id
+      })
+    } catch (e) {
+      dispatch({ type: ActionTypes.API_FAILED, error: e })
+      throw e
+    }
   }
 }
 

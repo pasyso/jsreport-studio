@@ -3,11 +3,11 @@ import style from './ReportEditor.scss'
 import React, { Component} from 'react'
 import Studio from 'jsreport-studio'
 
-let _activeReport
+let _instance
 export default class ReportEditor extends Component {
 
-  static get ActiveReport () {
-    return _activeReport
+  static get Instance () {
+    return _instance
   }
 
   constructor () {
@@ -16,7 +16,8 @@ export default class ReportEditor extends Component {
     this.skip = 0
     this.top = 50
     this.pending = 0
-    _activeReport = null
+    this.ActiveReport = null
+    _instance = this
   }
 
   componentWillMount () {
@@ -24,13 +25,13 @@ export default class ReportEditor extends Component {
   }
 
   componentWillUnmount () {
-    _activeReport = null
+    this.ActiveReport = null
   }
 
   async openReport (r) {
     Studio.preview(`/reports/${r._id}/content`)
     this.setState({ active: r._id })
-    _activeReport = r
+    this.ActiveReport = r
   }
 
   async lazyFetch () {
@@ -59,6 +60,13 @@ export default class ReportEditor extends Component {
     }
 
     return this.renderItem(task, index)
+  }
+
+  async remove () {
+    const id = this.ActiveReport._id
+    this.ActiveReport = null
+    await Studio.api.del(`/odata/reports(${id})`)
+    this.setState({reports: this.state.reports.filter((r) => r._id !== id)})
   }
 
   renderItem (report, index) {

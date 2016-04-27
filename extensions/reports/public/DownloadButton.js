@@ -9,13 +9,13 @@ export default class DownloadButton extends Component {
   }
 
   download () {
-    if (ReportEditor.ActiveReport) {
-      window.open(relativizeUrl(`/reports/${ReportEditor.ActiveReport._id}/content`), '_blank')
+    if (ReportEditor.Instance && ReportEditor.Instance.ActiveReport) {
+      window.open(relativizeUrl(`/reports/${ReportEditor.Instance.ActiveReport._id}/content`), '_blank')
     }
   }
 
   render () {
-    if (!this.props.tab || (this.props.tab.key !== 'Reports') || !ReportEditor.ActiveReport) {
+    if (!this.props.tab || (this.props.tab.key !== 'Reports') || !ReportEditor.Instance || !ReportEditor.Instance.ActiveReport) {
       return <div/>
     }
 
