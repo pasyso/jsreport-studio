@@ -57,7 +57,7 @@ export default class App extends Component {
   }
 
   componentDidMount () {
-    this.update = _debounce(this.props.update, 500, { leading: true })
+    this.setUpDebouncedUpdate()
     if (this.props.params.shortid) {
       this.props.openTab({ shortid: this.props.params.shortid, entitySet: this.props.params.entitySet })
       return
@@ -70,7 +70,13 @@ export default class App extends Component {
     this.props.updateHistory()
   }
 
+  setUpDebouncedUpdate () {
+    this.update = _debounce(this.props.update, 5000, { leading: true })
+  }
+
   async handleRun () {
+    this.update.flush()
+
     if (!/Trident/i.test(navigator.userAgent) && !/MSIE/i.test(navigator.userAgent) && !/Edge/i.test(navigator.userAgent)) {
       this.props.start()
     }
@@ -80,6 +86,18 @@ export default class App extends Component {
     const entities = Object.assign({}, this.props.entities)
     await Promise.all([...Studio.previewListeners.map((l) => l(request, entities))])
     preview(request, 'previewFrame')
+  }
+
+  save () {
+    this.update.flush()
+    this.setUpDebouncedUpdate()
+    return this.props.save()
+  }
+
+  saveAll () {
+    this.update.flush()
+    this.setUpDebouncedUpdate()
+    return this.props.saveAll()
   }
 
   handleSplitChanged () {
@@ -92,8 +110,8 @@ export default class App extends Component {
   }
 
   render () {
-    const { tabsWithEntities, references, saveAll, isPending, canRun, canSave, canRemove, canSaveAll, activeTabWithEntity, entities,
-      openTab, openComponent, end, activateTab, activeTabKey, activeEntity, update, save, closeTab } = this.props
+    const { tabsWithEntities, references, isPending, canRun, canSave, canRemove, canSaveAll, activeTabWithEntity, entities,
+      openTab, openComponent, end, activateTab, activeTabKey, activeEntity, update, closeTab } = this.props
 
     console.log('render main')
 
@@ -105,8 +123,8 @@ export default class App extends Component {
         <div className={style.appContent + ' container'}>
           <div className='block'>
             <Toolbar
-              canRun={canRun} canSave={canSave} canSaveAll={canSaveAll} canRemove={canRemove} onSave={save}
-              onSaveAll={saveAll} isPending={isPending} activeTab={activeTabWithEntity} onUpdate={update}
+              canRun={canRun} canSave={canSave} canSaveAll={canSaveAll} canRemove={canRemove} onSave={() => this.save()}
+              onSaveAll={() => this.save()} isPending={isPending} activeTab={activeTabWithEntity} onUpdate={update}
               onRemove={() => openComponent(DELETE_CONFIRMATION_MODAL, {_id: activeEntity._id})}
               onRun={() => this.handleRun()}/>
 
@@ -124,7 +142,8 @@ export default class App extends Component {
                 </SplitPane>
 
                 <div className='block'>
-                  <TabTitles activeTabKey={activeTabKey} activateTab={activateTab} tabs={tabsWithEntities} closeTab={closeTab}/>
+                  <TabTitles activeTabKey={activeTabKey} activateTab={activateTab} tabs={tabsWithEntities}
+                             closeTab={closeTab}/>
                   <SplitPane
                     onChange={() => this.handleSplitChanged()} onDragFinished={() => this.handleSplitDragFinished()}
                     resizerClassName='resizer'>
