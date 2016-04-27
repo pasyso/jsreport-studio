@@ -28,7 +28,7 @@ export default class ScheduleEditor extends Component {
   async openReport (t) {
     const reports = await Studio.api.get(`/odata/reports?$filter=taskId eq '${t._id}'`)
     const report = reports.value[0]
-    Studio.preview(`/reports/${report._id}/content`)
+    Studio.setPreviewFrameSrc(`/reports/${report._id}/content`)
     this.setState({ active: t._id })
     _activeReport = report
   }

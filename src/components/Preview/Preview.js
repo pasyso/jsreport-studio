@@ -12,7 +12,7 @@ export default class Preview extends Component {
   }
 
   componentDidMount () {
-    Studio.previewSubscriber = (src) => this.setState({ src: relativizeUrl(src) })
+    Studio.frameChangeSubscriber = (src) => this.setState({ src: relativizeUrl(src) })
   }
 
   resizeStarted () {

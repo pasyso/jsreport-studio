@@ -72,7 +72,8 @@ export default class Toolbar extends Component {
     return Studio.toolbarComponents[position].map((p, i) => React.createElement(p, {
       key: i,
       tab: this.props.activeTab,
-      onUpdate: this.props.onUpdate
+      onUpdate: this.props.onUpdate,
+      canRun: this.props.canRun
     }))
   }
 

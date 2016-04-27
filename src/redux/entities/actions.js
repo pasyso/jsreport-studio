@@ -5,7 +5,7 @@ import * as selectors from './selectors.js'
 const prune = (entity) => {
   let pruned = {}
   Object.keys(entity).forEach((k) => {
-    if (k.indexOf('__') !== 0) {
+    if (k.indexOf('__') !== 0 && k.indexOf('@')) {
       pruned[k] = entity[k]
     }
   })

@@ -89,21 +89,21 @@ export default class Properties extends Component {
         </div>
 
         <div className='form-group'>
-          <label title='window.PHANTOM_HTML_TO_PDF_READY=true;'>Wait for printing trigger</label>
+          <label title='window.PHANTOM_HTML_TO_PDF_READY=true;'>wait for printing trigger</label>
           <input
             type='checkbox' title='window.PHANTOM_HTML_TO_PDF_READY=true;' checked={phantom.waitForJS === true}
             onChange={(v) => changePhantom({waitForJS: v.target.checked})}/>
         </div>
 
         <div className='form-group'>
-          <label>Block javascript</label>
+          <label>block javascript</label>
           <input
             type='checkbox' checked={phantom.blockJavaScript === true}
             onChange={(v) => changePhantom({blockJavaScript: v.target.checked})}/>
         </div>
 
         <div className='form-group'>
-          <label>Use custom phantomjs</label>
+          <label>use custom phantomjs</label>
           <input
             type='checkbox' checked={phantom.customPhantomJS === true}
             onChange={(v) => changePhantom({customPhantomJS: v.target.checked})}/>

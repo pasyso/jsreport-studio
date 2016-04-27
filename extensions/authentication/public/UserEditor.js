@@ -7,16 +7,6 @@ export default class DataEditor extends Component {
     onUpdate: React.PropTypes.func.isRequired
   }
 
-  //renderInitialPassword () {
-  //  const { entity, onUpdate } = this.props
-  //
-  //  return <div>
-  //    <input
-  //      type='password' value={entity.password || ''}
-  //      onChange={(v) => onUpdate({_id: entity._id, password: v.target.value})}/>
-  //  </div>
-  //}
-
   componentDidMount () {
     if (this.props.entity.__isNew && !this.props.entity.password) {
       Studio.openModal('CHANGE_PASSWORD_MODAL', { entity: this.props.entity })
@@ -26,8 +16,8 @@ export default class DataEditor extends Component {
   render () {
     const { entity } = this.props
 
-    return <div>
-      <div><h1>{entity.username}</h1></div>
+    return <div className='custom-editor'>
+      <h1><i className='fa fa-user'/> {entity.username}</h1>
     </div>
   }
 }

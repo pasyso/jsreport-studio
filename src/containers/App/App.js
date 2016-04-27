@@ -58,6 +58,12 @@ export default class App extends Component {
 
   componentDidMount () {
     this.setUpDebouncedUpdate()
+    Studio.previewSubscriber = (src) => {
+      if (!src) {
+        this.handleRun()
+      }
+    }
+
     if (this.props.params.shortid) {
       this.props.openTab({ shortid: this.props.params.shortid, entitySet: this.props.params.entitySet })
       return
@@ -82,7 +88,7 @@ export default class App extends Component {
     }
 
     let template = Object.assign({}, this.props.lastActiveTemplate)
-    let request = { template: template }
+    let request = { template: template, options: {} }
     const entities = Object.assign({}, this.props.entities)
     await Promise.all([...Studio.previewListeners.map((l) => l(request, entities))])
     preview(request, 'previewFrame')
@@ -124,7 +130,7 @@ export default class App extends Component {
           <div className='block'>
             <Toolbar
               canRun={canRun} canSave={canSave} canSaveAll={canSaveAll} canRemove={canRemove} onSave={() => this.save()}
-              onSaveAll={() => this.save()} isPending={isPending} activeTab={activeTabWithEntity} onUpdate={update}
+              onSaveAll={() => this.saveAll()} isPending={isPending} activeTab={activeTabWithEntity} onUpdate={update}
               onRemove={() => openComponent(DELETE_CONFIRMATION_MODAL, {_id: activeEntity._id})}
               onRun={() => this.handleRun()}/>
 
@@ -142,8 +148,8 @@ export default class App extends Component {
                 </SplitPane>
 
                 <div className='block'>
-                  <TabTitles activeTabKey={activeTabKey} activateTab={activateTab} tabs={tabsWithEntities}
-                             closeTab={closeTab}/>
+                  <TabTitles
+                    activeTabKey={activeTabKey} activateTab={activateTab} tabs={tabsWithEntities} closeTab={closeTab}/>
                   <SplitPane
                     onChange={() => this.handleSplitChanged()} onDragFinished={() => this.handleSplitDragFinished()}
                     resizerClassName='resizer'>

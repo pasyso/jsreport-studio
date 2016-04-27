@@ -110,9 +110,15 @@ class Studio {
     return () => { this.splitResizeSubscribers = this.splitResizeSubscribers.filter((s) => s !== fn) }
   }
 
-  preview (frameSrc) {
+  setPreviewFrameSrc (frameSrc) {
+    if (this.frameChangeSubscriber) {
+      this.frameChangeSubscriber(frameSrc)
+    }
+  }
+
+  preview () {
     if (this.previewSubscriber) {
-      this.previewSubscriber(frameSrc)
+      this.previewSubscriber()
     }
   }
 

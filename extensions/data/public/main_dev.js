@@ -17,5 +17,5 @@ Studio.previewListeners.push((request, entities) => {
     return
   }
 
-  request.data = dataDetails[0].dataJson
+  request.data = dataDetails[0].dataJson || JSON.stringify({})
 })

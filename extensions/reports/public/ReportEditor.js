@@ -29,7 +29,7 @@ export default class ReportEditor extends Component {
   }
 
   async openReport (r) {
-    Studio.preview(`/reports/${r._id}/content`)
+    Studio.setPreviewFrameSrc(`/reports/${r._id}/content`)
     this.setState({ active: r._id })
     this.ActiveReport = r
   }

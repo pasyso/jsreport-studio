@@ -24,4 +24,7 @@ module.exports = [{
 }, {
   name: 'scripts',
   directory: path.join(__dirname, 'scripts')
+}, {
+  name: 'debug',
+  directory: path.join(__dirname, 'debug')
 }]

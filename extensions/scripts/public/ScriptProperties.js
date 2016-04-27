@@ -80,7 +80,7 @@ export default class ScriptProperties extends Component {
     return (
       <div className='properties-section'>
         <div className='form-group'>
-          <select
+          <select title='Use CTRL to deselect item and also to select multiple options. The order of selected scripts is reflected on the server'
             multiple size='7' value={entity.scripts ? entity.scripts.map((s) => s.shortid) : []}
             onChange={(v) => onChange({_id: entity._id, scripts: selectValues(v, entity.scripts)})}>
             {scripts.map((s) => <option key={s.shortid} value={s.shortid}>{s.name}</option>)}

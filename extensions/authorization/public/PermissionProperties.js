@@ -28,7 +28,7 @@ export default class PermissionProperties extends Component {
       <div className='properties-section'>
         <div className='form-group'>
           <label>read permissions</label>
-          <select
+          <select title='Use CTRL to deselect item and also to select multiple options.'
             multiple value={entity.readPermissions || []}
             onChange={(v) => onChange({_id: entity._id, readPermissions: selectValues(v.target)})}>
             {users.map((e) => <option key={e._id} value={e._id}>{e.username}</option>)}
@@ -36,7 +36,7 @@ export default class PermissionProperties extends Component {
         </div>
         <div className='form-group'>
           <label>write permissions</label>
-          <select
+          <select title='Use CTRL to deselect item and also to select multiple options.'
             multiple value={entity.writePermissions || []}
             onChange={(v) => onChange({_id: entity._id, writePermissions: selectValues(v.target)})}>
             {users.map((e) => <option key={e._id} value={e._id}>{e.username}</option>)}

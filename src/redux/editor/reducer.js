@@ -17,7 +17,8 @@ reducer.handleAction(ActionTypes.OPEN_TAB, (state, { tab }) => ({
 reducer.handleAction(ActionTypes.OPEN_NEW_TAB, (state, { tab }) => ({
   ...state,
   activeTab: tab.key,
-  tabs: [...state.tabs, tab]
+  tabs: [...state.tabs, tab],
+  lastActiveTemplateKey: (tab.entitySet === 'templates') ? tab._id : state.lastActiveTemplateKey
 }))
 
 reducer.handleActions([EntityActionTypes.REMOVE, ActionTypes.CLOSE_TAB], (state, action) => {
@@ -60,6 +61,7 @@ reducer.handleAction(EntityActionTypes.SAVE_NEW, (state, action) => {
       ...state.tabs.slice(0, index),
       tab,
       ...state.tabs.slice(index + 1)],
-    activeTab: action.entity._id
+    activeTab: action.entity._id,
+    lastActiveTemplateKey: state.lastActiveTemplateKey === action.oldId ? action.entity._id : state.lastActiveTemplateKey
   }
 })
