@@ -69,7 +69,7 @@ export default class App extends Component {
       return
     }
 
-    return this.props.openTab({ key: 'StartupPage', editorComponentKey: 'startup', title: 'Statup' })
+    this.openStartup()
   }
 
   componentDidUpdate () {
@@ -111,6 +111,10 @@ export default class App extends Component {
     this.refs.preview.resizeStarted()
   }
 
+  openStartup () {
+    this.props.openTab({ key: 'StartupPage', editorComponentKey: 'startup', title: 'Statup' })
+  }
+
   handleSplitDragFinished () {
     this.refs.preview.resizeEnded()
   }
@@ -132,7 +136,7 @@ export default class App extends Component {
               canRun={canRun} canSave={canSave} canSaveAll={canSaveAll} canRemove={canRemove} onSave={() => this.save()}
               onSaveAll={() => this.saveAll()} isPending={isPending} activeTab={activeTabWithEntity} onUpdate={update}
               onRemove={() => openComponent(DELETE_CONFIRMATION_MODAL, {_id: activeEntity._id})}
-              onRun={() => this.handleRun()}/>
+              onRun={() => this.handleRun()} openStartup={() => this.openStartup()}/>
 
             <div className='block'>
               <SplitPane

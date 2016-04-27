@@ -19,72 +19,12 @@ export default class Startup extends Component {
     const { templates } = this.state
     const { openTab } = this.props
 
-    return <div className='block' style={{overflow: 'auto', minHeight: 0, height: 'auto'}}>
+    return <div className='block custom-editor' style={{overflow: 'auto', minHeight: 0, height: 'auto'}}>
       Last edited templates:
       <div>
-        {templates.map((t) => <div key={t._id}><a style={{cursor: 'pointer', textDecoration:'underline'}}
-                                                  onClick={() => openTab({_id: t._id})} key={t._id}>{t.name}</a></div>)}
-        <div>fooo</div>
-        <div>fooo</div>
-        <div>fooo</div>
-        <div>fooo</div>
-        <div>fooo</div>
-        <div>fooo</div>
-        <div>fooo</div>
-        <div>fooo</div>
-        <div>fooo</div>
-        <div>fooo</div>
-        <div>fooo</div>
-        <div>fooo</div>
-        <div>fooo</div>
-        <div>fooo</div>
-        <div>fooo</div>
-        <div>fooo</div>
-        <div>fooo</div>
-        <div>fooo</div>
-        <div>fooo</div>
-        <div>fooo</div>
-        <div>fooo</div>
-        <div>fooo</div>
-        <div>fooo</div>
-        <div>fooo</div>
-        <div>fooo</div>
-        <div>fooo</div>
-        <div>fooo</div>
-        <div>fooo</div>
-        <div>fooo</div>
-        <div>fooo</div>
-        <div>fooo</div>
-        <div>fooo</div>
-        <div>fooo</div>
-        <div>fooo</div>
-        <div>fooo</div>
-        <div>fooo</div>
-        <div>fooo</div>
-        <div>fooo</div>
-        <div>fooo</div>
-        <div>fooo</div>
-        <div>fooo</div>
-        <div>fooo</div>
-        <div>fooo</div>
-        <div>fooo</div>
-        <div>fooo</div>
-        <div>fooo</div>
-        <div>fooo</div>
-        <div>fooo</div>
-        <div>fooo</div>
-        <div>fooo</div>
-        <div>fooo</div>
-        <div>fooo</div>
-        <div>fooo</div>
-        <div>fooo</div>
-        <div>fooo</div>
-        <div>fooo</div>
-        <div>fooo</div>
-        <div>fooo</div>
-        <div>fooo</div>
-        <div>fooo</div>
-
+        {templates.map((t) => <div key={t._id}><a
+          style={{cursor: 'pointer', textDecoration:'underline'}}
+          onClick={() => openTab({_id: t._id})} key={t._id}>{t.name}</a></div>)}
       </div>
     </div>
   }
