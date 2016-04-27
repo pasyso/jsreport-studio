@@ -1,4 +1,3 @@
-import style from './ImageEditor.scss'
 import React, { Component } from 'react'
 
 export default class ImageEditor extends Component {
@@ -9,8 +8,8 @@ export default class ImageEditor extends Component {
   render () {
     const { entity } = this.props
 
-    return (<div className={style.editor}>
-      <div className={style.header}><h1><i className='fa fa-camera'/> {entity.name}</h1></div>
+    return (<div className='custom-editor'>
+      <div><h1><i className='fa fa-camera'/> {entity.name}</h1></div>
       <div>
         <div>Embed into template using:
           <code>

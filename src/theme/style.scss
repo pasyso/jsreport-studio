@@ -1,4 +1,6 @@
 @import "common";
+@import "controls";
+@import "resizer";
 
 *, *:before, *:after {
   box-sizing: inherit;
@@ -31,138 +33,10 @@ html, body {
   flex-direction: column;
 }
 
-:focus {
-  outline: 0;
-}
-
 .block-item {
   flex: 1;
 }
 
-.ace {
-  flex: 1;
-  height: auto !important;
+.custom-editor {
+  padding: 1rem;
 }
-
-.form-group {
-  display: block;
-  margin: 0.5rem 1rem;
-  min-width: 8rem;
-}
-
-.form-group > * {
-  display: block;
-  width: 100%;
-  margin-top: 0.3rem;
-}
-
-select {
-  border: none;
-  border-bottom: solid 0.2rem $secondaryColor;
-  transition: border 0.3s;
-  padding: 0.5rem;
-}
-
-select:hover, select:focus, select:active {
-  border-bottom: solid 0.2rem $primarySelectionBackgroundColor;
-}
-
-input {
-  border: none;
-  border-bottom: solid 0.2rem $secondaryColor;
-  transition: border 0.3s;
-  padding: 0.3rem;
-}
-
-input:hover, input:focus, input:active {
-  border-bottom: solid 0.2rem $primarySelectionBackgroundColor;
-}
-
-input[type=checkbox] {
-  width: auto;
-}
-
-
-.resizer {
-  background: #000;
-  opacity: .2;
-  /*z-index: 1000;*/
-  box-sizing: border-box;
-  background-clip: padding-box;
-  width: 11px;
-  margin: 0 -5px;
-  border-left: 5px solid rgba(255, 255, 255, 0);
-  border-right: 5px solid rgba(255, 255, 255, 0);
-  cursor: col-resize;
-}
-
-.resizer-horizontal {
-  background: #000;
-  opacity: .2;
-  /*z-index: 1000;*/
-  box-sizing: border-box;
-  background-clip: padding-box;
-  height: 11px;
-  margin: -5px 0;
-  border-top: 5px solid rgba(255, 255, 255, 0);
-  border-bottom: 5px solid rgba(255, 255, 255, 0);
-  cursor: row-resize;
-  width: 100%;
-}
-
-
-.resizer-horizontal:hover {
-  transition: all 2s ease;
-  border-top: 5px solid rgba(0, 0, 0, 0.5);
-  border-bottom: 5px solid rgba(0, 0, 0, 0.5);
-}
-
-.resizer:hover {
-  transition: all 2s ease;
-  border-left: 5px solid rgba(0, 0, 0, 0.5);
-  border-right: 5px solid rgba(0, 0, 0, 0.5);
-}
-
-.resizer:hover {
-  transition: all 2s ease;
-}
-
-.button-bar {
-  display: flex;
-  margin-top: 2rem;
-  flex-direction: row-reverse;
-}
-
-
-
-.button {
-  margin-left: 1rem;
-  flex: 0.2;
-  border: none;
-  color: $primarySelectionColor;
-  padding: 0.5rem;
-  text-align: center;
-  text-decoration: none;
-  cursor: pointer;
-  box-shadow: 0 0 1px rgba(0, 0, 0, 0);
-}
-
-
-
-@keyframes fadein {
-  0% { opacity: 0; display: none }
-  100% { opacity: 1; display: flex;  }
-}
-
-.button:hover, .button:focus, button:active {
-  box-shadow: 0 0 0.5rem rgba(0, 0, 0, 0.6);
-}
-
-.button.confirmation {
-  background-color: #4CAF50;
-}
-
-.button.danger {
-  background-color: #da532c;
-}
-

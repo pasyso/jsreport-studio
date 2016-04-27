@@ -86,8 +86,8 @@ export default class ReportEditor extends Component {
   render () {
     const { count } = this.state
 
-    return <div className={'block ' + style.editor}>
-      <div className={style.header}>
+    return <div className='block custom-editor'>
+      <div>
         <h1><i className='fa fa-folder-open-o'/> Reports</h1>
       </div>
       <div className={style.listContainer + ' block-item'}>

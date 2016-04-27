@@ -86,8 +86,8 @@ export default class ScheduleEditor extends Component {
     const { entity } = this.props
     const { count } = this.state
 
-    return <div className={'block ' + style.editor}>
-      <div className={style.header}><h1><i className='fa fa-calendar'/> {entity.name}</h1>
+    return <div className='block custom-editor'>
+      <div><h1><i className='fa fa-calendar'/> {entity.name}</h1>
         {entity.nextRun ? (<div><span>next run&nbsp;&nbsp;</span>
           <small>{entity.nextRun.toLocaleString()}</small>
         </div>) : <div>Not planned yet. Fill CRON expression and report template in the properties.</div>}
