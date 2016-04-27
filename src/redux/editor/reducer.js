@@ -33,17 +33,18 @@ reducer.handleActions([EntityActionTypes.REMOVE, ActionTypes.CLOSE_TAB], (state,
     ...state,
     activeTab: newActivatTabKey,
     tabs: newTabs,
-    lastActiveTemplateKey: (newActivatTab && newActivatTab.entitySet === 'templates') ? newActivatTab.key
-      : (newTabs.filter((t) => t.key === state.lastActiveTemplateKey).length ? state.lastActiveTemplateKey : null)
+    lastActiveTemplateKey: (newActivatTab && newActivatTab.entitySet === 'templates') ? newActivatTab._id
+      : (newTabs.filter((t) => t._id === state.lastActiveTemplateKey).length ? state.lastActiveTemplateKey : null)
   }
 })
 
 reducer.handleAction(ActionTypes.ACTIVATE_TAB, (state, action) => {
   const newTab = state.tabs.filter((t) => t.key === action.key)[0]
+
   return {
     ...state,
     activeTab: action.key,
-    lastActiveTemplateKey: newTab.entitySet === 'templates' ? action.key : state.lastActiveTemplateKey
+    lastActiveTemplateKey: newTab.entitySet === 'templates' ? newTab._id : state.lastActiveTemplateKey
   }
 })
 

@@ -47,6 +47,17 @@ export default class Properties extends Component {
           <button onClick={() => this.openHeaderFooter('footer')}>open in tab...</button>
         </div>
 
+        <div className='form-group'><label>paper format</label>
+          <select value={phantom.format || ''} onChange={(v) => changePhantom({format: v.target.value})}>
+            <option key='A4' value='A4'>A4</option>
+            <option key='A3' value='A3'>A3</option>
+            <option key='A5' value='A5'>A5</option>
+            <option key='Legal' value='Legal'>Legal</option>
+            <option key='Letter' value='Letter'>Letter</option>
+            <option key='Tabloid' value='Tabloid'>Tabloid</option>
+          </select>
+        </div>
+
         <div className='form-group'><label>paper width</label>
           <input
             type='text' placeholder='1cm' value={phantom.paperWidth || ''}
@@ -58,10 +69,44 @@ export default class Properties extends Component {
             onChange={(v) => changePhantom({paperHeight: v.target.value})}/>
         </div>
 
+        <div className='form-group'><label>orientation</label>
+          <select value={phantom.orientation || ''} onChange={(v) => changePhantom({orientation: v.target.value})}>
+            <option key='portrait' value='portrait'>portrait</option>
+            <option key='landscape' value='landscape'>landscape</option>
+          </select>
+        </div>
+
         <div className='form-group'><label>print delay</label>
           <input
-            type='text' placeholder='1000' value={phantom.paperWidth || ''}
+            type='text' placeholder='1000' value={phantom.printDelay || ''}
             onChange={(v) => changePhantom({printDelay: v.target.value})}/>
+        </div>
+
+        <div className='form-group'><label>resource timeout</label>
+          <input
+            type='text' placeholder='1000' value={phantom.resourceTimeout || ''}
+            onChange={(v) => changePhantom({resourceTimeout: v.target.value})}/>
+        </div>
+
+        <div className='form-group'>
+          <label title='window.PHANTOM_HTML_TO_PDF_READY=true;'>Wait for printing trigger</label>
+          <input
+            type='checkbox' title='window.PHANTOM_HTML_TO_PDF_READY=true;' checked={phantom.waitForJS === true}
+            onChange={(v) => changePhantom({waitForJS: v.target.checked})}/>
+        </div>
+
+        <div className='form-group'>
+          <label>Block javascript</label>
+          <input
+            type='checkbox' checked={phantom.blockJavaScript === true}
+            onChange={(v) => changePhantom({blockJavaScript: v.target.checked})}/>
+        </div>
+
+        <div className='form-group'>
+          <label>Use custom phantomjs</label>
+          <input
+            type='checkbox' checked={phantom.customPhantomJS === true}
+            onChange={(v) => changePhantom({customPhantomJS: v.target.checked})}/>
         </div>
       </div>
     )

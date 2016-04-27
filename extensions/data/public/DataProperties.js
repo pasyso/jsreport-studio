@@ -10,7 +10,13 @@ export default class Properties extends Component {
       return 'data'
     }
 
-    return 'selected data: ' + Properties.selectDataItems(entities).filter((e) => entity.data.shortid === e.shortid)[0].name
+    const foundItems = Properties.selectDataItems(entities).filter((e) => entity.data.shortid === e.shortid)
+
+    if (!foundItems.length) {
+      return 'data'
+    }
+
+    return 'sample data: ' + foundItems[0].name
   }
 
   render () {
