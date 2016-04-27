@@ -20,17 +20,48 @@
   overflow: auto;
 }
 
+:global .property-title {
+  cursor: pointer;
+  padding: 0.5rem 0.5rem 0.5rem 1.2rem;
+  background-color: $secondaryColor;
+  color: $primaryColor;
+}
+
+:global .property-title.expanded {
+  background-color: $primarySelectionBackgroundColor;
+  color: $secondaryBackgroundColor;
+}
+
+:global .property-title:hover {
+  background-color: $primaryHoverBackgroundColor;
+}
+
+:global .property-box {
+  margin: 0.3rem 0.3rem;
+  min-width: 9rem;
+}
+
+:global .property-content-box {
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.4s;
+}
+
+:global .property-content-box.expanded {
+  max-height: 1000px;
+}
+
 :global .properties-section {
   box-shadow: 0 0.1rem 0.1rem 0 rgba(0, 0, 0, 0.2);
   border-radius: 0.1rem;
-  margin: 0.3rem 0.3rem;
-  flex: 1;
+  padding-bottom: 0.5rem;
 }
+
 
 .propertiesNodes {
   padding: 0.5em;
   overflow: auto;
-  flex: 1;
-  flex-wrap: wrap;
-  display:flex;
+  flex-direction: column;
+  display: flex;
 }
+

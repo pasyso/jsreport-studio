@@ -60,7 +60,7 @@ select {
   border: none;
   border-bottom: solid 0.2rem $secondaryColor;
   transition: border 0.3s;
-  padding: 0.3rem;
+  padding: 0.5rem;
 }
 
 select:hover, select:focus, select:active {
@@ -141,6 +141,13 @@ input:hover, input:focus, input:active {
   text-decoration: none;
   cursor: pointer;
   box-shadow: 0 0 1px rgba(0, 0, 0, 0);
+}
+
+
+
+@keyframes fadein {
+  0% { opacity: 0; display: none }
+  100% { opacity: 1; display: flex;  }
 }
 
 .button:hover, .button:focus, button:active {

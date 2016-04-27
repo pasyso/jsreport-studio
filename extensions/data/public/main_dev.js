@@ -3,7 +3,7 @@ import Properties from './DataProperties.js'
 import Studio from 'jsreport-studio'
 
 Studio.registerEntitySet({ name: 'data', faIcon: 'fa-database', visibleName: 'sample data' })
-Studio.properties.push(Properties)
+Studio.registerPropertyComponent(Properties.title, Properties, (entity) => entity.__entitySet === 'templates')
 Studio.registerTabEditorComponent('data', DataEditor)
 
 Studio.previewListeners.push((request, entities) => {

@@ -1,22 +1,25 @@
 import React, { Component } from 'react'
 
 export default class Properties extends Component {
-  selectDataItems (entities) {
+  static selectDataItems (entities) {
     return Object.keys(entities).filter((k) => entities[k].__entitySet === 'data').map((k) => entities[k])
+  }
+
+  static title (entity, entities) {
+    if (!entity.data || !entity.data.shortid) {
+      return 'data'
+    }
+
+    return 'selected data: ' + Properties.selectDataItems(entities).filter((e) => entity.data.shortid === e.shortid)[0].name
   }
 
   render () {
     const { entity, entities, onChange } = this.props
-    const dataItems = this.selectDataItems(entities)
-
-    if (entity.__entitySet !== 'templates') {
-      return <div></div>
-    }
+    const dataItems = Properties.selectDataItems(entities)
 
     return (
       <div className='properties-section'>
         <div className='form-group'>
-          <label>data</label>
           <select
             value={entity.data ? entity.data.shortid : ''}
             onChange={(v) => onChange({_id: entity._id, data: v.target.value !== 'empty' ? { shortid: v.target.value } : null})}>

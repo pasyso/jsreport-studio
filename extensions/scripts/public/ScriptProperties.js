@@ -5,22 +5,30 @@ export default class ScriptProperties extends Component {
     return Object.keys(entities).filter((k) => entities[k].__entitySet === 'scripts').map((k) => entities[k])
   }
 
-  renderOrder () {
-    const scripts = (this.props.entity.scripts || []).map((s) => ({
+  static getSelectedScripts (entity, entities) {
+    return (entity.scripts || []).map((s) => ({
       ...s,
-      name: Object.keys(this.props.entities).map((k) => this.props.entities[k]).filter((sc) => sc.shortid === s.shortid)[0].name
+      name: Object.keys(entities).map((k) => entities[k]).filter((sc) => sc.shortid === s.shortid)[0].name
     }))
+  }
 
-    return <ol>{scripts.map((s) => <li key={s.shortid}>{s.name}</li>)}</ol>
+  renderOrder () {
+    const scripts = ScriptProperties.getSelectedScripts(this.props.entity, this.props.entities)
+
+    return <span>{scripts.map((s) => <span key={s.shortid}>{s.name + ' '}</span>)}</span>
+  }
+
+  static title (entity, entities) {
+    if (!entity.scripts || !entity.scripts.length) {
+      return 'scripts'
+    }
+
+    return ScriptProperties.getSelectedScripts(entity, entities).map((s) => s.name).join(', ')
   }
 
   render () {
     const { entity, entities, onChange } = this.props
     const scripts = this.selectScripts(entities)
-
-    if (entity.__entitySet !== 'templates') {
-      return <div></div>
-    }
 
     const selectValues = (event, ascripts) => {
       const el = event.target
@@ -44,14 +52,12 @@ export default class ScriptProperties extends Component {
     return (
       <div className='properties-section'>
         <div className='form-group'>
-          <label>scripts</label>
-
-          <div>Order:{this.renderOrder()}</div>
           <select
-            multiple value={entity.scripts ? entity.scripts.map((s) => s.shortid) : []}
+            multiple size='7' value={entity.scripts ? entity.scripts.map((s) => s.shortid) : []}
             onChange={(v) => onChange({_id: entity._id, scripts: selectValues(v, entity.scripts)})}>
             {scripts.map((s) => <option key={s.shortid} value={s.shortid}>{s.name}</option>)}
           </select>
+          {(entity.scripts && entity.scripts.length) ? <div><span>Run order:</span>{this.renderOrder()}</div> : <div/>}
         </div>
       </div>
     )

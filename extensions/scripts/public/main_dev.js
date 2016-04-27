@@ -3,7 +3,7 @@ import Properties from './ScriptProperties.js'
 import Studio from 'jsreport-studio'
 
 Studio.registerEntitySet({ name: 'scripts', faIcon: 'fa-cogs', visibleName: 'script' })
-Studio.properties.push(Properties)
+Studio.registerPropertyComponent(Properties.title, Properties, (entity) => entity.__entitySet === 'templates')
 Studio.registerTabEditorComponent('scripts', ScriptEditor)
 
 Studio.previewListeners.push((request, entities) => {

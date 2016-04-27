@@ -27,7 +27,11 @@ class Studio {
 
     this.relativizeUrl = relativizeUrl
 
-    this.properties = [TemplateProperties]
+    this.propertyComponents = [{
+      title: TemplateProperties.title,
+      shouldDisplay: (entity) => entity.__entitySet === 'templates',
+      component: TemplateProperties
+    }]
     this.api = api
     this.tabTitleComponents = {}
     this.tabEditorComponents = { templates: require('./components/Editor/TemplateEditor.js'), startup: Startup }
@@ -87,6 +91,14 @@ class Studio {
 
   registerTabEditorComponent (key, component) {
     this.tabEditorComponents[key] = component
+  }
+
+  registerPropertyComponent (title, component, shouldDisplay) {
+    this.propertyComponents.push({
+      title: title,
+      component: component,
+      shouldDisplay: shouldDisplay
+    })
   }
 
   getEntityName (entity) {

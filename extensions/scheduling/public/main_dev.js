@@ -5,5 +5,5 @@ import Studio from 'jsreport-studio'
 
 Studio.registerEntitySet({ name: 'schedules', faIcon: 'fa-calendar', visibleName: 'schedule' })
 Studio.registerTabEditorComponent('schedules', ScheduleEditor)
-Studio.properties.push(ScheduleProperties)
+Studio.registerPropertyComponent('schedules', ScheduleProperties, (entity) => entity.__entitySet === 'schedules')
 Studio.registerToolbarComponent(DownloadButton)

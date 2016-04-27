@@ -16,6 +16,10 @@ export default class TemplateProperties extends Component {
     </select>
   }
 
+  static title (entity) {
+    return entity.engine + ', ' + entity.recipe
+  }
+
   renderRecipes () {
     const { entity, onChange } = this.props
 
