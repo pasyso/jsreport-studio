@@ -1,22 +1,8 @@
 import React, {Component} from 'react'
 
 export default class TabContent extends Component {
-  constructor () {
-    super()
-    this.state = {}
-  }
-
-  static propTypes = {}
-
-  static defaultProps = {}
-
-  componentDidMount () {
-  }
-
-  componentWillReceiveProps (props) {
-  }
-
-  componentWillUnmount () {
+  shouldComponentUpdate (nextProps) {
+    return this.props.active || nextProps.active
   }
 
   render () {
