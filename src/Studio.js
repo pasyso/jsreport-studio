@@ -150,8 +150,8 @@ class Studio {
     this.store.dispatch(entities.actions.addExisting(entity))
   }
 
-  getEntityByShortid (shortid) {
-    return entities.selectors.getByShortid(this.store.getState(), shortid)
+  getEntityByShortid (shortid, shouldThrow = true) {
+    return entities.selectors.getByShortid(this.store.getState(), shortid, shouldThrow)
   }
 }
 

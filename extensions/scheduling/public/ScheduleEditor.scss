@@ -1,52 +1,31 @@
-.list {
-  display: flex;
-  flex: 1;
-  flex-wrap: wrap;
-  justify-content: space-between;
-}
-
 .listContainer {
   margin-top: 1rem;
   overflow: auto;
   position: relative;
   padding: 1rem;
+  min-height: 0;
+  height: auto;
 }
 
 .listContainer > div {
+  // it somehow shows the horizontal scrollbar even when no needeit, this workaround to hide it
+  width: 95%;
+  // the tabs height based on flex box is otherwise wrongly calculated
   position: absolute !important;
 }
 
-.item {
-  display: flex;
-  flex-direction: column;
-  padding: 0.4rem;
-  width: 10rem;
-  height: 6.8rem;
-  margin: 1rem;
-  cursor: pointer;
-  background-color: rgba(0, 122, 204, 0.07);
-  justify-content: space-between;
-  align-items: center;
-  box-shadow: 0 0.1rem 0.1rem 0 rgba(0, 0, 0, 0.24);
-  border-radius: 0.1rem;
-}
-
-.active, .item:hover {
-  box-shadow: 0 0 1rem rgba(0, 0, 0, 0.8)
-}
-
 .state {
-  flex: 0.5;
   font-size: 0.8rem;
-  padding: 0.4rem;
-  margin-bottom: 0.4rem;
+  padding: 0.3rem;
+  display: inline-block;
+  text-align: center;
+  min-width: 4rem;
 }
 
 .error {
   background-color: #da532c;
   color: white;
 }
-
 
 .cancelled {
   background-color: orange;
@@ -56,12 +35,5 @@
 .success {
   background-color: #4CAF50;
   color: white;
-}
-.date {
-  flex: 1;
-  display: block;
-  flex-direction: column;
-  text-align: center;
-  font-size: 0.7rem;
 }
 

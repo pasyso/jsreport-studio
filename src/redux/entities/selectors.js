@@ -6,14 +6,14 @@ export const getById = (state, id, shouldThrow = true) => {
   return state.entities[ id ]
 }
 
-export const getByShortid = (state, shortid) => {
+export const getByShortid = (state, shortid, shouldThrow = true) => {
   const entities = Object.keys(state.entities).map((e) => state.entities[ e ]).filter((e) => e.shortid === shortid)
 
-  if (!entities.length) {
+  if (!entities.length && shouldThrow) {
     throw new Error(`Unable to find entity with shprtod ${shortid}`)
   }
 
-  return entities[0]
+  return entities.length ? entities[0] : null
 }
 
 export const getReferences = (state) => {

@@ -123,8 +123,6 @@ export default class App extends Component {
     const { tabsWithEntities, references, isPending, canRun, canSave, canRemove, canSaveAll, activeTabWithEntity, entities,
       openTab, openComponent, end, activateTab, activeTabKey, activeEntity, update, closeTab } = this.props
 
-    console.log('render main')
-
     return (
       <div className='container'>
         <Helmet/>

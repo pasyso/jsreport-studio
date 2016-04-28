@@ -26,11 +26,17 @@ export default class ScheduleEditor extends Component {
   }
 
   async openReport (t) {
-    const reports = await Studio.api.get(`/odata/reports?$filter=taskId eq '${t._id}'`)
-    const report = reports.value[0]
-    Studio.setPreviewFrameSrc(`/reports/${report._id}/content`)
-    this.setState({ active: t._id })
-    _activeReport = report
+    if (t.state === 'success') {
+      const reports = await Studio.api.get(`/odata/reports?$filter=taskId eq '${t._id}'`)
+      const report = reports.value[0]
+      Studio.setPreviewFrameSrc(`/reports/${report._id}/content`)
+      this.setState({ active: t._id })
+      _activeReport = report
+    } else {
+      this.setState({ active: null })
+      _activeReport = null
+      Studio.setPreviewFrameSrc('data:text/html;charset=utf-8,' + encodeURI(t.error || t.state))
+    }
   }
 
   async lazyFetch () {
@@ -53,33 +59,42 @@ export default class ScheduleEditor extends Component {
     if (!task) {
       this.pending = Math.max(this.pending, index)
       this.lazyFetch()
-      return <div key={index} className={style.item}>
-        <div><i className='fa fa-spinner fa-spin fa-fw'/></div>
-      </div>
+      return <tr key={index}>
+        <td><i className='fa fa-spinner fa-spin fa-fw'/></td>
+      </tr>
     }
 
     return this.renderItem(task, index)
   }
 
   renderItem (task, index) {
-    return <div
-      key={index} className={style.item + ' ' + ((this.state.active === task._id) ? style.active : '')}
+    return <tr
+      key={index} className={(this.state.active === task._id) ? 'active' : ''}
       onClick={() => this.openReport(task)}>
-      <div
-        className={style.state + ' ' + (task.state === 'error' ? style.error : (task.state === 'success' ? style.success : style.canceled))}>{task.state}</div>
-      <div className={style.date}>
-        <div className={style.label}>start</div>
+      <td>
+        <span className={style.state + ' ' + (task.state === 'error' ? style.error : (task.state === 'success' ? style.success : style.canceled))}>
+          {task.state}</span>
+      </td>
+      <td>
         <span className={style.value}>{task.creationDate ? task.creationDate.toLocaleString() : ''}</span>
-      </div>
-      <div className={style.date}>
-        <div className={style.label}>finish</div>
+      </td>
+      <td>
         <div className={style.value}>{task.finishDate ? task.finishDate.toLocaleString() : ''}</div>
-      </div>
-    </div>
+      </td>
+    </tr>
   }
 
   renderItems (items, ref) {
-    return <div className={style.list} ref={ref}>{items}</div>
+    return <table className='table' ref={ref}>
+      <thead>
+        <tr>
+          <th>state</th>
+          <th>start</th>
+          <th>finish</th>
+        </tr>
+      </thead>
+      <tbody>{items}</tbody>
+    </table>
   }
 
   render () {

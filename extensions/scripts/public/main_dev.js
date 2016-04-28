@@ -11,8 +11,13 @@ Studio.previewListeners.push((request, entities) => {
     return
   }
 
-  request.template.scripts = request.template.scripts.map((s) => ({
-    ...s,
-    content: Studio.getEntityByShortid(s.shortid).content
-  }))
+  request.template.scripts = request.template.scripts.map((s) => {
+    const script = Studio.getEntityByShortid(s.shortid, false)
+
+    if (!script) {
+      return s
+    }
+
+    return script
+  }).filter((s) => !s.__isNew || s.content)
 })

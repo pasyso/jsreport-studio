@@ -1,7 +1,15 @@
 import { selectors } from '../entities'
 
-export const getLogsWithTemplates = (state) => ((state.settings.failedRequestsLog || []).map((l) => ({
-  ...l,
-  templateName: selectors.getById(state, l.template) ? selectors.getById(state, l.template).name : 'not found'
-})))
+export const getLogsWithTemplates = (state) => ((state.settings.failedRequestsLog || []).map((l) => {
+  let template = selectors.getByShortid(state, l.template.shortid, false)
+
+  if (!template) {
+    template = { name: 'anonymous' }
+  }
+
+  return {
+    ...l,
+    template: { ...template }
+  }
+}))
 

@@ -54,9 +54,9 @@ export default class ReportEditor extends Component {
     if (!task) {
       this.pending = Math.max(this.pending, index)
       this.lazyFetch()
-      return <div key={index} className={style.item}>
-        <div><i className='fa fa-spinner fa-spin fa-fw'/></div>
-      </div>
+      return <tr key={index}>
+        <td><i className='fa fa-spinner fa-spin fa-fw'/></td>
+      </tr>
     }
 
     return this.renderItem(task, index)
@@ -66,21 +66,30 @@ export default class ReportEditor extends Component {
     const id = this.ActiveReport._id
     this.ActiveReport = null
     await Studio.api.del(`/odata/reports(${id})`)
-    this.setState({reports: this.state.reports.filter((r) => r._id !== id)})
+    this.setState({ reports: this.state.reports.filter((r) => r._id !== id) })
   }
 
   renderItem (report, index) {
-    return <div
-      key={index} className={style.item + ' ' + ((this.state.active === report._id) ? style.active : '')}
+    return <tr
+      key={index} className={(this.state.active === report._id) ? 'active' : ''}
       onClick={() => this.openReport(report)}>
-      <div>{report.name}</div>
-      <div>{report.creationDate.toLocaleString()}</div>
-      <div>{report.recipe}</div>
-    </div>
+      <td className='selection'>{report.name}</td>
+      <td>{report.creationDate.toLocaleString()}</td>
+      <td>{report.recipe}</td>
+    </tr>
   }
 
   renderItems (items, ref) {
-    return <div className={style.list} ref={ref}>{items}</div>
+    return <table className='table' ref={ref}>
+      <thead>
+        <th>name</th>
+        <th>created on</th>
+        <th>recipe</th>
+      </thead>
+      <tbody>
+      {items}
+      </tbody>
+    </table>
   }
 
   render () {

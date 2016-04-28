@@ -65,7 +65,7 @@ export default class Startup extends Component {
           </thead>
           <tbody>
           {templates.map((t) => <tr key={t._id} onClick={() => openTab({_id: t._id})}>
-            <td>{t.name}</td>
+            <td className='selection'>{t.name}</td>
             <td>{t.recipe}</td>
             <td>{t.modificationDate.toLocaleString()}</td>
           </tr>)}
@@ -84,7 +84,7 @@ export default class Startup extends Component {
           </thead>
           <tbody>
           {(logsWithTemplates).map((l, k) => <tr key={k} onClick={() => this.openLogs(l.logs)}>
-            <td><a style={{textDecoration: 'underline'}} onClick={() => openTab({_id: l.template})}>{l.templateName}</a></td>
+            <td className='selection'><a style={{textDecoration: 'underline'}} onClick={() => l.template._id ? openTab({_id: l.template}) : null}>{l.template.name}</a></td>
             <td>{l.timestamp.toLocaleString()}</td>
           </tr>)}
           </tbody>
