@@ -4,6 +4,7 @@ import uid from '../../helpers/uid.js'
 import * as selectors from './selectors.js'
 import { push } from 'react-router-redux'
 import shortid from 'shortid'
+import preview from '../../helpers/preview'
 import { engines, recipes } from '../../lib/configuration.js'
 
 export function closeTab (id) {
@@ -148,3 +149,15 @@ export function remove () {
     await dispatch(entities.actions.remove(tab._id))
   }
 }
+
+export function run () {
+  return async function (dispatch, getState) {
+    let template = Object.assign({}, selectors.getLastActiveTemplate(getState()))
+    let request = { template: template, options: {} }
+    const entities = Object.assign({}, getState().entities)
+    await Promise.all([...Studio.previewListeners.map((l) => l(request, entities))])
+    dispatch({type: ActionTypes.RUN})
+    preview(request, 'previewFrame')
+  }
+}
+

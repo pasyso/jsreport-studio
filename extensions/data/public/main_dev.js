@@ -11,7 +11,8 @@ Studio.previewListeners.push((request, entities) => {
     return
   }
 
-  let dataDetails = Object.keys(entities).map((e) => entities[e]).filter((d) => d.shortid === request.template.data.shortid && d.__entitySet === 'data')
+  let dataDetails = Object.keys(entities).map((e) => entities[e])
+    .filter((d) => d.shortid === request.template.data.shortid && d.__entitySet === 'data' && d.__isLoaded)
 
   if (!dataDetails.length) {
     return

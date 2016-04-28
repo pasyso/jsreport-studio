@@ -25,7 +25,9 @@ init(store)
 const start = async () => {
   await fetchExtensions()
 
-  await Promise.all([...Studio.initializeListeners.map((l) => l())])
+  for (const key in Studio.initializeListeners) {
+    await Studio.initializeListeners[key]()
+  }
 
   await Promise.all(
     [

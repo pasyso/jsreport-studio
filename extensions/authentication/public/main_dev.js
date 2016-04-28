@@ -6,7 +6,8 @@ import ChangePasswordSettingsButton from './ChangePasswordSettingsButton.js'
 import ChangePasswordButton from './ChangePasswordButton.js'
 import Studio from 'jsreport-studio'
 
-Studio.initializeListeners.push(async () => {
+//we want to be at the front, because other extension like scheduling relies on loaded user
+Studio.initializeListeners.unshift(async () => {
   const response = await Studio.api.get('/api/settings')
 
   if (!response.tenant) {

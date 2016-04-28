@@ -6,6 +6,17 @@ export default class ScheduleProperties extends Component {
     return Object.keys(entities).filter((k) => entities[k].__entitySet === 'templates').map((k) => entities[k])
   }
 
+  static title (entity, entities) {
+    const templates = Object.keys(entities).map((k) => entities[k])
+      .filter((t) => t.__entitySet === 'templates' && t.shortid === entity.templateShortid)
+
+    if (!templates.length) {
+      return 'schedule (select template...)'
+    }
+
+    return `schedule (${templates[0].name}) ${entity.enabled !== true ? '(disabled)' : ''}`
+  }
+
   render () {
     const { entity, entities, onChange } = this.props
     const templates = this.selectTemplates(entities)

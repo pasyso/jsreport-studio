@@ -6,12 +6,10 @@ import Preview from '../../components/Preview/Preview.js'
 import EntityTree from '../../components/EntityTree/EntityTree.js'
 import Properties from '../../components/Properties/Properties.js'
 import style from './App.scss'
-import Promise from 'bluebird'
 import Studio from '../../Studio.js'
 import Toolbar from '../../components/Toolbar/Toolbar.js'
 import _debounce from 'lodash/debounce'
 import Helmet from 'react-helmet'
-import preview from '../../helpers/preview'
 import SplitPane from '../../components/common/SplitPane/SplitPane.js'
 import EditorTabs from '../../components/Tabs/EditorTabs.js'
 import TabTitles from '../../components/Tabs/TabTitles.js'
@@ -87,11 +85,7 @@ export default class App extends Component {
       this.props.start()
     }
 
-    let template = Object.assign({}, this.props.lastActiveTemplate)
-    let request = { template: template, options: {} }
-    const entities = Object.assign({}, this.props.entities)
-    await Promise.all([...Studio.previewListeners.map((l) => l(request, entities))])
-    preview(request, 'previewFrame')
+    this.props.run()
   }
 
   save () {
