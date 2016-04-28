@@ -8,6 +8,7 @@ import getRoutes from './routes'
 import fetchExtensions from 'lib/fetchExtensions'
 import './theme/style.scss'
 import * as entities from 'redux/entities'
+import * as settings from 'redux/settings'
 import Promise from 'bluebird'
 import StudioInst, { init } from './Studio'
 import { load as loadConfiguration } from './lib/configuration.js'
@@ -29,7 +30,8 @@ const start = async () => {
   await Promise.all(
     [
       ...Object.keys(Studio.entitySets).map((t) => entities.actions.loadReferences(t)(store.dispatch)),
-      loadConfiguration()
+      loadConfiguration(),
+      settings.actions.load()(store.dispatch)
     ]
   )
 

@@ -40,3 +40,44 @@ html, body {
 .custom-editor {
   padding: 1rem;
 }
+
+h1,h2,h3,h4 {
+  text-transform: lowercase;
+  font-weight: 100;
+  color: $primarySelectionBackgroundColor
+}
+
+.table {
+  border-collapse: collapse;
+}
+.table > thead {
+}
+
+.table > thead > tr > th {
+   font-weight: bold;
+   text-transform: uppercase;
+   text-align: left;
+   padding: 0.2rem 1rem 0.5rem 1rem;
+   vertical-align: bottom;
+   border-bottom: 0.1rem solid #ddd;
+   border-right: 0.1rem solid #ddd;
+   font-size: 0.8rem;
+ }
+
+.table > tbody > tr {
+  vertical-align: middle;
+  cursor: pointer;
+}
+
+.table > tbody > tr:hover {
+  background-color: $primaryHoverBackgroundColor;
+  color: $primaryHoverColor;
+}
+
+.table > tbody > tr > td {
+  font-weight: normal;
+  padding: 0.8rem;
+  border: 0;
+  font-size: 0.8rem;
+}
+

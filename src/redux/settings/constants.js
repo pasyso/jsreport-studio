@@ -1,0 +1,1 @@
+export const SETTINGS_LOAD = 'SETTINGS_LOAD'
