@@ -130,14 +130,14 @@
 
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-	var _activeReport = void 0;
+	var _instance = void 0;
 
 	var ReportEditor = function (_Component) {
 	  (0, _inherits3.default)(ReportEditor, _Component);
 	  (0, _createClass3.default)(ReportEditor, null, [{
-	    key: 'ActiveReport',
+	    key: 'Instance',
 	    get: function get() {
-	      return _activeReport;
+	      return _instance;
 	    }
 	  }]);
 
@@ -150,7 +150,8 @@
 	    _this.skip = 0;
 	    _this.top = 50;
 	    _this.pending = 0;
-	    _activeReport = null;
+	    _this.ActiveReport = null;
+	    _instance = _this;
 	    return _this;
 	  }
 
@@ -162,7 +163,7 @@
 	  }, {
 	    key: 'componentWillUnmount',
 	    value: function componentWillUnmount() {
-	      _activeReport = null;
+	      this.ActiveReport = null;
 	    }
 	  }, {
 	    key: 'openReport',
@@ -172,9 +173,9 @@
 	          while (1) {
 	            switch (_context.prev = _context.next) {
 	              case 0:
-	                _jsreportStudio2.default.preview('/reports/' + r._id + '/content');
+	                _jsreportStudio2.default.setPreviewFrameSrc('/reports/' + r._id + '/content');
 	                this.setState({ active: r._id });
-	                _activeReport = r;
+	                this.ActiveReport = r;
 
 	              case 3:
 	              case 'end':
@@ -244,10 +245,10 @@
 	        this.pending = Math.max(this.pending, index);
 	        this.lazyFetch();
 	        return _react2.default.createElement(
-	          'div',
-	          { key: index, className: _ReportEditor2.default.item },
+	          'tr',
+	          { key: index },
 	          _react2.default.createElement(
-	            'div',
+	            'td',
 	            null,
 	            _react2.default.createElement('i', { className: 'fa fa-spinner fa-spin fa-fw' })
 	          )
@@ -257,29 +258,63 @@
 	      return this.renderItem(task, index);
 	    }
 	  }, {
+	    key: 'remove',
+	    value: function () {
+	      var ref = (0, _asyncToGenerator3.default)(_regenerator2.default.mark(function _callee3() {
+	        var id;
+	        return _regenerator2.default.wrap(function _callee3$(_context3) {
+	          while (1) {
+	            switch (_context3.prev = _context3.next) {
+	              case 0:
+	                id = this.ActiveReport._id;
+
+	                this.ActiveReport = null;
+	                _context3.next = 4;
+	                return _jsreportStudio2.default.api.del('/odata/reports(' + id + ')');
+
+	              case 4:
+	                this.setState({ reports: this.state.reports.filter(function (r) {
+	                    return r._id !== id;
+	                  }) });
+
+	              case 5:
+	              case 'end':
+	                return _context3.stop();
+	            }
+	          }
+	        }, _callee3, this);
+	      }));
+
+	      function remove() {
+	        return ref.apply(this, arguments);
+	      }
+
+	      return remove;
+	    }()
+	  }, {
 	    key: 'renderItem',
 	    value: function renderItem(report, index) {
 	      var _this2 = this;
 
 	      return _react2.default.createElement(
-	        'div',
+	        'tr',
 	        {
-	          key: index, className: _ReportEditor2.default.item + ' ' + (this.state.active === report._id ? _ReportEditor2.default.active : ''),
+	          key: index, className: this.state.active === report._id ? 'active' : '',
 	          onClick: function onClick() {
 	            return _this2.openReport(report);
 	          } },
 	        _react2.default.createElement(
-	          'div',
-	          null,
+	          'td',
+	          { className: 'selection' },
 	          report.name
 	        ),
 	        _react2.default.createElement(
-	          'div',
+	          'td',
 	          null,
 	          report.creationDate.toLocaleString()
 	        ),
 	        _react2.default.createElement(
-	          'div',
+	          'td',
 	          null,
 	          report.recipe
 	        )
@@ -289,9 +324,36 @@
 	    key: 'renderItems',
 	    value: function renderItems(items, ref) {
 	      return _react2.default.createElement(
-	        'div',
-	        { className: _ReportEditor2.default.list, ref: ref },
-	        items
+	        'table',
+	        { className: 'table', ref: ref },
+	        _react2.default.createElement(
+	          'thead',
+	          null,
+	          _react2.default.createElement(
+	            'tr',
+	            null,
+	            _react2.default.createElement(
+	              'th',
+	              null,
+	              'name'
+	            ),
+	            _react2.default.createElement(
+	              'th',
+	              null,
+	              'created on'
+	            ),
+	            _react2.default.createElement(
+	              'th',
+	              null,
+	              'recipe'
+	            )
+	          )
+	        ),
+	        _react2.default.createElement(
+	          'tbody',
+	          null,
+	          items
+	        )
 	      );
 	    }
 	  }, {
@@ -304,10 +366,10 @@
 
 	      return _react2.default.createElement(
 	        'div',
-	        { className: 'block ' + _ReportEditor2.default.editor },
+	        { className: 'block custom-editor' },
 	        _react2.default.createElement(
 	          'div',
-	          { className: _ReportEditor2.default.header },
+	          null,
 	          _react2.default.createElement(
 	            'h1',
 	            null,
@@ -415,16 +477,11 @@
 
 
 	// module
-	exports.push([module.id, ".editor___13P6x {\n  padding: 1rem;\n}\n\n.header___bOuES {\n  margin-bottom: 1rem;\n}\n\n.list___2oths {\n  display: flex;\n  flex: 1;\n  flex-wrap: wrap;\n  justify-content: space-between;\n}\n\n.listContainer___3gCYa {\n  overflow: auto;\n  position: relative;\n}\n\n.listContainer___3gCYa > div {\n  position: absolute !important;\n}\n\n.item___RIKj- {\n  display: flex;\n  flex-direction: column;\n  padding: 0.4rem;\n  width: 10rem;\n  height: 6.8rem;\n  margin: 1rem 0;\n  cursor: pointer;\n  background-color: #fff;\n  justify-content: space-between;\n  align-items: center;\n  box-shadow: 0 0.1rem 0.1rem 0 rgba(0, 0, 0, 0.2);\n  border-radius: 0.1rem;\n}\n\n.active___178dk, .item___RIKj-:hover {\n  box-shadow: 0 0 0.5rem rgba(0, 0, 0, 0.6);\n}\n", "", {"version":3,"sources":["/./ReportEditor.scss"],"names":[],"mappings":"AAAA;EACE,cAAc;CACf;;AAED;EACE,oBAAoB;CACrB;;AAED;EACE,cAAc;EACd,QAAQ;EACR,gBAAgB;EAChB,+BAA+B;CAChC;;AAED;EACE,eAAe;EACf,mBAAmB;CACpB;;AAED;EACE,8BAA8B;CAC/B;;AAED;EACE,cAAc;EACd,uBAAuB;EACvB,gBAAgB;EAChB,aAAa;EACb,eAAe;EACf,eAAe;EACf,gBAAgB;EAChB,uBAAuB;EACvB,+BAA+B;EAC/B,oBAAoB;EACpB,iDAAkC;EAClC,sBAAsB;CACvB;;AAED;EACE,0CAA2B;CAC5B","file":"ReportEditor.scss","sourcesContent":[".editor {\r\n  padding: 1rem;\r\n}\r\n\r\n.header {\r\n  margin-bottom: 1rem;\r\n}\r\n\r\n.list {\r\n  display: flex;\r\n  flex: 1;\r\n  flex-wrap: wrap;\r\n  justify-content: space-between;\r\n}\r\n\r\n.listContainer {\r\n  overflow: auto;\r\n  position: relative;\r\n}\r\n\r\n.listContainer > div {\r\n  position: absolute !important;\r\n}\r\n\r\n.item {\r\n  display: flex;\r\n  flex-direction: column;\r\n  padding: 0.4rem;\r\n  width: 10rem;\r\n  height: 6.8rem;\r\n  margin: 1rem 0;\r\n  cursor: pointer;\r\n  background-color: #fff;\r\n  justify-content: space-between;\r\n  align-items: center;\r\n  box-shadow: 0 0.1rem 0.1rem 0 rgba(0, 0, 0, 0.2);\r\n  border-radius: 0.1rem;\r\n}\r\n\r\n.active, .item:hover {\r\n  box-shadow: 0 0 0.5rem rgba(0, 0, 0, 0.6)\r\n}"],"sourceRoot":"webpack://"}]);
+	exports.push([module.id, ".listContainer___3gCYa {\n  margin-top: 1rem;\n  overflow: auto;\n  position: relative;\n  padding: 1rem;\n  min-height: 0;\n  height: auto;\n}\n\n.listContainer___3gCYa > div {\n  width: 95%;\n  position: absolute !important;\n}\n", "", {"version":3,"sources":["/./ReportEditor.scss"],"names":[],"mappings":"AAAA;EACE,iBAAiB;EACjB,eAAe;EACf,mBAAmB;EACnB,cAAc;EACd,cAAc;EACd,aAAa;CACd;;AAED;EAEE,WAAW;EAEX,8BAA8B;CAC/B","file":"ReportEditor.scss","sourcesContent":[".listContainer {\r\n  margin-top: 1rem;\r\n  overflow: auto;\r\n  position: relative;\r\n  padding: 1rem;\r\n  min-height: 0;\r\n  height: auto;\r\n}\r\n\r\n.listContainer > div {\r\n  // it somehow shows the horizontal scrollbar even when no needeit, this workaround to hide it\r\n  width: 95%;\r\n  // the tabs height based on flex box is otherwise wrongly calculated\r\n  position: absolute !important;\r\n}\r\n"],"sourceRoot":"webpack://"}]);
 
 	// exports
 	exports.locals = {
-		"editor": "editor___13P6x",
-		"header": "header___bOuES",
-		"list": "list___2oths",
-		"listContainer": "listContainer___3gCYa",
-		"item": "item___RIKj-",
-		"active": "active___178dk"
+		"listContainer": "listContainer___3gCYa"
 	};
 
 /***/ },
@@ -873,8 +930,8 @@
 	  (0, _createClass3.default)(DownloadButton, [{
 	    key: 'download',
 	    value: function download() {
-	      if (_ReportEditor2.default.ActiveReport) {
-	        window.open((0, _jsreportStudio.relativizeUrl)('/reports/' + _ReportEditor2.default.ActiveReport._id + '/content'), '_blank');
+	      if (_ReportEditor2.default.Instance && _ReportEditor2.default.Instance.ActiveReport) {
+	        window.open((0, _jsreportStudio.relativizeUrl)('/reports/' + _ReportEditor2.default.Instance.ActiveReport._id + '/content'), '_blank');
 	      }
 	    }
 	  }, {
@@ -882,7 +939,7 @@
 	    value: function render() {
 	      var _this2 = this;
 
-	      if (!this.props.tab || this.props.tab.key !== 'Reports' || !_ReportEditor2.default.ActiveReport) {
+	      if (!this.props.tab || this.props.tab.key !== 'Reports' || !_ReportEditor2.default.Instance || !_ReportEditor2.default.Instance.ActiveReport) {
 	        return _react2.default.createElement('div', null);
 	      }
 
@@ -943,6 +1000,10 @@
 
 	var _ReportEditor2 = _interopRequireDefault(_ReportEditor);
 
+	var _jsreportStudio = __webpack_require__(15);
+
+	var _jsreportStudio2 = _interopRequireDefault(_jsreportStudio);
+
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 	var DeleteButton = function (_Component) {
@@ -954,25 +1015,16 @@
 	  }
 
 	  (0, _createClass3.default)(DeleteButton, [{
-	    key: 'remove',
-	    value: function remove() {
-	      if (_ReportEditor2.default.ActiveReport) {
-	        window.open('/reports/' + _ReportEditor2.default.ActiveReport._id + '/content', '_blank');
-	      }
-	    }
-	  }, {
 	    key: 'render',
 	    value: function render() {
-	      var _this2 = this;
-
-	      if (!this.props.tab || this.props.tab.key !== 'Reports' || !_ReportEditor2.default.ActiveReport) {
+	      if (!this.props.tab || this.props.tab.key !== 'Reports' || !_ReportEditor2.default.Instance || !_ReportEditor2.default.Instance.ActiveReport) {
 	        return _react2.default.createElement('div', null);
 	      }
 
 	      return _react2.default.createElement(
 	        'div',
 	        { className: 'toolbar-button', onClick: function onClick() {
-	            return _this2.remove();
+	            return _ReportEditor2.default.Instance.remove();
 	          } },
 	        _react2.default.createElement('i', { className: 'fa fa-trash' }),
 	        'Delete'

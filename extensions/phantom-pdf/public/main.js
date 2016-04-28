@@ -70,7 +70,9 @@
 
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-	_jsreportStudio2.default.properties.push(_PhantomProperties2.default);
+	_jsreportStudio2.default.registerPropertyComponent('phantom pdf', _PhantomProperties2.default, function (entity) {
+	  return entity.__entitySet === 'templates' && entity.recipe === 'phantom-pdf';
+	});
 
 	_jsreportStudio2.default.registerTabEditorComponent(Constants.PHANTOM_TAB_EDITOR, _PhantomEditor2.default);
 	_jsreportStudio2.default.registerTabTitleComponent(Constants.PHANTOM_TAB_TITLE, _PhantomTitle2.default);
@@ -296,10 +298,6 @@
 	        return onChange((0, _assign2.default)({}, entity, { phantom: (0, _assign2.default)({}, entity.phantom, change) }));
 	      };
 
-	      if (entity.__entitySet !== 'templates' || entity.recipe !== 'phantom-pdf') {
-	        return _react2.default.createElement('div', null);
-	      }
-
 	      return _react2.default.createElement(
 	        'div',
 	        { className: 'properties-section' },
@@ -383,6 +381,51 @@
 	          _react2.default.createElement(
 	            'label',
 	            null,
+	            'paper format'
+	          ),
+	          _react2.default.createElement(
+	            'select',
+	            { value: phantom.format || '', onChange: function onChange(v) {
+	                return changePhantom({ format: v.target.value });
+	              } },
+	            _react2.default.createElement(
+	              'option',
+	              { key: 'A4', value: 'A4' },
+	              'A4'
+	            ),
+	            _react2.default.createElement(
+	              'option',
+	              { key: 'A3', value: 'A3' },
+	              'A3'
+	            ),
+	            _react2.default.createElement(
+	              'option',
+	              { key: 'A5', value: 'A5' },
+	              'A5'
+	            ),
+	            _react2.default.createElement(
+	              'option',
+	              { key: 'Legal', value: 'Legal' },
+	              'Legal'
+	            ),
+	            _react2.default.createElement(
+	              'option',
+	              { key: 'Letter', value: 'Letter' },
+	              'Letter'
+	            ),
+	            _react2.default.createElement(
+	              'option',
+	              { key: 'Tabloid', value: 'Tabloid' },
+	              'Tabloid'
+	            )
+	          )
+	        ),
+	        _react2.default.createElement(
+	          'div',
+	          { className: 'form-group' },
+	          _react2.default.createElement(
+	            'label',
+	            null,
 	            'paper width'
 	          ),
 	          _react2.default.createElement('input', {
@@ -411,12 +454,93 @@
 	          _react2.default.createElement(
 	            'label',
 	            null,
+	            'orientation'
+	          ),
+	          _react2.default.createElement(
+	            'select',
+	            { value: phantom.orientation || '', onChange: function onChange(v) {
+	                return changePhantom({ orientation: v.target.value });
+	              } },
+	            _react2.default.createElement(
+	              'option',
+	              { key: 'portrait', value: 'portrait' },
+	              'portrait'
+	            ),
+	            _react2.default.createElement(
+	              'option',
+	              { key: 'landscape', value: 'landscape' },
+	              'landscape'
+	            )
+	          )
+	        ),
+	        _react2.default.createElement(
+	          'div',
+	          { className: 'form-group' },
+	          _react2.default.createElement(
+	            'label',
+	            null,
 	            'print delay'
 	          ),
 	          _react2.default.createElement('input', {
-	            type: 'text', placeholder: '1000', value: phantom.paperWidth || '',
+	            type: 'text', placeholder: '1000', value: phantom.printDelay || '',
 	            onChange: function onChange(v) {
 	              return changePhantom({ printDelay: v.target.value });
+	            } })
+	        ),
+	        _react2.default.createElement(
+	          'div',
+	          { className: 'form-group' },
+	          _react2.default.createElement(
+	            'label',
+	            null,
+	            'resource timeout'
+	          ),
+	          _react2.default.createElement('input', {
+	            type: 'text', placeholder: '1000', value: phantom.resourceTimeout || '',
+	            onChange: function onChange(v) {
+	              return changePhantom({ resourceTimeout: v.target.value });
+	            } })
+	        ),
+	        _react2.default.createElement(
+	          'div',
+	          { className: 'form-group' },
+	          _react2.default.createElement(
+	            'label',
+	            { title: 'window.PHANTOM_HTML_TO_PDF_READY=true;' },
+	            'wait for printing trigger'
+	          ),
+	          _react2.default.createElement('input', {
+	            type: 'checkbox', title: 'window.PHANTOM_HTML_TO_PDF_READY=true;', checked: phantom.waitForJS === true,
+	            onChange: function onChange(v) {
+	              return changePhantom({ waitForJS: v.target.checked });
+	            } })
+	        ),
+	        _react2.default.createElement(
+	          'div',
+	          { className: 'form-group' },
+	          _react2.default.createElement(
+	            'label',
+	            null,
+	            'block javascript'
+	          ),
+	          _react2.default.createElement('input', {
+	            type: 'checkbox', checked: phantom.blockJavaScript === true,
+	            onChange: function onChange(v) {
+	              return changePhantom({ blockJavaScript: v.target.checked });
+	            } })
+	        ),
+	        _react2.default.createElement(
+	          'div',
+	          { className: 'form-group' },
+	          _react2.default.createElement(
+	            'label',
+	            null,
+	            'use custom phantomjs'
+	          ),
+	          _react2.default.createElement('input', {
+	            type: 'checkbox', checked: phantom.customPhantomJS === true,
+	            onChange: function onChange(v) {
+	              return changePhantom({ customPhantomJS: v.target.checked });
 	            } })
 	        )
 	      );

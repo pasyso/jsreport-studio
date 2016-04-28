@@ -84,7 +84,8 @@
 
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-	_jsreportStudio2.default.initializeListeners.push((0, _asyncToGenerator3.default)(_regenerator2.default.mark(function _callee() {
+	//we want to be at the front, because other extension like scheduling relies on loaded user
+	_jsreportStudio2.default.initializeListeners.unshift((0, _asyncToGenerator3.default)(_regenerator2.default.mark(function _callee() {
 	  var response;
 	  return _regenerator2.default.wrap(function _callee$(_context) {
 	    while (1) {
@@ -196,18 +197,6 @@
 
 	  (0, _createClass3.default)(DataEditor, [{
 	    key: 'componentDidMount',
-
-
-	    //renderInitialPassword () {
-	    //  const { entity, onUpdate } = this.props
-	    //
-	    //  return <div>
-	    //    <input
-	    //      type='password' value={entity.password || ''}
-	    //      onChange={(v) => onUpdate({_id: entity._id, password: v.target.value})}/>
-	    //  </div>
-	    //}
-
 	    value: function componentDidMount() {
 	      if (this.props.entity.__isNew && !this.props.entity.password) {
 	        _jsreportStudio2.default.openModal('CHANGE_PASSWORD_MODAL', { entity: this.props.entity });
@@ -221,15 +210,13 @@
 
 	      return _react2.default.createElement(
 	        'div',
-	        null,
+	        { className: 'custom-editor' },
 	        _react2.default.createElement(
-	          'div',
+	          'h1',
 	          null,
-	          _react2.default.createElement(
-	            'h1',
-	            null,
-	            entity.username
-	          )
+	          _react2.default.createElement('i', { className: 'fa fa-user' }),
+	          ' ',
+	          entity.username
 	        )
 	      );
 	    }

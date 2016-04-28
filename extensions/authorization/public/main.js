@@ -56,7 +56,9 @@
 
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-	_jsreportStudio2.default.properties.push(_PermissionProperties2.default);
+	_jsreportStudio2.default.registerPropertyComponent('permissions', _PermissionProperties2.default, function (entity) {
+	  return entity.__entitySet !== 'users';
+	});
 
 /***/ },
 /* 1 */
@@ -153,7 +155,7 @@
 	          ),
 	          _react2.default.createElement(
 	            'select',
-	            {
+	            { title: 'Use CTRL to deselect item and also to select multiple options.',
 	              multiple: true, value: entity.readPermissions || [],
 	              onChange: function onChange(v) {
 	                return _onChange({ _id: entity._id, readPermissions: selectValues(v.target) });
@@ -173,14 +175,14 @@
 	          _react2.default.createElement(
 	            'label',
 	            null,
-	            'write permissions'
+	            'edit permissions'
 	          ),
 	          _react2.default.createElement(
 	            'select',
-	            {
-	              multiple: true, value: entity.writePermissions || [],
+	            { title: 'Use CTRL to deselect item and also to select multiple options.',
+	              multiple: true, value: entity.editPermissions || [],
 	              onChange: function onChange(v) {
-	                return _onChange({ _id: entity._id, writePermissions: selectValues(v.target) });
+	                return _onChange({ _id: entity._id, editPermissions: selectValues(v.target) });
 	              } },
 	            users.map(function (e) {
 	              return _react2.default.createElement(

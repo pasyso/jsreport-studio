@@ -46,7 +46,15 @@
 
 	'use strict';
 
-	var _ScheduleEditor = __webpack_require__(1);
+	var _regenerator = __webpack_require__(1);
+
+	var _regenerator2 = _interopRequireDefault(_regenerator);
+
+	var _asyncToGenerator2 = __webpack_require__(2);
+
+	var _asyncToGenerator3 = _interopRequireDefault(_asyncToGenerator2);
+
+	var _ScheduleEditor = __webpack_require__(3);
 
 	var _ScheduleEditor2 = _interopRequireDefault(_ScheduleEditor);
 
@@ -64,13 +72,49 @@
 
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-	_jsreportStudio2.default.registerEntitySet({ name: 'schedules', faIcon: 'fa-calendar', visibleName: 'schedule' });
-	_jsreportStudio2.default.registerTabEditorComponent('schedules', _ScheduleEditor2.default);
-	_jsreportStudio2.default.properties.push(_ScheduleProperties2.default);
-	_jsreportStudio2.default.registerToolbarComponent(_DownloadButton2.default);
+	_jsreportStudio2.default.initializeListeners.push((0, _asyncToGenerator3.default)(_regenerator2.default.mark(function _callee() {
+	  return _regenerator2.default.wrap(function _callee$(_context) {
+	    while (1) {
+	      switch (_context.prev = _context.next) {
+	        case 0:
+	          if (!(_jsreportStudio2.default.authentication && !_jsreportStudio2.default.authentication.user.isAdmin)) {
+	            _context.next = 2;
+	            break;
+	          }
+
+	          return _context.abrupt('return');
+
+	        case 2:
+
+	          _jsreportStudio2.default.registerEntitySet({ name: 'schedules', faIcon: 'fa-calendar', visibleName: 'schedule' });
+	          _jsreportStudio2.default.registerTabEditorComponent('schedules', _ScheduleEditor2.default);
+	          _jsreportStudio2.default.registerPropertyComponent(_ScheduleProperties2.default.title, _ScheduleProperties2.default, function (entity) {
+	            return entity.__entitySet === 'schedules';
+	          });
+	          _jsreportStudio2.default.registerToolbarComponent(_DownloadButton2.default);
+
+	        case 6:
+	        case 'end':
+	          return _context.stop();
+	      }
+	    }
+	  }, _callee, undefined);
+	})));
 
 /***/ },
 /* 1 */
+/***/ function(module, exports) {
+
+	module.exports = Studio.runtime['regenerator'];
+
+/***/ },
+/* 2 */
+/***/ function(module, exports) {
+
+	module.exports = Studio.runtime['helpers/asyncToGenerator'];
+
+/***/ },
+/* 3 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -79,11 +123,11 @@
 	  value: true
 	});
 
-	var _regenerator = __webpack_require__(2);
+	var _regenerator = __webpack_require__(1);
 
 	var _regenerator2 = _interopRequireDefault(_regenerator);
 
-	var _asyncToGenerator2 = __webpack_require__(3);
+	var _asyncToGenerator2 = __webpack_require__(2);
 
 	var _asyncToGenerator3 = _interopRequireDefault(_asyncToGenerator2);
 
@@ -152,18 +196,30 @@
 	          while (1) {
 	            switch (_context.prev = _context.next) {
 	              case 0:
-	                _context.next = 2;
+	                if (!(t.state === 'success')) {
+	                  _context.next = 10;
+	                  break;
+	                }
+
+	                _context.next = 3;
 	                return Studio.api.get('/odata/reports?$filter=taskId eq \'' + t._id + '\'');
 
-	              case 2:
+	              case 3:
 	                reports = _context.sent;
 	                report = reports.value[0];
 
-	                Studio.preview('/reports/' + report._id + '/content');
+	                Studio.setPreviewFrameSrc('/reports/' + report._id + '/content');
 	                this.setState({ active: t._id });
 	                _activeReport = report;
+	                _context.next = 13;
+	                break;
 
-	              case 7:
+	              case 10:
+	                this.setState({ active: null });
+	                _activeReport = null;
+	                Studio.setPreviewFrameSrc('data:text/html;charset=utf-8,' + encodeURI(t.error || t.state));
+
+	              case 13:
 	              case 'end':
 	                return _context.stop();
 	            }
@@ -231,10 +287,10 @@
 	        this.pending = Math.max(this.pending, index);
 	        this.lazyFetch();
 	        return _react2.default.createElement(
-	          'div',
-	          { key: index, className: _ScheduleEditor2.default.item },
+	          'tr',
+	          { key: index },
 	          _react2.default.createElement(
-	            'div',
+	            'td',
 	            null,
 	            _react2.default.createElement('i', { className: 'fa fa-spinner fa-spin fa-fw' })
 	          )
@@ -249,26 +305,24 @@
 	      var _this2 = this;
 
 	      return _react2.default.createElement(
-	        'div',
+	        'tr',
 	        {
-	          key: index, className: _ScheduleEditor2.default.item + ' ' + (this.state.active === task._id ? _ScheduleEditor2.default.active : ''),
+	          key: index, className: this.state.active === task._id ? 'active' : '',
 	          onClick: function onClick() {
 	            return _this2.openReport(task);
 	          } },
 	        _react2.default.createElement(
-	          'div',
-	          {
-	            className: _ScheduleEditor2.default.state + ' ' + (task.state === 'error' ? _ScheduleEditor2.default.error : task.state === 'success' ? _ScheduleEditor2.default.success : _ScheduleEditor2.default.canceled) },
-	          task.state
+	          'td',
+	          null,
+	          _react2.default.createElement(
+	            'span',
+	            { className: _ScheduleEditor2.default.state + ' ' + (task.state === 'error' ? _ScheduleEditor2.default.error : task.state === 'success' ? _ScheduleEditor2.default.success : _ScheduleEditor2.default.canceled) },
+	            task.state
+	          )
 	        ),
 	        _react2.default.createElement(
-	          'div',
-	          { className: _ScheduleEditor2.default.date },
-	          _react2.default.createElement(
-	            'div',
-	            { className: _ScheduleEditor2.default.label },
-	            'start'
-	          ),
+	          'td',
+	          null,
 	          _react2.default.createElement(
 	            'span',
 	            { className: _ScheduleEditor2.default.value },
@@ -276,13 +330,8 @@
 	          )
 	        ),
 	        _react2.default.createElement(
-	          'div',
-	          { className: _ScheduleEditor2.default.date },
-	          _react2.default.createElement(
-	            'div',
-	            { className: _ScheduleEditor2.default.label },
-	            'finish'
-	          ),
+	          'td',
+	          null,
 	          _react2.default.createElement(
 	            'div',
 	            { className: _ScheduleEditor2.default.value },
@@ -295,9 +344,36 @@
 	    key: 'renderItems',
 	    value: function renderItems(items, ref) {
 	      return _react2.default.createElement(
-	        'div',
-	        { className: _ScheduleEditor2.default.list, ref: ref },
-	        items
+	        'table',
+	        { className: 'table', ref: ref },
+	        _react2.default.createElement(
+	          'thead',
+	          null,
+	          _react2.default.createElement(
+	            'tr',
+	            null,
+	            _react2.default.createElement(
+	              'th',
+	              null,
+	              'state'
+	            ),
+	            _react2.default.createElement(
+	              'th',
+	              null,
+	              'start'
+	            ),
+	            _react2.default.createElement(
+	              'th',
+	              null,
+	              'finish'
+	            )
+	          )
+	        ),
+	        _react2.default.createElement(
+	          'tbody',
+	          null,
+	          items
+	        )
 	      );
 	    }
 	  }, {
@@ -311,10 +387,10 @@
 
 	      return _react2.default.createElement(
 	        'div',
-	        { className: 'block ' + _ScheduleEditor2.default.editor },
+	        { className: 'block custom-editor' },
 	        _react2.default.createElement(
 	          'div',
-	          { className: _ScheduleEditor2.default.header },
+	          null,
 	          _react2.default.createElement(
 	            'h1',
 	            null,
@@ -366,18 +442,6 @@
 	  onUpdate: _react2.default.PropTypes.func.isRequired
 	};
 	exports.default = ScheduleEditor;
-
-/***/ },
-/* 2 */
-/***/ function(module, exports) {
-
-	module.exports = Studio.runtime['regenerator'];
-
-/***/ },
-/* 3 */
-/***/ function(module, exports) {
-
-	module.exports = Studio.runtime['helpers/asyncToGenerator'];
 
 /***/ },
 /* 4 */
@@ -456,21 +520,15 @@
 
 
 	// module
-	exports.push([module.id, ".editor___s7ucX {\n  padding: 1rem;\n}\n\n.header___VHhiJ {\n  margin-bottom: 1rem;\n}\n\n.list___a-qOT {\n  display: flex;\n  flex: 1;\n  flex-wrap: wrap;\n  justify-content: space-between;\n}\n\n.listContainer___1erKb {\n  overflow: auto;\n  position: relative;\n}\n\n.listContainer___1erKb > div {\n  position: absolute !important;\n}\n\n.item___2IV79 {\n  display: flex;\n  flex-direction: column;\n  padding: 0.4rem;\n  width: 10rem;\n  height: 6.8rem;\n  margin: 1rem 0;\n  cursor: pointer;\n  background-color: #fff;\n  justify-content: space-between;\n  align-items: center;\n  box-shadow: 0 0.1rem 0.1rem 0 rgba(0, 0, 0, 0.2);\n  border-radius: 0.1rem;\n}\n\n.active___1x06e, .item___2IV79:hover {\n  box-shadow: 0 0 0.5rem rgba(0, 0, 0, 0.6);\n}\n\n.state___3-LDK {\n  flex: 0.5;\n  font-size: 0.8rem;\n  padding: 0.4rem;\n  margin-bottom: 0.4rem;\n}\n\n.error___2PG7b {\n  background-color: #da532c;\n  color: white;\n}\n\n.cancelled___1kGiJ {\n  background-color: orange;\n  color: white;\n}\n\n.success___1gg7n {\n  background-color: #4CAF50;\n  color: white;\n}\n\n.date___3wxZy {\n  flex: 1;\n  display: block;\n  flex-direction: column;\n  text-align: center;\n  font-size: 0.7rem;\n}\n", "", {"version":3,"sources":["/./ScheduleEditor.scss"],"names":[],"mappings":"AAAA;EACE,cAAc;CACf;;AAED;EACE,oBAAoB;CACrB;;AAED;EACE,cAAc;EACd,QAAQ;EACR,gBAAgB;EAChB,+BAA+B;CAChC;;AAED;EACE,eAAe;EACf,mBAAmB;CACpB;;AAED;EACE,8BAA8B;CAC/B;;AAED;EACE,cAAc;EACd,uBAAuB;EACvB,gBAAgB;EAChB,aAAa;EACb,eAAe;EACf,eAAe;EACf,gBAAgB;EAChB,uBAAuB;EACvB,+BAA+B;EAC/B,oBAAoB;EACpB,iDAAkC;EAClC,sBAAsB;CACvB;;AAED;EACE,0CAA2B;CAC5B;;AAED;EACE,UAAU;EACV,kBAAkB;EAClB,gBAAgB;EAChB,sBAAsB;CACvB;;AAED;EACE,0BAA0B;EAC1B,aAAa;CACd;;AAGD;EACE,yBAAyB;EACzB,aAAa;CACd;;AAED;EACE,0BAA0B;EAC1B,aAAa;CACd;;AACD;EACE,QAAQ;EACR,eAAe;EACf,uBAAuB;EACvB,mBAAmB;EACnB,kBAAkB;CACnB","file":"ScheduleEditor.scss","sourcesContent":[".editor {\r\n  padding: 1rem;\r\n}\r\n\r\n.header {\r\n  margin-bottom: 1rem;\r\n}\r\n\r\n.list {\r\n  display: flex;\r\n  flex: 1;\r\n  flex-wrap: wrap;\r\n  justify-content: space-between;\r\n}\r\n\r\n.listContainer {\r\n  overflow: auto;\r\n  position: relative;\r\n}\r\n\r\n.listContainer > div {\r\n  position: absolute !important;\r\n}\r\n\r\n.item {\r\n  display: flex;\r\n  flex-direction: column;\r\n  padding: 0.4rem;\r\n  width: 10rem;\r\n  height: 6.8rem;\r\n  margin: 1rem 0;\r\n  cursor: pointer;\r\n  background-color: #fff;\r\n  justify-content: space-between;\r\n  align-items: center;\r\n  box-shadow: 0 0.1rem 0.1rem 0 rgba(0, 0, 0, 0.2);\r\n  border-radius: 0.1rem;\r\n}\r\n\r\n.active, .item:hover {\r\n  box-shadow: 0 0 0.5rem rgba(0, 0, 0, 0.6)\r\n}\r\n\r\n.state {\r\n  flex: 0.5;\r\n  font-size: 0.8rem;\r\n  padding: 0.4rem;\r\n  margin-bottom: 0.4rem;\r\n}\r\n\r\n.error {\r\n  background-color: #da532c;\r\n  color: white;\r\n}\r\n\r\n\r\n.cancelled {\r\n  background-color: orange;\r\n  color: white;\r\n}\r\n\r\n.success {\r\n  background-color: #4CAF50;\r\n  color: white;\r\n}\r\n.date {\r\n  flex: 1;\r\n  display: block;\r\n  flex-direction: column;\r\n  text-align: center;\r\n  font-size: 0.7rem;\r\n}\r\n\r\n"],"sourceRoot":"webpack://"}]);
+	exports.push([module.id, ".listContainer___1erKb {\n  margin-top: 1rem;\n  overflow: auto;\n  position: relative;\n  padding: 1rem;\n  min-height: 0;\n  height: auto;\n}\n\n.listContainer___1erKb > div {\n  width: 95%;\n  position: absolute !important;\n}\n\n.state___3-LDK {\n  font-size: 0.8rem;\n  padding: 0.3rem;\n  display: inline-block;\n  text-align: center;\n  min-width: 4rem;\n}\n\n.error___2PG7b {\n  background-color: #da532c;\n  color: white;\n}\n\n.cancelled___1kGiJ {\n  background-color: orange;\n  color: white;\n}\n\n.success___1gg7n {\n  background-color: #4CAF50;\n  color: white;\n}\n", "", {"version":3,"sources":["/./ScheduleEditor.scss"],"names":[],"mappings":"AAAA;EACE,iBAAiB;EACjB,eAAe;EACf,mBAAmB;EACnB,cAAc;EACd,cAAc;EACd,aAAa;CACd;;AAED;EAEE,WAAW;EAEX,8BAA8B;CAC/B;;AAED;EACE,kBAAkB;EAClB,gBAAgB;EAChB,sBAAsB;EACtB,mBAAmB;EACnB,gBAAgB;CACjB;;AAED;EACE,0BAA0B;EAC1B,aAAa;CACd;;AAED;EACE,yBAAyB;EACzB,aAAa;CACd;;AAED;EACE,0BAA0B;EAC1B,aAAa;CACd","file":"ScheduleEditor.scss","sourcesContent":[".listContainer {\r\n  margin-top: 1rem;\r\n  overflow: auto;\r\n  position: relative;\r\n  padding: 1rem;\r\n  min-height: 0;\r\n  height: auto;\r\n}\r\n\r\n.listContainer > div {\r\n  // it somehow shows the horizontal scrollbar even when no needeit, this workaround to hide it\r\n  width: 95%;\r\n  // the tabs height based on flex box is otherwise wrongly calculated\r\n  position: absolute !important;\r\n}\r\n\r\n.state {\r\n  font-size: 0.8rem;\r\n  padding: 0.3rem;\r\n  display: inline-block;\r\n  text-align: center;\r\n  min-width: 4rem;\r\n}\r\n\r\n.error {\r\n  background-color: #da532c;\r\n  color: white;\r\n}\r\n\r\n.cancelled {\r\n  background-color: orange;\r\n  color: white;\r\n}\r\n\r\n.success {\r\n  background-color: #4CAF50;\r\n  color: white;\r\n}\r\n\r\n"],"sourceRoot":"webpack://"}]);
 
 	// exports
 	exports.locals = {
-		"editor": "editor___s7ucX",
-		"header": "header___VHhiJ",
-		"list": "list___a-qOT",
 		"listContainer": "listContainer___1erKb",
-		"item": "item___2IV79",
-		"active": "active___1x06e",
 		"state": "state___3-LDK",
 		"error": "error___2PG7b",
 		"cancelled": "cancelled___1kGiJ",
-		"success": "success___1gg7n",
-		"date": "date___3wxZy"
+		"success": "success___1gg7n"
 	};
 
 /***/ },
@@ -911,6 +969,21 @@
 	        )
 	      );
 	    }
+	  }], [{
+	    key: 'title',
+	    value: function title(entity, entities) {
+	      var templates = (0, _keys2.default)(entities).map(function (k) {
+	        return entities[k];
+	      }).filter(function (t) {
+	        return t.__entitySet === 'templates' && t.shortid === entity.templateShortid;
+	      });
+
+	      if (!templates.length) {
+	        return 'schedule (select template...)';
+	      }
+
+	      return 'schedule (' + templates[0].name + ') ' + (entity.enabled !== true ? '(disabled)' : '');
+	    }
 	  }]);
 	  return ScheduleProperties;
 	}(_react.Component);
@@ -957,7 +1030,7 @@
 
 	var _react2 = _interopRequireDefault(_react);
 
-	var _ScheduleEditor = __webpack_require__(1);
+	var _ScheduleEditor = __webpack_require__(3);
 
 	var _ScheduleEditor2 = _interopRequireDefault(_ScheduleEditor);
 
