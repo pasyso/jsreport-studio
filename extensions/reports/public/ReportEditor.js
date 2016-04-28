@@ -82,9 +82,11 @@ export default class ReportEditor extends Component {
   renderItems (items, ref) {
     return <table className='table' ref={ref}>
       <thead>
-        <th>name</th>
-        <th>created on</th>
-        <th>recipe</th>
+        <tr>
+          <th>name</th>
+          <th>created on</th>
+          <th>recipe</th>
+        </tr>
       </thead>
       <tbody>
       {items}
