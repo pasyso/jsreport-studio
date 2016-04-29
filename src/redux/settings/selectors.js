@@ -1,6 +1,6 @@
 import { selectors } from '../entities'
 
-export const getLogsWithTemplates = (state) => ((state.settings.failedRequestsLog || []).map((l) => {
+const getLogs = (logs, state) => ((logs || []).map((l) => {
   let template = selectors.getByShortid(state, l.template.shortid, false)
 
   if (!template) {
@@ -12,4 +12,7 @@ export const getLogsWithTemplates = (state) => ((state.settings.failedRequestsLo
     template: { ...template }
   }
 }))
+
+export const getFailedLogsWithTemplates = (state) => getLogs(state.settings.failedRequestsLog, state)
+export const getLogsWithTemplates = (state) => getLogs(state.settings.requestsLog, state)
 

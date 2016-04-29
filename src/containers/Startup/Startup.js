@@ -6,7 +6,8 @@ import api from '../../helpers/api.js'
 
 @connect((state) => ({
   activeTab: state.editor.activeTab,
-  logsWithTemplates: selectors.getLogsWithTemplates(state)
+  logsWithTemplates: selectors.getLogsWithTemplates(state),
+  failedLogsWithTemplates: selectors.getFailedLogsWithTemplates(state)
 }), { ...actions, ...settingsActions })
 export default class Startup extends Component {
   constructor () {
@@ -36,20 +37,25 @@ export default class Startup extends Component {
     return props.activeTab === 'StartupPage'
   }
 
-  openLogs (l) {
-    const start = l[0].timestamp.getTime()
-    const rows = l.map((m) => {
-      const time = (m.timestamp.getTime() - start)
-      return `<tr><td>+${time}</td><td>${m.message}</td></tr>`
-    }).join('')
-    const log = '<table>' + rows + '</table>'
+  openLogs (m) {
+    const errorMessage = m.error ? (m.error.message + '<br/>' + m.error.stack + '<br/><br/><br/>') : ''
 
-    return Studio.setPreviewFrameSrc('data:text/html;charset=utf-8,' + encodeURI(log))
+    let logs = ''
+    if (m.logs && m.logs.length) {
+      const start = m.logs[0].timestamp.getTime()
+      const rows = m.logs.map((m) => {
+        const time = (m.timestamp.getTime() - start)
+        return `<tr><td>+${time}</td><td>${m.message}</td></tr>`
+      }).join('')
+      logs = '<table>' + rows + '</table>'
+    }
+
+    return Studio.setPreviewFrameSrc('data:text/html;charset=utf-8,' + encodeURI(errorMessage + logs))
   }
 
   render () {
     const { templates } = this.state
-    const { openTab, logsWithTemplates } = this.props
+    const { openTab, logsWithTemplates, failedLogsWithTemplates } = this.props
 
     return <div className='block custom-editor' style={{overflow: 'auto', minHeight: 0, height: 'auto'}}>
       <h2>Last edited templates</h2>
@@ -83,7 +89,7 @@ export default class Startup extends Component {
             </tr>
           </thead>
           <tbody>
-          {(logsWithTemplates).map((l, k) => <tr key={k} onClick={() => this.openLogs(l.logs)}>
+          {(logsWithTemplates).map((l, k) => <tr key={k} onClick={() => this.openLogs(l)}>
             <td className='selection'><a style={{textDecoration: 'underline'}} onClick={() => l.template._id ? openTab({_id: l.template}) : null}>{l.template.name}</a></td>
             <td>{l.timestamp.toLocaleString()}</td>
           </tr>)}
@@ -91,9 +97,24 @@ export default class Startup extends Component {
         </table>
       </div>
 
-      <h2>Request failed requests</h2>
+      <h2>LAst failed requests</h2>
       <div>
-        TODO
+        <table className='table'>
+          <thead>
+            <tr>
+              <th>template</th>
+              <th>error</th>
+              <th>started</th>
+            </tr>
+          </thead>
+          <tbody>
+          {(failedLogsWithTemplates).map((l, k) => <tr key={k} onClick={() => this.openLogs(l)}>
+            <td className='selection'><a style={{textDecoration: 'underline'}} onClick={() => l.template._id ? openTab({_id: l.template._id}) : null}>{l.template.name}</a></td>
+            <td>{l.error.message.length < 90 ? l.error.message : (l.error.message.substring(0, 80) + '...')}</td>
+            <td>{l.timestamp.toLocaleString()}</td>
+          </tr>)}
+          </tbody>
+        </table>
       </div>
     </div>
   }
