@@ -3,6 +3,7 @@ var webpack = require('webpack')
 const exposedLibraries = ['react', 'react-dom', 'superagent', 'react-list']
 
 webpack({
+  devtool: 'hidden-source-map',
   entry: {
     main: './main_dev.js'
   },

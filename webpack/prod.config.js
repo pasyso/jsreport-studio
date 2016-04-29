@@ -11,7 +11,7 @@ var projectRootPath = path.resolve(__dirname, '../')
 var assetsPath = path.resolve(projectRootPath, './static/dist')
 
 module.exports = {
-  devtool: 'source-map',
+  devtool: 'hidden-source-map',
   context: path.resolve(__dirname, '..'),
   entry: {
     'main': [

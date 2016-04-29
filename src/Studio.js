@@ -43,6 +43,7 @@ class Studio {
     this.registerEntitySet({ name: 'templates', visibleName: 'template' })
     this.toolbarComponents = { right: [], left: [], settings: [] }
     this.modals = modalComponents
+    this.templateEditorModeResovlers = []
 
     this.splitResizeSubscribers = []
 

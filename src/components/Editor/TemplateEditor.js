@@ -23,6 +23,17 @@ export default class TemplateEditor extends Component {
     Studio.triggerSplitResize()
   }
 
+  resolveTemplateEditorMode (template) {
+    for (const k in Studio.templateEditorModeResovlers) {
+      const mode = Studio.templateEditorModeResovlers[k](template)
+      if (mode) {
+        return mode
+      }
+    }
+
+    return null
+  }
+
   render () {
     const { entity, onUpdate } = this.props
 
@@ -33,7 +44,7 @@ export default class TemplateEditor extends Component {
         <TextEditor
           key={entity._id}
           name={entity._id}
-          mode='handlebars'
+          mode={this.resolveTemplateEditorMode(entity) || 'handlebars'}
           onUpdate={(v) => onUpdate(Object.assign({}, entity, {content: v}))}
           value={entity.content}
           />
