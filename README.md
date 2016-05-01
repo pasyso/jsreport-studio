@@ -1,4 +1,6 @@
 # jsreport-studio
+[![Build Status](https://travis-ci.org/jsreport/jsreport-studio.png?branch=master)](https://travis-ci.org/jsreport/jsreport-studio)
+
 **Next version of jsreport studio**
 
 ```
