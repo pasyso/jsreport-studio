@@ -1,4 +1,8 @@
 export default (url) => {
+  if (typeof window === 'undefined') {
+    return url
+  }
+
   // someAppPath/studio/templates/NkyDH-8gW
   const path = window.location.pathname
 

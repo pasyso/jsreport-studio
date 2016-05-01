@@ -5,7 +5,7 @@ import * as selectors from './selectors.js'
 import { push } from 'react-router-redux'
 import shortid from 'shortid'
 import preview from '../../helpers/preview'
-import { engines, recipes } from '../../lib/configuration.js'
+import { engines, recipes, entitySets } from '../../lib/configuration.js'
 
 export function closeTab (id) {
   return async (dispatch, getState) => {
@@ -57,7 +57,7 @@ export function openNewTab ({ entitySet, name }) {
       _id: id,
       __entitySet: entitySet,
       shortid: shortid.generate(),
-      [Studio.entitySets[entitySet].nameAttribute]: name
+      [entitySets[entitySet].nameAttribute]: name
     }
 
     if (entitySet === 'templates') {

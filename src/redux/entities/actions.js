@@ -1,6 +1,7 @@
 import * as ActionTypes from './constants.js'
 import api from '../../helpers/api.js'
 import * as selectors from './selectors.js'
+import { entitySets } from '../../lib/configuration.js'
 
 const prune = (entity) => {
   let pruned = {}
@@ -102,7 +103,7 @@ export function unload (id) {
 
 export function loadReferences (entitySet) {
   return async function (dispatch) {
-    const nameAttribute = Studio.entitySets[entitySet].nameAttribute
+    const nameAttribute = entitySets[entitySet].nameAttribute
     let response = await api.get(`/odata/${entitySet}?$select=${nameAttribute},shortid&$orderby=${nameAttribute}`)
     dispatch({
       type: ActionTypes.LOAD_REFERENCES,

@@ -43,8 +43,6 @@ export default class ChangePasswordModal extends Component {
   }
 
   render () {
-    const { entity } = this.props.options
-
     return <div>
       {Studio.authentication.user.isAdmin ? '' : <div className='form-group'>
         <label>old password</label>

@@ -8,6 +8,7 @@ import api from './helpers/api.js'
 import TextEditor from './components/Editor/TextEditor.js'
 import * as editor from './redux/editor'
 import * as entities from './redux/entities'
+import * as configuration from './lib/configuration.js'
 import modalComponents from './components/Modals'
 import relativizeUrl from './helpers/relativizeUrl.js'
 
@@ -38,7 +39,6 @@ class Studio {
     this.initializeListeners = []
     this.previewListeners = []
     this.TextEditor = TextEditor
-    this.entitySets = {}
     this.registerEntitySet({ name: 'templates', visibleName: 'template' })
     this.toolbarComponents = { right: [], left: [], settings: [] }
     this.modals = modalComponents
@@ -70,7 +70,7 @@ class Studio {
 
   registerEntitySet (entitySet) {
     entitySet.nameAttribute = entitySet.nameAttribute || 'name'
-    this.entitySets[entitySet.name] = entitySet
+    configuration.entitySets[entitySet.name] = entitySet
   }
 
   registerToolbarComponent (toolbarComponent) {
@@ -106,7 +106,7 @@ class Studio {
   }
 
   getEntityName (entity) {
-    return entity[this.entitySets[entity.__entitySet].nameAttribute]
+    return entity[configuration.entitySets[entity.__entitySet].nameAttribute]
   }
 
   subscribeToSplitResize (fn) {

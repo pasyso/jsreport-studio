@@ -1,31 +1,14 @@
 import 'should'
 import { createStore, applyMiddleware } from 'redux'
 import reducer from '../../src/redux/reducer'
+import thunk from 'redux-thunk'
 import { stub as api } from '../../src/helpers/api.js'
-import Promise from 'bluebird'
+import * as configuration from '../../src/lib/configuration.js'
 
 export const itAsync = (name, fn) => {
   it(name, (done) => {
     fn().then(done).catch(done)
   })
-}
-
-// this enhanced middlaware is checking the action output promise and if it fails, it returns flow back to the test caller
-const safeThunkMiddleware = (reject) => ({ dispatch, getState }) => {
-  return (next) => (action) => {
-    if (typeof action === 'function') {
-      let res = action(dispatch, getState)
-      if (res && typeof res.catch === 'function') {
-        res.catch((e) => {
-          console.error(e)
-          reject(e)
-        })
-      }
-      return res
-    }
-
-    return next(action)
-  }
 }
 
 const actionHistoryMiddleware = (history) => ({ dispatch, getState }) => (next) => (action) => {
@@ -40,24 +23,12 @@ export const describeAsyncStore = (name, nestedDescribe) => {
   describe(name, () => {
     beforeEach(() => {
       Object.keys(history).forEach((a) => delete history[ a ])
+      configuration.entitySets = { 'testEntity': {} }
 
-      let res
-      let rej
-      let _store = createStore(reducer, applyMiddleware(actionHistoryMiddleware(history), safeThunkMiddleware((e) => rej(e))))
-
-      _store.subscribe(() => {
-        res(_store.getState())
-      })
+      let _store = createStore(reducer, applyMiddleware(thunk, actionHistoryMiddleware(history)))
 
       store.getState = _store.getState
-      store.dispatchAsync = (a) => {
-        const promise = new Promise((resolve, reject) => {
-          res = resolve
-          rej = reject
-        })
-        _store.dispatch(a)
-        return promise
-      }
+      store.dispatch = _store.dispatch
     })
 
     nestedDescribe({ store: store, api: api, history: history })
