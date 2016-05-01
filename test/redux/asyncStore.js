@@ -2,7 +2,9 @@ import 'should'
 import { createStore, applyMiddleware } from 'redux'
 import reducer from '../../src/redux/reducer'
 import thunk from 'redux-thunk'
+import _assign from 'lodash/assign'
 import { stub as api } from '../../src/helpers/api.js'
+import Invariant from 'redux-immutable-state-invariant'
 import * as configuration from '../../src/lib/configuration.js'
 
 export const itAsync = (name, fn) => {
@@ -12,8 +14,20 @@ export const itAsync = (name, fn) => {
 }
 
 const actionHistoryMiddleware = (history) => ({ dispatch, getState }) => (next) => (action) => {
-  history[ action.type ] = action
+  history[action.type] = action
   next(action)
+}
+
+const rootReducer = (state, action) => {
+  if (action.type === '@RESET') {
+    return reducer(undefined, action)
+  }
+
+  if (action.type === '@UPDATE') {
+    return _assign({}, state, action.value)
+  }
+
+  return reducer(state, action)
 }
 
 export const describeAsyncStore = (name, nestedDescribe) => {
@@ -22,11 +36,12 @@ export const describeAsyncStore = (name, nestedDescribe) => {
 
   describe(name, () => {
     beforeEach(() => {
-      Object.keys(history).forEach((a) => delete history[ a ])
-      configuration.entitySets = { 'testEntity': {} }
+      Object.keys(history).forEach((a) => delete history[a])
+      configuration.entitySets = { 'testEntity': { nameAttribute: 'name' } }
 
-      let _store = createStore(reducer, applyMiddleware(thunk, actionHistoryMiddleware(history)))
-
+      let _store = createStore(rootReducer, applyMiddleware(thunk, Invariant(), actionHistoryMiddleware(history)))
+      _store.dispatch({ type: '@RESET' })
+      store.update = (val) => _store.dispatch({ type: '@UPDATE', value: val })
       store.getState = _store.getState
       store.dispatch = _store.dispatch
     })
