@@ -15,7 +15,6 @@ import EditorTabs from '../../components/Tabs/EditorTabs.js'
 import TabTitles from '../../components/Tabs/TabTitles.js'
 import Modal from '../Modal/Modal.js'
 import { NEW_ENTITY_MODAL, DELETE_CONFIRMATION_MODAL } from '../../components/Modals'
-import { actions as modalActions } from '../../redux/modal'
 import * as progress from '../../redux/progress'
 
 const progressActions = progress.actions
@@ -33,7 +32,7 @@ const progressActions = progress.actions
   tabsWithEntities: selectors.getTabWithEntities(state),
   activeEntity: selectors.getActiveEntity(state),
   lastActiveTemplate: selectors.getLastActiveTemplate(state)
-}), { ...actions, ...modalActions, ...progressActions })
+}), { ...actions, ...progressActions })
 export default class App extends Component {
   static contextTypes = {
     store: PropTypes.object.isRequired
@@ -51,7 +50,6 @@ export default class App extends Component {
 
   constructor () {
     super()
-    this.state = { modalIsOpen: true }
   }
 
   componentDidMount () {
@@ -79,6 +77,8 @@ export default class App extends Component {
   }
 
   async handleRun () {
+    return this.openModal('foooo')
+
     this.update.flush()
 
     if (!/Trident/i.test(navigator.userAgent) && !/MSIE/i.test(navigator.userAgent) && !/Edge/i.test(navigator.userAgent)) {
@@ -86,6 +86,10 @@ export default class App extends Component {
     }
 
     this.props.run()
+  }
+
+  openModal (componentKeyOrText, options) {
+    this.refs.modal.open(componentKeyOrText, options)
   }
 
   save () {
@@ -115,19 +119,19 @@ export default class App extends Component {
 
   render () {
     const { tabsWithEntities, references, isPending, canRun, canSave, canRemove, canSaveAll, activeTabWithEntity, entities,
-      openTab, openComponent, end, activateTab, activeTabKey, activeEntity, update, closeTab } = this.props
+      openTab, end, activateTab, activeTabKey, activeEntity, update, closeTab } = this.props
 
     return (
       <div className='container'>
         <Helmet/>
-        <Modal/>
+        <Modal ref='modal'/>
 
         <div className={style.appContent + ' container'}>
           <div className='block'>
             <Toolbar
               canRun={canRun} canSave={canSave} canSaveAll={canSaveAll} canRemove={canRemove} onSave={() => this.save()}
               onSaveAll={() => this.saveAll()} isPending={isPending} activeTab={activeTabWithEntity} onUpdate={update}
-              onRemove={() => openComponent(DELETE_CONFIRMATION_MODAL, {_id: activeEntity._id})}
+              onRemove={() => this.openModal(DELETE_CONFIRMATION_MODAL, {_id: activeEntity._id})}
               onRun={() => this.handleRun()} openStartup={() => this.openStartup()}/>
 
             <div className='block'>
@@ -139,7 +143,7 @@ export default class App extends Component {
                   defaultSize={(window.innerHeight * 0.4) + 'px'}>
                   <EntityTree
                     activeEntity={activeEntity} entities={references} onClick={(_id) => openTab({_id: _id})}
-                    onNewClick={(es) => Studio.entitySets[es].onNew ? Studio.entitySets[es].onNew() : openComponent(NEW_ENTITY_MODAL, {entitySet: es})}/>
+                    onNewClick={(es) => Studio.entitySets[es].onNew ? Studio.entitySets[es].onNew() : this.openModal(NEW_ENTITY_MODAL, {entitySet: es})}/>
                   <Properties entity={activeEntity} entities={entities} onChange={update}/>
                 </SplitPane>
 

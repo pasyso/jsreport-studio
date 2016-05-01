@@ -8,7 +8,6 @@ import api from './helpers/api.js'
 import TextEditor from './components/Editor/TextEditor.js'
 import * as editor from './redux/editor'
 import * as entities from './redux/entities'
-import * as modal from './redux/modal'
 import modalComponents from './components/Modals'
 import relativizeUrl from './helpers/relativizeUrl.js'
 
@@ -102,6 +101,10 @@ class Studio {
     })
   }
 
+  registerModalSubscriber (subscriber) {
+    this.modalSubscriber = subscriber
+  }
+
   getEntityName (entity) {
     return entity[this.entitySets[entity.__entitySet].nameAttribute]
   }
@@ -128,7 +131,7 @@ class Studio {
   }
 
   openModal (key, options) {
-    this.store.dispatch(modal.actions.openComponent(key, options))
+    this.modalSubscriber.open(key, options)
   }
 
   triggerSplitResize () {
