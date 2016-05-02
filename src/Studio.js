@@ -154,19 +154,18 @@ class Studio {
   }
 
   /**
+   * Open and activate new editor tab
    *
-   * @param tab
+   * @example
+   * //open entity editor
+   * Studio.openTab({ _id: 'myentityid' })
+   * //open custom page
+   * Studio.openTab({ key: 'StartupPage', editorComponentKey: 'startup', title: 'Statup' })
+   *
+   * @param {Object} tab
    */
   openTab (tab) {
     this.store.dispatch(editor.actions.openTab(tab))
-  }
-
-  /**
-   *
-   * @param tab
-   */
-  openNewTab (tab) {
-    this.store.dispatch(editor.actions.openNewTab(tab))
   }
 
   /**

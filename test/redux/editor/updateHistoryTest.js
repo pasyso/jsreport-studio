@@ -6,7 +6,7 @@ describeAsyncStore('editor.actions.updateHistory', ({ store, api, history }) => 
   itAsync('should push to history routes based on active entity', async () => {
     store.update({
       entities: { '1': { __entitySet: 'testEntity', _id: '1', shortid: 'foo' } },
-      editor: { tabs: [{ key: '1', _id: '1', type: 'entity', entitySet: 'testEntity' }], activeTab: '1' },
+      editor: { tabs: [{ key: '1', _id: '1', type: 'entity', entitySet: 'testEntity' }], activeTabKey: '1' },
       routing: { locationBeforeTransitions: { pathname: '/' } }
     })
 
@@ -18,7 +18,7 @@ describeAsyncStore('editor.actions.updateHistory', ({ store, api, history }) => 
   itAsync('should push to history only if the route is different', async () => {
     store.update({
       entities: { '1': { __entitySet: 'testEntity', _id: '1', shortid: 'foo' } },
-      editor: { tabs: [{ key: '1', _id: '1', type: 'entity', entitySet: 'testEntity' }], activeTab: '1' },
+      editor: { tabs: [{ key: '1', _id: '1', type: 'entity', entitySet: 'testEntity' }], activeTabKey: '1' },
       routing: { locationBeforeTransitions: { pathname: '/studio/testEntity/foo' } }
     })
 

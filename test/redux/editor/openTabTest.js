@@ -7,7 +7,7 @@ describeAsyncStore('editor.actions.openTab', ({ store, api, history }) => {
   itAsync('should add custom tabs collection and activate it', async () => {
     await store.dispatch(actions.openTab({ key: '1' }))
     store.getState().editor.tabs.should.have.length(1)
-    store.getState().editor.activeTab.should.be.eql('1')
+    store.getState().editor.activeTabKey.should.be.eql('1')
   })
 
   itAsync('should load entity if _id supplied', async () => {
