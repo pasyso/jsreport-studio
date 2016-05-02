@@ -3,6 +3,7 @@ import {connect} from 'react-redux'
 import { actions } from '../../redux/editor'
 import { actions as settingsActions, selectors } from '../../redux/settings'
 import api from '../../helpers/api.js'
+import { previewFrameChangeHandler } from '../../lib/configuration.js'
 
 @connect((state) => ({
   activeTab: state.editor.activeTab,
@@ -50,7 +51,7 @@ export default class Startup extends Component {
       logs = '<table>' + rows + '</table>'
     }
 
-    return Studio.setPreviewFrameSrc('data:text/html;charset=utf-8,' + encodeURI(errorMessage + logs))
+    return previewFrameChangeHandler('data:text/html;charset=utf-8,' + encodeURI(errorMessage + logs))
   }
 
   render () {

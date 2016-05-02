@@ -5,7 +5,7 @@ import * as selectors from './selectors.js'
 import { push } from 'react-router-redux'
 import shortid from 'shortid'
 import preview from '../../helpers/preview'
-import { engines, recipes, entitySets } from '../../lib/configuration.js'
+import { engines, recipes, entitySets, previewListeners } from '../../lib/configuration.js'
 
 export function closeTab (id) {
   return async (dispatch, getState) => {
@@ -155,7 +155,7 @@ export function run () {
     let template = Object.assign({}, selectors.getLastActiveTemplate(getState()))
     let request = { template: template, options: {} }
     const entities = Object.assign({}, getState().entities)
-    await Promise.all([...Studio.previewListeners.map((l) => l(request, entities))])
+    await Promise.all([...previewListeners.map((l) => l(request, entities))])
     dispatch({type: ActionTypes.RUN})
     preview(request, 'previewFrame')
   }

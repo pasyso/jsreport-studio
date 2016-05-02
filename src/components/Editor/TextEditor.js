@@ -2,7 +2,7 @@ import React, { Component } from 'react'
 import AceEditor from 'react-ace'
 import 'brace/mode/handlebars'
 import 'brace/theme/chrome'
-import Studio from '../../Studio.js'
+import { subscribeToSplitResize } from '../../lib/configuration.js'
 
 export default class TextEditor extends Component {
   static propTypes = {
@@ -14,7 +14,7 @@ export default class TextEditor extends Component {
 
   componentDidMount () {
     this.refs.ace.editor.renderer.setScrollMargin(5, 0)
-    this.unsubscribe = Studio.subscribeToSplitResize(() => this.refs.ace.editor.resize())
+    this.unsubscribe = subscribeToSplitResize(() => this.refs.ace.editor.resize())
   }
 
   componentWillUnmount () {
@@ -34,6 +34,6 @@ export default class TextEditor extends Component {
       className='ace'
       width='100%'
       value={value || ''}
-      editorProps={{$blockScrolling: true}}/>)
+      editorProps={{$blockScrolling: true}} />)
   }
 }

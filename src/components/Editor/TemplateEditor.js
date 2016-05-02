@@ -5,8 +5,8 @@ import 'brace/mode/javascript'
 import 'brace/theme/chrome'
 import 'brace/ext/searchbox'
 import _debounce from 'lodash/debounce'
-import Studio from '../../Studio.js'
 import SplitPane from '../../components/common/SplitPane/SplitPane.js'
+import { triggerSplitResize, templateEditorModeResolvers } from '../../lib/configuration.js'
 
 export default class TemplateEditor extends Component {
   static propTypes = {
@@ -20,12 +20,12 @@ export default class TemplateEditor extends Component {
   }
 
   handleSplitChanged () {
-    Studio.triggerSplitResize()
+    triggerSplitResize()
   }
 
   resolveTemplateEditorMode (template) {
-    for (const k in Studio.templateEditorModeResovlers) {
-      const mode = Studio.templateEditorModeResovlers[k](template)
+    for (const k in templateEditorModeResolvers) {
+      const mode = templateEditorModeResolvers[k](template)
       if (mode) {
         return mode
       }

@@ -1,7 +1,7 @@
 import React, {Component, PropTypes} from 'react'
 import {connect} from 'react-redux'
 import {actions} from '../../redux/editor'
-import Studio from '../../Studio.js'
+import { entitySets } from '../../lib/configuration.js'
 
 @connect((state) => ({}), { ...actions })
 
@@ -30,9 +30,9 @@ export default class Modal extends Component {
     const { entitySet } = this.props.options
 
     return <div>
-      <div>New {Studio.entitySets[entitySet].visibleName}</div>
+      <div>New {entitySets[entitySet].visibleName}</div>
       <div className='form-group'>
-        <input type='text' placeholder='name...' ref='nameInput' onKeyPress={(e) => this.handleKeyPress(e)}/>
+        <input type='text' placeholder='name...' ref='nameInput' onKeyPress={(e) => this.handleKeyPress(e)} />
       </div>
     </div>
   }

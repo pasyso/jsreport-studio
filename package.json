@@ -14,6 +14,10 @@
   ],
   "main": "src/server.js",
   "standard": {
+    "ignore": [
+      "extensions.js",
+      "webpack/**"
+    ],
     "parser": "babel-eslint"
   },
   "scripts": {
@@ -87,7 +91,7 @@
     "resolve-url-loader": "^1.4.3",
     "sass-loader": "^3.1.2",
     "should": "^8.3.0",
-    "standard": "^6.0.8",
+    "standard": "^7.0.0-beta.0",
     "strip-loader": "^0.1.0",
     "style-loader": "^0.13.0",
     "superagent": "^1.4.0",

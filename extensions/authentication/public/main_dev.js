@@ -1,6 +1,4 @@
 import UserEditor from './UserEditor.js'
-import ChangePasswordModal from './ChangePasswordModal.js'
-import NewUserModal from './NewUserModal.js'
 import LogoutSettingsButton from './LogoutSettingsButton.js'
 import ChangePasswordSettingsButton from './ChangePasswordSettingsButton.js'
 import ChangePasswordButton from './ChangePasswordButton.js'
@@ -18,19 +16,17 @@ Studio.initializeListeners.unshift(async () => {
   Studio.authentication = { user: response.tenant }
 
   if (Studio.authentication.user.isAdmin) {
-    Studio.registerEntitySet({
+    Studio.addEntitySet({
       name: 'users',
       faIcon: 'fa-user',
       visibleName: 'user',
       nameAttribute: 'username',
       onNew: () => Studio.openModal('NEW_USER_MODAL')
     })
-    Studio.registerTabEditorComponent('users', UserEditor)
-    Studio.registerToolbarComponent(ChangePasswordButton)
+    Studio.addTabEditorComponent('users', UserEditor)
+    Studio.addToolbarComponent(ChangePasswordButton)
   }
 
-  Studio.registerSettingsToolbarComponent(LogoutSettingsButton)
-  Studio.registerSettingsToolbarComponent(ChangePasswordSettingsButton)
-  Studio.registerModal('CHANGE_PASSWORD_MODAL', ChangePasswordModal)
-  Studio.registerModal('NEW_USER_MODAL', NewUserModal)
+  Studio.addToolbarComponent(LogoutSettingsButton, 'settings')
+  Studio.addToolbarComponent(ChangePasswordSettingsButton, 'settings')
 })

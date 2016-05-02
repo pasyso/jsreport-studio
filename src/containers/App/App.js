@@ -6,7 +6,6 @@ import Preview from '../../components/Preview/Preview.js'
 import EntityTree from '../../components/EntityTree/EntityTree.js'
 import Properties from '../../components/Properties/Properties.js'
 import style from './App.scss'
-import Studio from '../../Studio.js'
 import Toolbar from '../../components/Toolbar/Toolbar.js'
 import _debounce from 'lodash/debounce'
 import Helmet from 'react-helmet'
@@ -14,8 +13,10 @@ import SplitPane from '../../components/common/SplitPane/SplitPane.js'
 import EditorTabs from '../../components/Tabs/EditorTabs.js'
 import TabTitles from '../../components/Tabs/TabTitles.js'
 import Modal from '../Modal/Modal.js'
-import { NEW_ENTITY_MODAL, DELETE_CONFIRMATION_MODAL } from '../../components/Modals'
+import NewEntityModal from '../../components/Modals/NewEntityModal.js'
+import DeleteConfirmationModal from '../../components/Modals/DeleteConfirmationModal.js'
 import * as progress from '../../redux/progress'
+import { triggerSplitResize, registerPreviewHandler, entitySets } from '../../lib/configuration.js'
 
 const progressActions = progress.actions
 
@@ -50,11 +51,11 @@ export default class App extends Component {
 
   componentDidMount () {
     this.setUpDebouncedUpdate()
-    Studio.previewSubscriber = (src) => {
+    registerPreviewHandler((src) => {
       if (!src) {
         this.handleRun()
       }
-    }
+    })
 
     if (this.props.params.shortid) {
       this.props.openTab({ shortid: this.props.params.shortid, entitySet: this.props.params.entitySet })
@@ -99,7 +100,7 @@ export default class App extends Component {
   }
 
   handleSplitChanged () {
-    Studio.triggerSplitResize()
+    triggerSplitResize()
     this.refs.preview.resizeStarted()
   }
 
@@ -117,16 +118,16 @@ export default class App extends Component {
 
     return (
       <div className='container'>
-        <Helmet/>
-        <Modal ref='modal'/>
+        <Helmet />
+        <Modal ref='modal' />
 
         <div className={style.appContent + ' container'}>
           <div className='block'>
             <Toolbar
               canRun={canRun} canSave={canSave} canSaveAll={canSaveAll} canRemove={canRemove} onSave={() => this.save()}
               onSaveAll={() => this.saveAll()} isPending={isPending} activeTab={activeTabWithEntity} onUpdate={update}
-              onRemove={() => this.openModal(DELETE_CONFIRMATION_MODAL, {_id: activeEntity._id})}
-              onRun={() => this.handleRun()} openStartup={() => this.openStartup()}/>
+              onRemove={() => this.openModal(DeleteConfirmationModal, {_id: activeEntity._id})}
+              onRun={() => this.handleRun()} openStartup={() => this.openStartup()} />
 
             <div className='block'>
               <SplitPane
@@ -137,19 +138,19 @@ export default class App extends Component {
                   defaultSize={(window.innerHeight * 0.4) + 'px'}>
                   <EntityTree
                     activeEntity={activeEntity} entities={references} onClick={(_id) => openTab({_id: _id})}
-                    onNewClick={(es) => Studio.entitySets[es].onNew ? Studio.entitySets[es].onNew() : this.openModal(NEW_ENTITY_MODAL, {entitySet: es})}/>
-                  <Properties entity={activeEntity} entities={entities} onChange={update}/>
+                    onNewClick={(es) => entitySets[es].onNew ? entitySets[es].onNew() : this.openModal(NewEntityModal, {entitySet: es})} />
+                  <Properties entity={activeEntity} entities={entities} onChange={update} />
                 </SplitPane>
 
                 <div className='block'>
                   <TabTitles
-                    activeTabKey={activeTabKey} activateTab={activateTab} tabs={tabsWithEntities} closeTab={closeTab}/>
+                    activeTabKey={activeTabKey} activateTab={activateTab} tabs={tabsWithEntities} closeTab={closeTab} />
                   <SplitPane
                     onChange={() => this.handleSplitChanged()} onDragFinished={() => this.handleSplitDragFinished()}
                     resizerClassName='resizer'>
                     <EditorTabs
-                      activeTabKey={activeTabKey} onUpdate={(v) => this.update(v)} tabs={tabsWithEntities}/>
-                    <Preview ref='preview' onLoad={end}/>
+                      activeTabKey={activeTabKey} onUpdate={(v) => this.update(v)} tabs={tabsWithEntities} />
+                    <Preview ref='preview' onLoad={end} />
                   </SplitPane>
                 </div>
               </SplitPane>

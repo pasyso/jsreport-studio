@@ -10,17 +10,19 @@ import './theme/style.scss'
 import * as entities from 'redux/entities'
 import * as settings from 'redux/settings'
 import Promise from 'bluebird'
-import StudioInst, { init } from './Studio'
+import { createStudio as createStudio } from './Studio'
 import { load as loadConfiguration } from './lib/configuration.js'
-
+import defaults from './configurationDefaults.js'
 import { syncHistoryWithStore } from 'react-router-redux'
+
 window.React = React
+
+defaults()
 
 const store = createStore(browserHistory)
 const history = syncHistoryWithStore(browserHistory, store)
 
-var Studio = window.Studio = StudioInst
-init(store)
+var Studio = window.Studio = createStudio(store)
 
 const start = async () => {
   await fetchExtensions()

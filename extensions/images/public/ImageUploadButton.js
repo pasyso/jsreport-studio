@@ -53,7 +53,7 @@ export default class ImageUploadButton extends Component {
               return alert('Uploading image failed.')
             }
 
-            Studio.reloadEntity(this.props.tab.entity._id)
+            Studio.loadEntity(this.props.tab.entity._id, true)
           })
       }
     }

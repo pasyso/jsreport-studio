@@ -1,6 +1,6 @@
 import React, {Component} from 'react'
 import style from './Toolbar.scss'
-import Studio from '../../Studio.js'
+import { toolbarComponents } from '../../lib/configuration.js'
 import logo from './js-logo.png'
 
 export default class Toolbar extends Component {
@@ -66,11 +66,11 @@ export default class Toolbar extends Component {
     return <div
       title={tooltip} className={'toolbar-button ' + ' ' + (enabled ? '' : 'disabled')}
       onClick={enabled ? onClick : () => {}}>
-      <i className={imageClass}/><span>{text}</span></div>
+      <i className={imageClass} /><span>{text}</span></div>
   }
 
   renderToolbarComponents (position) {
-    return Studio.toolbarComponents[position].map((p, i) => React.createElement(p, {
+    return toolbarComponents[position].map((p, i) => React.createElement(p, {
       key: i,
       tab: this.props.activeTab,
       onUpdate: this.props.onUpdate,

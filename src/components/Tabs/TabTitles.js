@@ -1,5 +1,5 @@
 import React, {Component} from 'react'
-import Studio from 'Studio.js'
+import { tabTitleComponents, entitySets } from '../../lib/configuration.js'
 import style from './Tabs.scss'
 
 export default class EditorTabs extends Component {
@@ -16,10 +16,10 @@ export default class EditorTabs extends Component {
     return <div
       className={style.tabTitle + ' ' + (t.tab.key === activeTabKey ? style.active : '')} key={t.tab.key}
       onClick={() => activateTab(t.tab.key)}> <span>
-          {t.tab.titleComponentKey ? React.createElement(Studio.tabTitleComponents[t.tab.titleComponentKey], {
+          {t.tab.titleComponentKey ? React.createElement(tabTitleComponents[t.tab.titleComponentKey], {
             entity: t.entity,
             tab: t.tab
-          }) : (<span>{t.tab.title || (t.entity[Studio.entitySets[t.entity.__entitySet].nameAttribute] + (t.entity.__isDirty ? '*' : ''))}</span>)}</span>
+          }) : (<span>{t.tab.title || (t.entity[entitySets[t.entity.__entitySet].nameAttribute] + (t.entity.__isDirty ? '*' : ''))}</span>)}</span>
 
       <div
         className={style.tabClose} key={'x' + t.key}

@@ -2,167 +2,231 @@ import React from 'react'
 import ReactList from 'react-list'
 import superagent from 'superagent'
 import ReactDom from 'react-dom'
-import TemplateProperties from './components/Properties/TemplateProperties.js'
-import Startup from './containers/Startup/Startup.js'
 import api from './helpers/api.js'
 import TextEditor from './components/Editor/TextEditor.js'
 import * as editor from './redux/editor'
 import * as entities from './redux/entities'
 import * as configuration from './lib/configuration.js'
-import modalComponents from './components/Modals'
 import relativizeUrl from './helpers/relativizeUrl.js'
+import babelRuntime from './lib/babelRuntime.js'
 
+/**
+ * Main facade and API for extensions. Exposed as global variable Studio. It can be also imported from jsreport-studio
+ * when using extensions default webpack configuration
+ *
+ * @class
+ * @public
+ */
 class Studio {
-  init (store) {
-    this.editor = editor
-    this.store = store
-    this.routes = []
-    this.runtime = {}
-    this.libraries = {
-      react: React,
-      'react-dom': ReactDom,
-      'react-list': ReactList,
-      superagent: superagent
-    }
-
-    this.relativizeUrl = relativizeUrl
-
-    this.propertyComponents = [{
-      title: TemplateProperties.title,
-      shouldDisplay: (entity) => entity.__entitySet === 'templates',
-      component: TemplateProperties
-    }]
-    this.api = api
-    this.tabTitleComponents = {}
-    this.tabEditorComponents = { templates: require('./components/Editor/TemplateEditor.js'), startup: Startup }
-    this.references = {}
-    this.initializeListeners = []
-    this.previewListeners = []
-    this.TextEditor = TextEditor
-    this.registerEntitySet({ name: 'templates', visibleName: 'template' })
-    this.toolbarComponents = { right: [], left: [], settings: [] }
-    this.modals = modalComponents
-    this.templateEditorModeResovlers = []
-
-    this.splitResizeSubscribers = []
-
-    // add babel runtime to the global so extensions can replace their runtimes with this and decrease its package size
-    this.runtime['core-js/object/get-prototype-of'] = require('babel-runtime/core-js/object/get-prototype-of')
-    this.runtime['core-js/object/keys'] = require('babel-runtime/core-js/object/keys')
-    this.runtime['core-js/object/assign'] = require('babel-runtime/core-js/object/assign')
-    this.runtime['helpers/defineProperty'] = require('babel-runtime/helpers/defineProperty')
-    this.runtime['helpers/classCallCheck'] = require('babel-runtime/helpers/classCallCheck')
-    this.runtime['helpers/createClass'] = require('babel-runtime/helpers/createClass')
-    this.runtime['helpers/possibleConstructorReturn'] = require('babel-runtime/helpers/possibleConstructorReturn')
-    this.runtime['helpers/inherits'] = require('babel-runtime/helpers/inherits')
-    this.runtime['helpers/extends'] = require('babel-runtime/helpers/extends')
-    this.runtime['helpers/asyncToGenerator'] = require('babel-runtime/helpers/asyncToGenerator')
-    this.runtime['regenerator'] = require('babel-runtime/regenerator')
+  /**
+   * Provides methods get,patch,post,del for accessing jsreport server
+   *
+   * @example
+   * await Studio.api.patch('/odata/tasks', { data: { foo: '1 } })
+   *
+   * @returns {*}
+   */
+  get api () {
+    return api
   }
 
-  openTab (tab) {
-    this.store.dispatch(editor.actions.openTab(tab))
+  /**
+   * Ace editor React wrapper
+   *
+   * @example
+   * export default class DataEditor extends Component { ... }
+   *
+   * @returns {TextEditor}
+   */
+  get TextEditor () {
+    return TextEditor
   }
 
-  openNewTab (tab) {
-    this.store.dispatch(editor.actions.openNewTab(tab))
-  }
-
+  /**
+   * Get registered entity sets, each one is object { visibleName: 'foo', nameAttribute: 'name' }
+   * @returns {Object|Array}
+   */
   get entitySets () {
     return configuration.entitySets
   }
 
-  registerEntitySet (entitySet) {
+  /**
+   * Array of async functions invoked in sequence during initialization
+   * @returns {function|Array}
+   */
+  get initializeListeners () {
+    return configuration.initializeListeners
+  }
+
+  /**
+   * Array of async functions invoked in sequence when preview process starts.
+   * @returns {function|Array}
+   */
+  get previewListeners () {
+    return configuration.previewListeners
+  }
+
+  /**
+   * Array of functions used to resolve ace editor mode for template content. This is used by custom templating engines
+   * to add highlighting support for jade,ejs...
+   *
+   * @returns {*|Array}
+   */
+  get templateEditorModeResolvers () {
+    return configuration.templateEditorModeResolvers
+  }
+
+  addEntitySet (entitySet) {
     entitySet.nameAttribute = entitySet.nameAttribute || 'name'
     configuration.entitySets[entitySet.name] = entitySet
   }
 
-  registerToolbarComponent (toolbarComponent) {
-    this.toolbarComponents.left.push(toolbarComponent)
+  addToolbarComponent (toolbarComponent, position = 'left') {
+    configuration.toolbarComponents[position].push(toolbarComponent)
   }
 
-  registerRightToolbarComponent (toolbarComponent) {
-    this.toolbarComponents.right.push(toolbarComponent)
+  addTabTitleComponent (key, component) {
+    configuration.tabTitleComponents[key] = component
   }
 
-  registerSettingsToolbarComponent (toolbarComponent) {
-    this.toolbarComponents.settings.push(toolbarComponent)
+  addTabEditorComponent (key, component) {
+    configuration.tabEditorComponents[key] = component
   }
 
-  registerTabTitleComponent (key, component) {
-    this.tabTitleComponents[key] = component
-  }
-
-  registerTabEditorComponent (key, component) {
-    this.tabEditorComponents[key] = component
-  }
-
-  registerPropertyComponent (title, component, shouldDisplay) {
-    this.propertyComponents.push({
+  addPropertyComponent (title, component, shouldDisplay) {
+    configuration.propertyComponents.push({
       title: title,
       component: component,
       shouldDisplay: shouldDisplay
     })
   }
 
-  registerModalSubscriber (subscriber) {
-    this.modalSubscriber = subscriber
-  }
-
-  getEntityName (entity) {
-    return entity[configuration.entitySets[entity.__entitySet].nameAttribute]
-  }
-
-  subscribeToSplitResize (fn) {
-    this.splitResizeSubscribers.push(fn)
-    return () => { this.splitResizeSubscribers = this.splitResizeSubscribers.filter((s) => s !== fn) }
-  }
-
   setPreviewFrameSrc (frameSrc) {
-    if (this.frameChangeSubscriber) {
-      this.frameChangeSubscriber(frameSrc)
-    }
+    configuration.previewFrameChangeHandler(frameSrc)
   }
 
+  configure (cfg) {
+    this.addEntitySet(cfg.entitySet)
+    this.addPropertyComponent(cfg.property.title, cfg.property.component, cfg.property.visibility)
+    this.addTabEditorComponent(cfg.editor.entitySet, cfg.editor.component)
+  }
+
+  /**
+   * Opens modal dialog.
+   *
+   * @param {Component|String}componentOrText
+   * @param {Object} options passed as props to the react component
+   */
+  openModal (componentOrText, options) {
+    configuration.modalHandler.open(componentOrText, options)
+  }
+
+  /**
+   * Invoke preview process for last active template
+   */
   preview () {
-    if (this.previewSubscriber) {
-      this.previewSubscriber()
-    }
+    configuration.previewHandler()
   }
 
-  registerModal (key, component) {
-    this.modals[key] = component
+  /**
+   *
+   * @param tab
+   */
+  openTab (tab) {
+    this.store.dispatch(editor.actions.openTab(tab))
   }
 
-  openModal (key, options) {
-    this.modalSubscriber.open(key, options)
+  /**
+   *
+   * @param tab
+   */
+  openNewTab (tab) {
+    this.store.dispatch(editor.actions.openNewTab(tab))
   }
 
-  triggerSplitResize () {
-    this.splitResizeSubscribers.forEach((fn) => fn())
+  /**
+   * Loads entity, which reference is already present in the ui state, from the remote API
+   *
+   * @param {String} id
+   * @param {Boolean} force
+   * @return {Promise}
+   * @public
+   */
+  loadEntity (id, force = false) {
+    return this.store.dispatch(entities.actions.load(id, force))
   }
 
-  reloadEntity (id) {
-    this.store.dispatch(entities.actions.load(id, true))
-  }
-
+  /**
+   * Add entity to the state
+   * @param {object} entity
+   * @public
+   */
   addEntity (entity) {
     this.store.dispatch(entities.actions.add(entity))
   }
 
+  /**
+   * Call remote API and persist (insert or update) entity
+   * @param {String} id
+   * @return {Promise}
+   * @public
+   */
   saveEntity (id) {
-    this.store.dispatch(entities.actions.save(id))
+    return this.store.dispatch(entities.actions.save(id))
   }
 
+  /**
+   * Adds already existing (persisted) entity into the UI state
+   * @param entity
+   * @public
+   */
   addExistingEntity (entity) {
     this.store.dispatch(entities.actions.addExisting(entity))
   }
 
+  /**
+   * Searches for the entity in the UI state based on specified the shortid
+   * @param shortid
+   * @param shouldThrow
+   * @returns {object | null}
+   * @public
+   */
   getEntityByShortid (shortid, shouldThrow = true) {
     return entities.selectors.getByShortid(this.store.getState(), shortid, shouldThrow)
   }
+
+  /**
+   * Get the path in absolute form like /api/images and make it working also for jsreport running on subpath like myserver.com/reporting/api/images
+   * @param {String} path
+   * @returns {String}
+   */
+  relativizeUrl (path) {
+    return relativizeUrl(path)
+  }
+
+  constructor (store) {
+    this.editor = editor
+    this.store = store
+    this.references = {}
+    // extensions can add routes, not yet prototyped
+    this.routes = []
+
+    // webpack replaces all the babel runtime references in extensions with externals taking runtime from this field
+    // this basically removes the duplicated babel runtime code from extensions and decrease its sizes
+    this.runtime = babelRuntime
+
+    // the same case as for babel runtime, we expose the following libraries and replace their references in extensions
+    // using webpack externals
+    this.libraries = {
+      react: React,
+      'react-dom': ReactDom,
+      'react-list': ReactList,
+      superagent: superagent
+    }
+  }
 }
 
-const studio = new Studio()
-export const init = (store) => studio.init(store)
+let studio
+export const createStudio = (store) => (studio = new Studio(store))
+
 export default studio

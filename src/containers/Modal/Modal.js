@@ -1,33 +1,25 @@
 import React, {Component, PropTypes} from 'react'
-import Studio from '../../Studio.js'
+import { registerModalHandler } from '../../lib/configuration.js'
 import ReactModal from 'react-modal'
 import style from './Modal.scss'
 
-//@connect((state) => ({
-//  isOpen: state.modal.isOpen,
-//  text: state.modal.text,
-//  componentKey: state.modal.componentKey,
-//  options: state.modal.options
-//}), { ...actions })
 export default class Modal extends Component {
 
   constructor () {
     super()
     this.state = {}
-    Studio.registerModalSubscriber(this)
+    registerModalHandler(this)
   }
 
   renderContent () {
-    const component = Studio.modals[this.componentKeyOrText]
-
-    return (<div>{component ? React.createElement(component, {
+    return (<div>{typeof this.componentOrText !== 'string' ? React.createElement(this.componentOrText, {
       close: () => this.close(),
       options: this.options
     }) : this.componentKeyOrText}</div>)
   }
 
-  open (componentKeyOrText, options) {
-    this.componentKeyOrText = componentKeyOrText
+  open (componentOrText, options) {
+    this.componentOrText = componentOrText
     this.options = options
     this.setState({ isOpen: true })
   }
@@ -38,7 +30,7 @@ export default class Modal extends Component {
 
   render () {
     const { isOpen } = this.state
-    return <ReactModal key='foo'
+    return <ReactModal key='ReactModal'
       isOpen={isOpen} overlayClassName={style.overlay} className={style.content}
       onRequestClose={() => this.close()}>
       {isOpen ? this.renderContent() : ''}
