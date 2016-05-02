@@ -68,6 +68,10 @@ class Studio {
     this.store.dispatch(editor.actions.openNewTab(tab))
   }
 
+  get entitySets () {
+    return configuration.entitySets
+  }
+
   registerEntitySet (entitySet) {
     entitySet.nameAttribute = entitySet.nameAttribute || 'name'
     configuration.entitySets[entitySet.name] = entitySet

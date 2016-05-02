@@ -48,10 +48,6 @@ export default class App extends Component {
     loaded: PropTypes.bool
   };
 
-  constructor () {
-    super()
-  }
-
   componentDidMount () {
     this.setUpDebouncedUpdate()
     Studio.previewSubscriber = (src) => {
@@ -77,8 +73,6 @@ export default class App extends Component {
   }
 
   async handleRun () {
-    return this.openModal('foooo')
-
     this.update.flush()
 
     if (!/Trident/i.test(navigator.userAgent) && !/MSIE/i.test(navigator.userAgent) && !/Edge/i.test(navigator.userAgent)) {

@@ -1,7 +1,9 @@
 import React, {Component} from 'react'
 import ReactList from 'react-list'
 import style from './EntityTree.scss'
-import Studio from '../../Studio.js'
+import { entitySets } from '../../lib/configuration.js'
+
+const getEntityName = (e) => entitySets[e.__entitySet].nameAttribute ? e[entitySets[e.__entitySet].nameAttribute] : e.name
 
 export default class EntityTree extends Component {
   static propTypes = {
@@ -27,8 +29,8 @@ export default class EntityTree extends Component {
       onClick={() => this.props.onClick(entity._id)}
       key={entity._id}
       className={style.link + ' ' + ((activeEntity && entity._id === activeEntity._id) ? style.active : '')}>
-      <i className={style.entityIcon + ' fa ' + (Studio.entitySets[entity.__entitySet].faIcon || style.entityDefaultIcon)}></i>
-      <a>{entity[Studio.entitySets[entity.__entitySet].nameAttribute] + (entity.__isDirty ? '*' : '')}</a>
+      <i className={style.entityIcon + ' fa ' + (entitySets[entity.__entitySet].faIcon || style.entityDefaultIcon)}></i>
+      <a>{entity[entitySets[entity.__entitySet].nameAttribute] + (entity.__isDirty ? '*' : '')}</a>
     </div>
   }
 
@@ -56,7 +58,7 @@ export default class EntityTree extends Component {
 
     let result = {}
     Object.keys(entities).forEach((k) => {
-      result[k] = entities[k].filter((e) => Studio.getEntityName(e).indexOf(filter) !== -1)
+      result[k] = entities[k].filter((e) => getEntityName(e).indexOf(filter) !== -1)
     })
 
     return result
@@ -75,7 +77,7 @@ export default class EntityTree extends Component {
         </div>
       </div>
       <div className={style.nodesBox}>
-        {Object.keys(Studio.entitySets).map((k) => this.renderObjectSubTree(k, entities[k] || []))}
+        {Object.keys(entitySets).map((k) => this.renderObjectSubTree(k, entities[k] || []))}
       </div>
     </div>
   }

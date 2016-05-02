@@ -18,7 +18,7 @@ export default function createStore (history) {
     finalCreateStore = applyMiddleware(...middleware)(_createStore)
   }
 
-  const reducer = require('./reducer')()
+  const reducer = require('./reducer')
   const store = finalCreateStore(enableBatching(reducer))
 
   if (__DEVELOPMENT__ && module.hot) {
