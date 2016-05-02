@@ -9,7 +9,7 @@ export default class ImageEditor extends Component {
     const { entity } = this.props
 
     return (<div className='custom-editor'>
-      <div><h1><i className='fa fa-camera'/> {entity.name}</h1></div>
+      <div><h1><i className='fa fa-camera' /> {entity.name}</h1></div>
       <div>
         <div>Embed into template using:
           <code>

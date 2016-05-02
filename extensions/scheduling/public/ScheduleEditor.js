@@ -102,7 +102,7 @@ export default class ScheduleEditor extends Component {
     const { count } = this.state
 
     return <div className='block custom-editor'>
-      <div><h1><i className='fa fa-calendar'/> {entity.name}</h1>
+      <div><h1><i className='fa fa-calendar' /> {entity.name}</h1>
         {entity.nextRun ? (<div><span>next run&nbsp;&nbsp;</span>
           <small>{entity.nextRun.toLocaleString()}</small>
         </div>) : <div>Not planned yet. Fill CRON expression and report template in the properties.</div>}
@@ -110,7 +110,7 @@ export default class ScheduleEditor extends Component {
       <div className={style.listContainer + ' block-item'}>
         <ReactList
           type='uniform' itemsRenderer={this.renderItems} itemRenderer={(index) => this.tryRenderItem(index)}
-          length={count}/>
+          length={count} />
       </div>
     </div>
   }

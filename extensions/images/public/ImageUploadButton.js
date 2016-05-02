@@ -10,6 +10,8 @@ export default class ImageUploadButton extends Component {
     onUpdate: React.PropTypes.func.isRequired
   }
 
+  // we need to have global action in main_dev which is triggered when users clicks on + on images
+  // this triggers invisible button in the toolbar
   static OpenUpload () {
     _imageUploadButton.openFileDialog(true)
   }
@@ -86,8 +88,8 @@ export default class ImageUploadButton extends Component {
       return this.renderUpload(true)
     }
 
-    return <div className='toolbar-button' onClick={() => { console.log('ups'); this.openFileDialog() }}>
-      <i className='fa fa-cloud-upload'/>Upload
+    return <div className='toolbar-button' onClick={() => { this.openFileDialog() }}>
+      <i className='fa fa-cloud-upload' />Upload
       {this.renderUpload()}
     </div>
   }

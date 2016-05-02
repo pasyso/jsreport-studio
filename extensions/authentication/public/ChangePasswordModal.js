@@ -46,16 +46,16 @@ export default class ChangePasswordModal extends Component {
     return <div>
       {Studio.authentication.user.isAdmin ? '' : <div className='form-group'>
         <label>old password</label>
-        <input type='password' ref='oldPassword'/>
+        <input type='password' ref='oldPassword' />
       </div>
       }
       <div className='form-group'>
         <label>new password</label>
-        <input type='password' ref='newPassword1'/>
+        <input type='password' ref='newPassword1' />
       </div>
       <div className='form-group'>
         <label>new password verification</label>
-        <input type='password' ref='newPassword2' onChange={() => this.validatePassword()}/>
+        <input type='password' ref='newPassword2' onChange={() => this.validatePassword()} />
       </div>
       <div className='form-group'>
         <span style={{color: 'red', display: this.state.passwordError ? 'block' : 'none'}}>password doesn't match</span>
