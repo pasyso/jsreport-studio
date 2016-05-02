@@ -23,7 +23,7 @@ Studio.initializeListeners.unshift(async () => {
       nameAttribute: 'username',
       onNew: () => Studio.openModal('NEW_USER_MODAL')
     })
-    Studio.addTabEditorComponent('users', UserEditor)
+    Studio.addEditorComponent('users', UserEditor)
     Studio.addToolbarComponent(ChangePasswordButton)
   }
 

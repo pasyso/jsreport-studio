@@ -6,7 +6,7 @@ import api from '../../helpers/api.js'
 import { previewFrameChangeHandler } from '../../lib/configuration.js'
 
 @connect((state) => ({
-  activeTab: state.editor.activeTab,
+  activeTabKey: state.editor.activeTabKey,
   logsWithTemplates: selectors.getLogsWithTemplates(state),
   failedLogsWithTemplates: selectors.getFailedLogsWithTemplates(state)
 }), { ...actions, ...settingsActions })
@@ -35,7 +35,7 @@ export default class Startup extends Component {
   }
 
   shouldComponentUpdate (props) {
-    return props.activeTab === 'StartupPage'
+    return props.activeTabKey === 'StartupPage'
   }
 
   openLogs (m) {

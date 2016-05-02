@@ -8,7 +8,7 @@ describeAsyncStore('editor.actions.activateTab', ({ store, api, history }) => {
 
     await store.dispatch(actions.activateTab('1'))
 
-    store.getState().editor.activeTab.should.be.eql('1')
+    store.getState().editor.activeTabKey.should.be.eql('1')
   })
 
   itAsync('should set lastActiveTemplateKey if new tab has entitySet eql templates', async () => {

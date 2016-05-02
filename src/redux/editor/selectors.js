@@ -5,10 +5,10 @@ export const getTabWithEntities = (state) => state.editor.tabs.map((t) => ({
   tab: t
 }))
 
-export const getActiveTab = (state) => state.editor.activeTab ? state.editor.tabs.filter((t) => t.key === state.editor.activeTab)[ 0 ] : null
+export const getActiveTab = (state) => state.editor.activeTabKey ? state.editor.tabs.filter((t) => t.key === state.editor.activeTabKey)[ 0 ] : null
 
 export const getActiveEntity = (state) => {
-  if (!state.editor.activeTab) {
+  if (!state.editor.activeTabKey) {
     return null
   }
 

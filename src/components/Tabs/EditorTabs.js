@@ -1,7 +1,7 @@
 import React, {Component} from 'react'
 import Tab from './Tab'
 import TabPane from './TabPane.js'
-import { tabEditorComponents } from '../../lib/configuration.js'
+import { editorComponents } from '../../lib/configuration.js'
 
 export default class EditorTabs extends Component {
   static propTypes = {
@@ -12,7 +12,7 @@ export default class EditorTabs extends Component {
 
   renderEntityTab (t, onUpdate) {
     return <Tab key={t.tab.key} >
-      {React.createElement(tabEditorComponents[ t.tab.editorComponentKey || t.entity.__entitySet ], {
+      {React.createElement(editorComponents[ t.tab.editorComponentKey || t.entity.__entitySet ], {
         entity: t.entity,
         tab: t.tab,
         ref: t.tab.key,

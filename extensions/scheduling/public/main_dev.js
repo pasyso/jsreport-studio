@@ -9,7 +9,7 @@ Studio.initializeListeners.push(async () => {
   }
 
   Studio.addEntitySet({ name: 'schedules', faIcon: 'fa-calendar', visibleName: 'schedule' })
-  Studio.addTabEditorComponent('schedules', ScheduleEditor)
-  Studio.addPropertyComponent(ScheduleProperties.title, ScheduleProperties, (entity) => entity.__entitySet === 'schedules')
+  Studio.addEditorComponent('schedules', ScheduleEditor)
+  Studio.addPropertiesComponent(ScheduleProperties.title, ScheduleProperties, (entity) => entity.__entitySet === 'schedules')
   Studio.addToolbarComponent(DownloadButton)
 })

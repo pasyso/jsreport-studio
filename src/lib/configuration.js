@@ -7,8 +7,8 @@ export const initializeListeners = []
 export const previewListeners = []
 export const entitySets = {}
 export const templateEditorModeResolvers = []
-export const propertyComponents = []
-export const tabEditorComponents = []
+export const propertiesComponents = []
+export const editorComponents = []
 export const toolbarComponents = {
   left: [],
   right: [],

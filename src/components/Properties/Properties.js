@@ -1,6 +1,6 @@
 import React, {Component} from 'react'
 import style from './Properties.scss'
-import { entitySets, propertyComponents } from '../../lib/configuration.js'
+import { entitySets, propertiesComponents } from '../../lib/configuration.js'
 
 export default class Properties extends Component {
   static propTypes = {
@@ -56,7 +56,7 @@ export default class Properties extends Component {
             onChange={(v) => onChange({_id: entity._id, [nameAttribute]: v.target.value})} />
         </div>
       </div>
-      {propertyComponents.map((p, i) => this.renderOne(p, i, entity, entities, onChange))}
+      {propertiesComponents.map((p, i) => this.renderOne(p, i, entity, entities, onChange))}
     </div>
   }
 

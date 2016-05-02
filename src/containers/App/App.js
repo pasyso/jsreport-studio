@@ -23,7 +23,7 @@ const progressActions = progress.actions
 @connect((state) => ({
   entities: state.entities,
   references: entities.selectors.getReferences(state),
-  activeTabKey: state.editor.activeTab,
+  activeTabKey: state.editor.activeTabKey,
   activeTabWithEntity: selectors.getActiveTabWithEntity(state),
   isPending: progress.selectors.getIsPending(state),
   canRun: selectors.canRun(state),
@@ -83,8 +83,8 @@ export default class App extends Component {
     this.props.run()
   }
 
-  openModal (componentKeyOrText, options) {
-    this.refs.modal.open(componentKeyOrText, options)
+  openModal (componentOrText, options) {
+    this.refs.modal.open(componentOrText, options)
   }
 
   save () {

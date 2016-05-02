@@ -18,6 +18,92 @@ import babelRuntime from './lib/babelRuntime.js'
  * @public
  */
 class Studio {
+
+  /**
+   * Add new entity set, which will be automatically loaded through OData and displayed in the entity tree
+   *
+   * @param {Object} entitySet For example { name: 'data', visibleName: 'sample data' }
+   */
+  addEntitySet (entitySet) {
+    entitySet.nameAttribute = entitySet.nameAttribute || 'name'
+    configuration.entitySets[entitySet.name] = entitySet
+  }
+
+  /**
+   * Add React component which will be displayed in toolbar
+   *
+   * @param {Component|function} toolbarComponent
+   * @param {String} position left or settings
+   */
+  addToolbarComponent (toolbarComponent, position = 'left') {
+    configuration.toolbarComponents[position].push(toolbarComponent)
+  }
+
+  /**
+   * Add React component which will be used as tab title
+   *
+   * @param {String} key used in openTab({ titleComponentKey
+   * @param {Component|function} component
+   */
+  addTabTitleComponent (key, component) {
+    configuration.tabTitleComponents[key] = component
+  }
+
+  /**
+   * Add component used in tab as content editor
+   *
+   * @param {String} key - key used id openTab({ editorComponentKey: ... , use entity set name if the editor should represent the main entity editor
+   * @param component
+   */
+  addEditorComponent (key, component) {
+    configuration.editorComponents[key] = component
+  }
+
+  /**
+   * Add component used in the left Properties secion
+   *
+   * @param {Function|String} string or title function used to render the section title
+   * @param component
+   * @param {Function} shouldDisplay
+   */
+  addPropertiesComponent (title, component, shouldDisplay) {
+    configuration.propertiesComponents.push({
+      title: title,
+      component: component,
+      shouldDisplay: shouldDisplay
+    })
+  }
+
+  /**
+   * Array of async functions invoked in sequence during initialization
+   * @returns {function|Array}
+   */
+  get initializeListeners () {
+    return configuration.initializeListeners
+  }
+
+  /**
+   * Array of async functions invoked in sequence when preview process starts.
+   * @returns {function|Array}
+   */
+  get previewListeners () {
+    return configuration.previewListeners
+  }
+
+  /**
+   * Array of functions used to resolve ace editor mode for template content. This is used by custom templating engines
+   * to add highlighting support for jade,ejs...
+   *
+   * @returns {*|Array}
+   */
+  get templateEditorModeResolvers () {
+    return configuration.templateEditorModeResolvers
+  }
+
+  setPreviewFrameSrc (frameSrc) {
+    configuration.previewFrameChangeHandler(frameSrc)
+  }
+
   /**
    * Provides methods get,patch,post,del for accessing jsreport server
    *
@@ -48,67 +134,6 @@ class Studio {
    */
   get entitySets () {
     return configuration.entitySets
-  }
-
-  /**
-   * Array of async functions invoked in sequence during initialization
-   * @returns {function|Array}
-   */
-  get initializeListeners () {
-    return configuration.initializeListeners
-  }
-
-  /**
-   * Array of async functions invoked in sequence when preview process starts.
-   * @returns {function|Array}
-   */
-  get previewListeners () {
-    return configuration.previewListeners
-  }
-
-  /**
-   * Array of functions used to resolve ace editor mode for template content. This is used by custom templating engines
-   * to add highlighting support for jade,ejs...
-   *
-   * @returns {*|Array}
-   */
-  get templateEditorModeResolvers () {
-    return configuration.templateEditorModeResolvers
-  }
-
-  addEntitySet (entitySet) {
-    entitySet.nameAttribute = entitySet.nameAttribute || 'name'
-    configuration.entitySets[entitySet.name] = entitySet
-  }
-
-  addToolbarComponent (toolbarComponent, position = 'left') {
-    configuration.toolbarComponents[position].push(toolbarComponent)
-  }
-
-  addTabTitleComponent (key, component) {
-    configuration.tabTitleComponents[key] = component
-  }
-
-  addTabEditorComponent (key, component) {
-    configuration.tabEditorComponents[key] = component
-  }
-
-  addPropertyComponent (title, component, shouldDisplay) {
-    configuration.propertyComponents.push({
-      title: title,
-      component: component,
-      shouldDisplay: shouldDisplay
-    })
-  }
-
-  setPreviewFrameSrc (frameSrc) {
-    configuration.previewFrameChangeHandler(frameSrc)
-  }
-
-  configure (cfg) {
-    this.addEntitySet(cfg.entitySet)
-    this.addPropertyComponent(cfg.property.title, cfg.property.component, cfg.property.visibility)
-    this.addTabEditorComponent(cfg.editor.entitySet, cfg.editor.component)
   }
 
   /**

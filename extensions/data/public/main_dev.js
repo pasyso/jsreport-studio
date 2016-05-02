@@ -2,11 +2,11 @@ import DataEditor from './DataEditor.js'
 import Properties from './DataProperties.js'
 import Studio from 'jsreport-studio'
 
-//Studio.addEntitySet({ name: 'data', faIcon: 'fa-database', visibleName: 'sample data' })
-//Studio.addPropertyComponent(Properties.title, Properties, (entity) => entity.__entitySet === 'templates')
-//Studio.addTabEditorComponent('data', DataEditor)
+Studio.addEntitySet({ name: 'data', faIcon: 'fa-database', visibleName: 'sample data' })
+Studio.addPropertiesComponent(Properties.title, Properties, (entity) => entity.__entitySet === 'templates')
+Studio.addEditorComponent('data', DataEditor)
 
-const previewListener = (request, entities) => {
+Studio.previewListeners.push((request, entities) => {
   if (!request.template.data || !request.template.data.shortid) {
     return
   }
@@ -19,18 +19,4 @@ const previewListener = (request, entities) => {
   }
 
   request.data = dataDetails[0].dataJson || JSON.stringify({})
-}
-
-Studio.configure({
-  entitySet: { name: 'data', faIcon: 'fa-database', visibleName: 'sample data' },
-  property: {
-    title: Properties.title,
-    component: Properties,
-    visibility: (entity) => entity.__entitySet === 'templates'
-  },
-  editor: {
-    entitySet: 'data',
-    component: DataEditor
-  },
-  previewListener: previewListener
 })

@@ -4,7 +4,7 @@ import createReducer from '../createReducer.js'
 
 const reducer = createReducer({
   tabs: [],
-  activeTab: null,
+  activeTabKey: null,
   lastActiveTemplateKey: null
 })
 export default reducer.export()
@@ -16,15 +16,15 @@ reducer.handleAction(ActionTypes.OPEN_TAB, (state, { tab }) => ({
 
 reducer.handleAction(ActionTypes.OPEN_NEW_TAB, (state, { tab }) => ({
   ...state,
-  activeTab: tab.key,
+  activeTabKey: tab.key,
   tabs: [...state.tabs, tab],
   lastActiveTemplateKey: (tab.entitySet === 'templates') ? tab._id : state.lastActiveTemplateKey
 }))
 
 reducer.handleActions([EntityActionTypes.REMOVE, ActionTypes.CLOSE_TAB], (state, action) => {
   let newTabs = state.tabs.filter((t) => t.key !== action.key && (!action._id || t._id !== action._id))
-  let newActivatTabKey = state.activeTab
-  if (state.activeTab === action.key || state.activeTab === action._id) {
+  let newActivatTabKey = state.activeTabKey
+  if (state.activeTabKey === action.key || state.activeTabKey === action._id) {
     newActivatTabKey = newTabs.length ? newTabs[newTabs.length - 1].key : null
   }
 
@@ -32,7 +32,7 @@ reducer.handleActions([EntityActionTypes.REMOVE, ActionTypes.CLOSE_TAB], (state,
 
   return {
     ...state,
-    activeTab: newActivatTabKey,
+    activeTabKey: newActivatTabKey,
     tabs: newTabs,
     lastActiveTemplateKey: (newActivatTab && newActivatTab.entitySet === 'templates') ? newActivatTab._id
       : (newTabs.filter((t) => t._id === state.lastActiveTemplateKey).length ? state.lastActiveTemplateKey : null)
@@ -44,7 +44,7 @@ reducer.handleAction(ActionTypes.ACTIVATE_TAB, (state, action) => {
 
   return {
     ...state,
-    activeTab: action.key,
+    activeTabKey: action.key,
     lastActiveTemplateKey: newTab.entitySet === 'templates' ? newTab._id : state.lastActiveTemplateKey
   }
 })
@@ -61,7 +61,7 @@ reducer.handleAction(EntityActionTypes.SAVE_NEW, (state, action) => {
       ...state.tabs.slice(0, index),
       tab,
       ...state.tabs.slice(index + 1)],
-    activeTab: action.entity._id,
+    activeTabKey: action.entity._id,
     lastActiveTemplateKey: state.lastActiveTemplateKey === action.oldId ? action.entity._id : state.lastActiveTemplateKey
   }
 })
