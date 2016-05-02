@@ -75,7 +75,8 @@ module.exports = {
       }
 
       callback()
-    }
+    },
+    'react/addons', 'react/lib/ExecutionEnvironment', 'react/lib/ReactContext'
   ],
   module: {
     loaders: [
