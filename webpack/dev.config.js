@@ -4,6 +4,7 @@ require('babel-polyfill')
 var fs = require('fs')
 var path = require('path')
 var webpack = require('webpack')
+var HtmlWebpackPlugin = require('html-webpack-plugin')
 var assetsPath = path.resolve(__dirname, '../static/dist')
 var babelrc = fs.readFileSync('./.babelrc')
 var babelrcObject = {}
@@ -116,6 +117,10 @@ module.exports = {
     root: path.join(__dirname, '../node_modules')
   },
   plugins: [
+    new HtmlWebpackPlugin({
+      hash: true,
+      template: path.join(__dirname, '../static/index.html')
+    }),
     // hot reload
     new webpack.HotModuleReplacementPlugin(),
     new webpack.IgnorePlugin(/webpack-stats\.json$/),
