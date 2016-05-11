@@ -42,6 +42,12 @@ module.exports = [{
 }, {
   name: 'fs-store',
   directory: path.join(__dirname, 'fs-store')
+}, {
+  name: 'resources',
+  directory: path.join(__dirname, 'resources')
+}, {
+  name: 'public-templates',
+  directory: path.join(__dirname, 'public-templates')
 }]
 
 /*{

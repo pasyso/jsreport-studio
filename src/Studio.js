@@ -278,6 +278,14 @@ class Studio {
   }
 
   /**
+   * Update entity in the state
+   * @param entity
+   */
+  updateEntity (entity) {
+    this.store.dispatch(entities.actions.update(entity))
+  }
+
+  /**
    * Call remote API and persist (insert or update) entity
    * @param {String} id
    * @return {Promise}
@@ -379,6 +387,14 @@ class Studio {
    */
   relativizeUrl (path) {
     return relativizeUrl(path)
+  }
+
+  /**
+   * absolute root url to the server, like http://localhost/reporting
+    * @returns {string}
+   */
+  get rootUrl () {
+    return window.location.href.substring(0, window.location.href.indexOf('/studio'))
   }
 
   /** /runtime helpers **/
