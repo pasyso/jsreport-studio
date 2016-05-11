@@ -46,4 +46,6 @@ export let referencesLoader = null
 
 export let locationResolver = null
 
+export let extensions = []
+
 export const triggerSplitResize = () => { _splitResizeHandlers.forEach((fn) => fn()) }

@@ -13,6 +13,7 @@ import Promise from 'bluebird'
 import * as configuration from './lib/configuration.js'
 import { createStudio as createStudio } from './Studio'
 import defaults from './configurationDefaults.js'
+import zipObject from 'lodash/zipObject'
 import { syncHistoryWithStore } from 'react-router-redux'
 
 window.React = React
@@ -26,6 +27,9 @@ var Studio = window.Studio = createStudio(store)
 
 const start = async () => {
   await fetchExtensions()
+
+  const extensionsArray = await Studio.api.get('/api/extensions')
+  configuration.extensions = zipObject(extensionsArray.map((e) => e.name), extensionsArray)
 
   for (const key in Studio.initializeListeners) {
     await Studio.initializeListeners[key]()

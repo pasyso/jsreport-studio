@@ -39,6 +39,9 @@ module.exports = [{
 }, {
   name: 'scheduling',
   directory: path.join(__dirname, 'scheduling')
+}, {
+  name: 'fs-store',
+  directory: path.join(__dirname, 'fs-store')
 }]
 
 /*{

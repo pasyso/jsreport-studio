@@ -195,6 +195,13 @@ class Studio {
   }
 
   /**
+   * Object[name] with registered extensions and its options
+   */
+  get extensions () {
+    return configuration.extensions
+  }
+
+  /**
    * Opens modal dialog.
    *
    * @param {Component|String}componentOrText
@@ -255,6 +262,10 @@ class Studio {
    */
   loadEntity (id, force = false) {
     return this.store.dispatch(entities.actions.load(id, force))
+  }
+
+  unloadEntity (id) {
+    return this.store.dispatch(entities.actions.unload(id))
   }
 
   /**
@@ -343,6 +354,14 @@ class Studio {
    */
   getActiveEntity () {
     return editor.selectors.getActiveEntity(this.store.getState())
+  }
+
+  /**
+   * Returns last active entity
+   * @returns {Object|nu;;}
+   */
+  getLastActiveTemplate () {
+    return editor.selectors.getLastActiveTemplate(this.store.getState())
   }
 
   /**
