@@ -13,9 +13,6 @@ module.exports = [{
   name: 'reports',
   directory: path.join(__dirname, 'reports')
 }, {
-  name: 'schedules',
-  directory: path.join(__dirname, 'scheduling')
-}, {
   name: 'authentication',
   directory: path.join(__dirname, 'authentication')
 }, {
@@ -30,4 +27,21 @@ module.exports = [{
 }, {
   name: 'jade',
   directory: path.join(__dirname, 'jade')
+}, {
+  name: 'ejs',
+  directory: path.join(__dirname, 'ejs')
+}, {
+  name: 'wkhtmltopdf',
+  directory: path.join(__dirname, 'wkhtmltopdf')
+}, {
+  name: 'electron-pdf',
+  directory: path.join(__dirname, 'electron-pdf')
+}, {
+  name: 'scheduling',
+  directory: path.join(__dirname, 'scheduling')
 }]
+
+/*{
+ name: 'playground',
+ directory: path.join(__dirname, 'playground')
+ }*/

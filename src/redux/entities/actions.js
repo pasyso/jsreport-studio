@@ -1,9 +1,9 @@
 import * as ActionTypes from './constants.js'
 import api from '../../helpers/api.js'
 import * as selectors from './selectors.js'
-import { entitySets } from '../../lib/configuration.js'
+import { entitySets, referencesLoader } from '../../lib/configuration.js'
 
-const prune = (entity) => {
+export const prune = (entity) => {
   let pruned = {}
   Object.keys(entity).forEach((k) => {
     if (k.indexOf('__') !== 0 && k.indexOf('@')) {
@@ -29,17 +29,18 @@ export function remove (id) {
   return async function (dispatch, getState) {
     const entity = selectors.getById(getState(), id)
 
-    dispatch({ type: ActionTypes.API_START })
+    dispatch(apiStart())
     try {
       await api.del(`/odata/${entity.__entitySet}(${id})`)
-      dispatch({ type: ActionTypes.API_DONE })
 
-      return dispatch({
+      dispatch({
         type: ActionTypes.REMOVE,
         _id: id
       })
+
+      dispatch(apiDone())
     } catch (e) {
-      dispatch({ type: ActionTypes.API_FAILED, error: e })
+      dispatch(apiFailed(e))
       throw e
     }
   }
@@ -75,18 +76,18 @@ export function load (id, force) {
       return
     }
 
-    dispatch({ type: ActionTypes.API_START })
+    dispatch(apiStart())
     try {
       entity = (await api.get(`/odata/${entity.__entitySet}(${id})`)).value[0]
 
-      dispatch({ type: ActionTypes.API_DONE })
+      dispatch(apiDone())
 
       dispatch({
         type: ActionTypes.LOAD,
         entity: entity
       })
     } catch (e) {
-      dispatch({ type: ActionTypes.API_FAILED, error: e })
+      dispatch(apiFailed(e))
       throw e
     }
   }
@@ -103,28 +104,54 @@ export function unload (id) {
 
 export function loadReferences (entitySet) {
   return async function (dispatch) {
-    const nameAttribute = entitySets[entitySet].nameAttribute
-    let response = await api.get(`/odata/${entitySet}?$select=${nameAttribute},shortid&$orderby=${nameAttribute}`)
+    let entities
+
+    if (referencesLoader) {
+      entities = await referencesLoader(entitySet)
+    } else {
+      const nameAttribute = entitySets[entitySet].nameAttribute
+      entities = (await api.get(`/odata/${entitySet}?$select=${nameAttribute},shortid&$orderby=${nameAttribute}`)).value
+    }
+
     dispatch({
       type: ActionTypes.LOAD_REFERENCES,
-      entities: response.value,
+      entities: entities,
       entitySet: entitySet
     })
   }
 }
 
+export const apiDone = () => ({
+  type: ActionTypes.API_DONE
+})
+
+export const apiStart = () => ({
+  type: ActionTypes.API_START
+})
+
+export const apiFailed = (e) => ({
+  type: ActionTypes.API_FAILED,
+  error: e
+})
+
+export const replace = (oldId, entity) => ({
+  type: ActionTypes.REPLACE,
+  oldId: oldId,
+  entity: entity
+})
+
 export function save (id) {
   return async function (dispatch, getState) {
     try {
       const entity = Object.assign({}, selectors.getById(getState(), id))
-      dispatch({ type: ActionTypes.API_START })
+      dispatch(apiStart())
 
       if (entity.__isNew) {
         const oldId = entity._id
         delete entity._id
         const response = await api.post(`/odata/${entity.__entitySet}`, { data: prune(entity) })
         entity._id = response._id
-        dispatch({ type: ActionTypes.API_DONE })
+        dispatch(apiDone())
         dispatch({
           type: ActionTypes.SAVE_NEW,
           oldId: oldId,
@@ -133,7 +160,7 @@ export function save (id) {
         entity._id = response._id
       } else {
         await api.patch(`/odata/${entity.__entitySet}(${entity._id})`, { data: prune(entity) })
-        dispatch({ type: ActionTypes.API_DONE })
+        dispatch(apiDone())
         dispatch({
           type: ActionTypes.SAVE,
           _id: entity._id
@@ -142,7 +169,7 @@ export function save (id) {
 
       return entity
     } catch (e) {
-      dispatch({ type: ActionTypes.API_FAILED, error: e })
+      dispatch(apiFailed(e))
       throw e
     }
   }

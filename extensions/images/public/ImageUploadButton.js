@@ -28,35 +28,33 @@ export default class ImageUploadButton extends Component {
     const file = e.target.files[0]
     const reader = new FileReader()
 
-    reader.onloadend = () => {
+    reader.onloadend = async () => {
+      // playground/workspaces extension needs to save the new version
+      // so uploading of the new image goes into it
+      if (Studio.workspaces) {
+        await Studio.workspaces.save()
+      }
+
       if (this.forNew) {
-        superagent.post(Studio.relativizeUrl('/api/image'))
-          .attach('file.png', file)
-          .end((err, res) => {
-            if (err) {
-              return alert('Uploading image failed.')
-            }
+        const response = await Studio.api.post('/api/image', {
+          attach: { filename: 'file.png', file: file }
+        })
 
-            const response = JSON.parse(res.text)
-            const entity = {
-              __entitySet: 'images',
-              _id: response._id,
-              name: response.name,
-              shortid: response.shortid
-            }
-            Studio.addExistingEntity(entity)
-            Studio.openTab(Object.assign({}, entity))
-          })
+        const entity = {
+          __entitySet: 'images',
+          _id: response._id,
+          name: response.name,
+          shortid: response.shortid
+        }
+
+        Studio.addExistingEntity(entity)
+        Studio.openTab(Object.assign({}, entity))
       } else {
-        superagent.post(Studio.relativizeUrl('/api/image/') + this.props.tab.entity.shortid)
-          .attach('file.png', file)
-          .end((err, res) => {
-            if (err) {
-              return alert('Uploading image failed.')
-            }
+        await Studio.api.post(`/api/image/${this.props.tab.entity.shortid}`, {
+          attach: { filename: 'file.png', file: file }
+        })
 
-            Studio.loadEntity(this.props.tab.entity._id, true)
-          })
+        Studio.loadEntity(this.props.tab.entity._id, true)
       }
     }
 

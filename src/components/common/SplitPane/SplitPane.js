@@ -16,13 +16,13 @@ export default class SplitPane extends Component {
   }
 
   static propTypes = {
-    primary: React.PropTypes.oneOf([ 'first', 'second' ]),
+    primary: React.PropTypes.oneOf(['first', 'second']),
     minSize: React.PropTypes.number,
     defaultSize: React.PropTypes.string,
     size: React.PropTypes.number,
     allowResize: React.PropTypes.bool,
     resizerClassName: React.PropTypes.string,
-    split: React.PropTypes.oneOf([ 'vertical', 'horizontal' ]),
+    split: React.PropTypes.oneOf(['vertical', 'horizontal']),
     onDragStarted: React.PropTypes.func,
     onDragFinished: React.PropTypes.func
   }
@@ -42,8 +42,8 @@ export default class SplitPane extends Component {
   }
 
   componentWillReceiveProps (props) {
-    this.setSize(props, this.state)
   }
+
 
   setSize (props, state) {
     const ref = this.props.primary === 'first' ? this.refs.pane1 : this.refs.pane2
@@ -75,9 +75,9 @@ export default class SplitPane extends Component {
     }
   }
 
-  onMouseMove (event) {
-    if (this.props.allowResize && !this.props.size) {
-      if (this.state.active) {
+  onMouseMove (event, force) {
+    if (this.props.allowResize && !this.props.size && !this.state.collapsed) {
+      if (this.state.active || force) {
         this.unFocus()
         const ref = this.props.primary === 'first' ? this.refs.pane1 : this.refs.pane2
         if (ref) {
@@ -140,12 +140,84 @@ export default class SplitPane extends Component {
 
   merge (into, obj) {
     for (let attr in obj) {
-      into[ attr ] = obj[ attr ]
+      into[attr] = obj[attr]
+    }
+  }
+
+  collapse (v) {
+    //const ref = this.props.collapsable === 'first' ? this.refs.pane2 : this.refs.pane1
+    //
+    //let newSize
+    //if (v) {
+    //  const node = ReactDOM.findDOMNode(ref)
+    //  this.lastSize = ref.state.size
+    //  const size = node.getBoundingClientRect().width
+    //  const current = 100
+    //  const position = this.state.position
+    //  const newPosition = (current - position)
+    //  newSize = size - newPosition
+    //} else {
+    //  newSize = this.lastSize
+    //}
+    //
+    //ref.setState({
+    //  size: newSize
+    //})
+
+    //let newSize
+    //if (v) {
+    //  this.lastSize = ref1.state.size
+    //  const node1 = ReactDOM.findDOMNode(ref1)
+    //  const node2 = ReactDOM.findDOMNode(ref2)
+    //  newSize = node1.getBoundingClientRect().width + node2.getBoundingClientRect().width - 25
+    //} else {
+    //  newSize = this.lastSize
+    //}
+
+    let ref1 = this.props.collapsable === 'first' ? this.refs.pane2 : this.refs.pane1
+    const ref2 = this.props.collapsable === 'first' ? this.refs.pane1 : this.refs.pane2
+
+    if (!v) {
+      ref1.setState({
+        size: this.lastSize
+      })
+
+      ref2.setState({
+        size: undefined
+      })
+
+      this.setState({
+        resized: true,
+        collapsed: v,
+        draggedSize: this.lastSize,
+        position: this.lastSize
+      })
+    } else {
+      this.lastSize = ref1.state.size
+      ref1.setState({
+        size: undefined
+      })
+
+      ref2.setState({
+        size: 0
+      })
+
+      this.setState({
+        collapsed: v,
+        resized: true,
+        draggedSize: undefined,
+        position: undefined
+      })
+    }
+
+    if (typeof this.props.onDragFinished === 'function') {
+      this.props.onDragFinished()
     }
   }
 
   render () {
-    const {split, allowResize, resizerClassName} = this.props
+    const {split, allowResize, resizerClassName, collapsedText, collapsable} = this.props
+    const { collapsed } = this.state
     let disabledClass = allowResize ? '' : 'disabled'
 
     let style = {
@@ -171,15 +243,16 @@ export default class SplitPane extends Component {
     }
 
     const children = this.props.children
-    const classes = [ 'SplitPane', this.props.className, split, disabledClass ]
+    const classes = ['SplitPane', this.props.className, split, disabledClass]
 
     return (
       <div className={classes.join(' ')} style={style} ref='splitPane'>
-        <Pane ref='pane1' key='pane1' className='Pane1' split={split}>{children[ 0 ]}</Pane>
+        <Pane ref='pane1' key='pane1' className='Pane1' split={split}>{children[0]}</Pane>
         <Resizer
-          ref='resizer' key='resizer' className={disabledClass + ' ' + resizerClassName}
-          onMouseDown={this.onMouseDown} split={split}/>
-        <Pane ref='pane2' key='pane2' className='Pane2' split={split}>{children[ 1 ]}</Pane>
+          ref='resizer' key='resizer' collapsable={collapsable} collapsedText={collapsedText}
+          className={disabledClass + ' ' + resizerClassName}
+          onMouseDown={this.onMouseDown} collapsed={collapsed} split={split} collapse={(v) => this.collapse(v)} />
+        <Pane ref='pane2' key='pane2' className='Pane2' split={split}>{children[1]}</Pane>
       </div>
     )
   }

@@ -1,41 +1,41 @@
 /******/ (function(modules) { // webpackBootstrap
 /******/ 	// The module cache
 /******/ 	var installedModules = {};
-
+/******/
 /******/ 	// The require function
 /******/ 	function __webpack_require__(moduleId) {
-
+/******/
 /******/ 		// Check if module is in cache
 /******/ 		if(installedModules[moduleId])
 /******/ 			return installedModules[moduleId].exports;
-
+/******/
 /******/ 		// Create a new module (and put it into the cache)
 /******/ 		var module = installedModules[moduleId] = {
 /******/ 			exports: {},
 /******/ 			id: moduleId,
 /******/ 			loaded: false
 /******/ 		};
-
+/******/
 /******/ 		// Execute the module function
 /******/ 		modules[moduleId].call(module.exports, module, module.exports, __webpack_require__);
-
+/******/
 /******/ 		// Flag the module as loaded
 /******/ 		module.loaded = true;
-
+/******/
 /******/ 		// Return the exports of the module
 /******/ 		return module.exports;
 /******/ 	}
-
-
+/******/
+/******/
 /******/ 	// expose the modules object (__webpack_modules__)
 /******/ 	__webpack_require__.m = modules;
-
+/******/
 /******/ 	// expose the module cache
 /******/ 	__webpack_require__.c = installedModules;
-
+/******/
 /******/ 	// __webpack_public_path__
 /******/ 	__webpack_require__.p = "";
-
+/******/
 /******/ 	// Load entry module and return exports
 /******/ 	return __webpack_require__(0);
 /******/ })
@@ -45,92 +45,92 @@
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
-
+	
 	var _PhantomEditor = __webpack_require__(1);
-
+	
 	var _PhantomEditor2 = _interopRequireDefault(_PhantomEditor);
-
+	
 	var _PhantomProperties = __webpack_require__(11);
-
+	
 	var _PhantomProperties2 = _interopRequireDefault(_PhantomProperties);
-
+	
 	var _PhantomTitle = __webpack_require__(13);
-
+	
 	var _PhantomTitle2 = _interopRequireDefault(_PhantomTitle);
-
+	
 	var _constants = __webpack_require__(12);
-
+	
 	var Constants = _interopRequireWildcard(_constants);
-
+	
 	var _jsreportStudio = __webpack_require__(10);
-
+	
 	var _jsreportStudio2 = _interopRequireDefault(_jsreportStudio);
-
+	
 	function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj.default = obj; return newObj; } }
-
+	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-	_jsreportStudio2.default.registerPropertyComponent('phantom pdf', _PhantomProperties2.default, function (entity) {
+	
+	_jsreportStudio2.default.addPropertiesComponent('phantom pdf', _PhantomProperties2.default, function (entity) {
 	  return entity.__entitySet === 'templates' && entity.recipe === 'phantom-pdf';
 	});
-
-	_jsreportStudio2.default.registerTabEditorComponent(Constants.PHANTOM_TAB_EDITOR, _PhantomEditor2.default);
-	_jsreportStudio2.default.registerTabTitleComponent(Constants.PHANTOM_TAB_TITLE, _PhantomTitle2.default);
+	
+	_jsreportStudio2.default.addEditorComponent(Constants.PHANTOM_TAB_EDITOR, _PhantomEditor2.default);
+	_jsreportStudio2.default.addTabTitleComponent(Constants.PHANTOM_TAB_TITLE, _PhantomTitle2.default);
 
 /***/ },
 /* 1 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
-
+	
 	Object.defineProperty(exports, "__esModule", {
 	  value: true
 	});
-
+	
 	var _defineProperty2 = __webpack_require__(2);
-
+	
 	var _defineProperty3 = _interopRequireDefault(_defineProperty2);
-
+	
 	var _assign = __webpack_require__(3);
-
+	
 	var _assign2 = _interopRequireDefault(_assign);
-
+	
 	var _getPrototypeOf = __webpack_require__(4);
-
+	
 	var _getPrototypeOf2 = _interopRequireDefault(_getPrototypeOf);
-
+	
 	var _classCallCheck2 = __webpack_require__(5);
-
+	
 	var _classCallCheck3 = _interopRequireDefault(_classCallCheck2);
-
+	
 	var _createClass2 = __webpack_require__(6);
-
+	
 	var _createClass3 = _interopRequireDefault(_createClass2);
-
+	
 	var _possibleConstructorReturn2 = __webpack_require__(7);
-
+	
 	var _possibleConstructorReturn3 = _interopRequireDefault(_possibleConstructorReturn2);
-
+	
 	var _inherits2 = __webpack_require__(8);
-
+	
 	var _inherits3 = _interopRequireDefault(_inherits2);
-
+	
 	var _react = __webpack_require__(9);
-
+	
 	var _react2 = _interopRequireDefault(_react);
-
+	
 	var _jsreportStudio = __webpack_require__(10);
-
+	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
+	
 	var DataEditor = function (_Component) {
 	  (0, _inherits3.default)(DataEditor, _Component);
-
+	
 	  function DataEditor() {
 	    (0, _classCallCheck3.default)(this, DataEditor);
 	    return (0, _possibleConstructorReturn3.default)(this, (0, _getPrototypeOf2.default)(DataEditor).apply(this, arguments));
 	  }
-
+	
 	  (0, _createClass3.default)(DataEditor, [{
 	    key: 'render',
 	    value: function render() {
@@ -138,8 +138,8 @@
 	      var entity = _props.entity;
 	      var _onUpdate = _props.onUpdate;
 	      var tab = _props.tab;
-
-
+	
+	
 	      return _react2.default.createElement(_jsreportStudio.TextEditor, {
 	        name: entity._id + '_phantom' + tab.headerOrFooter,
 	        mode: 'handlebars',
@@ -152,7 +152,7 @@
 	  }]);
 	  return DataEditor;
 	}(_react.Component);
-
+	
 	DataEditor.propTypes = {
 	  entity: _react2.default.PropTypes.object.isRequired,
 	  tab: _react2.default.PropTypes.object.isRequired,
@@ -219,59 +219,59 @@
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
-
+	
 	Object.defineProperty(exports, "__esModule", {
 	  value: true
 	});
-
+	
 	var _assign = __webpack_require__(3);
-
+	
 	var _assign2 = _interopRequireDefault(_assign);
-
+	
 	var _getPrototypeOf = __webpack_require__(4);
-
+	
 	var _getPrototypeOf2 = _interopRequireDefault(_getPrototypeOf);
-
+	
 	var _classCallCheck2 = __webpack_require__(5);
-
+	
 	var _classCallCheck3 = _interopRequireDefault(_classCallCheck2);
-
+	
 	var _createClass2 = __webpack_require__(6);
-
+	
 	var _createClass3 = _interopRequireDefault(_createClass2);
-
+	
 	var _possibleConstructorReturn2 = __webpack_require__(7);
-
+	
 	var _possibleConstructorReturn3 = _interopRequireDefault(_possibleConstructorReturn2);
-
+	
 	var _inherits2 = __webpack_require__(8);
-
+	
 	var _inherits3 = _interopRequireDefault(_inherits2);
-
+	
 	var _constants = __webpack_require__(12);
-
+	
 	var Constants = _interopRequireWildcard(_constants);
-
+	
 	var _react = __webpack_require__(9);
-
+	
 	var _react2 = _interopRequireDefault(_react);
-
+	
 	var _jsreportStudio = __webpack_require__(10);
-
+	
 	var _jsreportStudio2 = _interopRequireDefault(_jsreportStudio);
-
+	
 	function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj.default = obj; return newObj; } }
-
+	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
+	
 	var Properties = function (_Component) {
 	  (0, _inherits3.default)(Properties, _Component);
-
+	
 	  function Properties() {
 	    (0, _classCallCheck3.default)(this, Properties);
 	    return (0, _possibleConstructorReturn3.default)(this, (0, _getPrototypeOf2.default)(Properties).apply(this, arguments));
 	  }
-
+	
 	  (0, _createClass3.default)(Properties, [{
 	    key: 'openHeaderFooter',
 	    value: function openHeaderFooter(type) {
@@ -287,17 +287,17 @@
 	    key: 'render',
 	    value: function render() {
 	      var _this2 = this;
-
+	
 	      var _props = this.props;
 	      var entity = _props.entity;
 	      var onChange = _props.onChange;
-
+	
 	      var phantom = entity.phantom || {};
-
+	
 	      var changePhantom = function changePhantom(change) {
 	        return onChange((0, _assign2.default)({}, entity, { phantom: (0, _assign2.default)({}, entity.phantom, change) }));
 	      };
-
+	
 	      return _react2.default.createElement(
 	        'div',
 	        { className: 'properties-section' },
@@ -556,7 +556,7 @@
 /***/ function(module, exports) {
 
 	'use strict';
-
+	
 	Object.defineProperty(exports, "__esModule", {
 	  value: true
 	});
@@ -568,11 +568,11 @@
 /***/ function(module, exports) {
 
 	'use strict';
-
+	
 	Object.defineProperty(exports, "__esModule", {
 	  value: true
 	});
-
+	
 	exports.default = function (props) {
 	  return React.createElement(
 	    'span',

@@ -5,7 +5,7 @@ import * as selectors from './selectors.js'
 import { push } from 'react-router-redux'
 import shortid from 'shortid'
 import preview from '../../helpers/preview'
-import { engines, recipes, entitySets, previewListeners } from '../../lib/configuration.js'
+import { engines, recipes, entitySets, previewListeners, locationResolver } from '../../lib/configuration.js'
 
 export function closeTab (id) {
   return async (dispatch, getState) => {
@@ -91,10 +91,15 @@ export function updateHistory () {
   return (dispatch, getState) => {
     const entity = selectors.getActiveEntity(getState())
     let path
+
     if (entity && entity.shortid) {
       path = `/studio/${entity.__entitySet}/${entity.shortid}`
     } else {
       path = '/'
+    }
+
+    if (locationResolver) {
+      path = locationResolver(path, entity)
     }
 
     if (path !== getState().routing.locationBeforeTransitions.pathname) {
@@ -156,7 +161,7 @@ export function run () {
     let request = { template: template, options: {} }
     const entities = Object.assign({}, getState().entities)
     await Promise.all([...previewListeners.map((l) => l(request, entities))])
-    dispatch({type: ActionTypes.RUN})
+    dispatch({ type: ActionTypes.RUN })
     preview(request, 'previewFrame')
   }
 }

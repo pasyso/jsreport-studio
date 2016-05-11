@@ -10,8 +10,8 @@ import './theme/style.scss'
 import * as entities from 'redux/entities'
 import * as settings from 'redux/settings'
 import Promise from 'bluebird'
+import * as configuration from './lib/configuration.js'
 import { createStudio as createStudio } from './Studio'
-import { load as loadConfiguration } from './lib/configuration.js'
 import defaults from './configurationDefaults.js'
 import { syncHistoryWithStore } from 'react-router-redux'
 
@@ -34,7 +34,8 @@ const start = async () => {
   await Promise.all(
     [
       ...Object.keys(Studio.entitySets).map((t) => entities.actions.loadReferences(t)(store.dispatch)),
-      loadConfiguration(),
+      Studio.api.get('/api/engine').then((engs) => (configuration.engines = engs)),
+      Studio.api.get('/api/recipe').then((recs) => (configuration.recipes = recs)),
       settings.actions.load()(store.dispatch)
     ]
   )
@@ -51,6 +52,10 @@ const start = async () => {
   )
 
   document.getElementById('loader').style.display = 'none'
+
+  for (const key in Studio.readyListeners) {
+    await Studio.readyListeners[key]()
+  }
 }
 
 start()

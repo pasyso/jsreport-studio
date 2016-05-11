@@ -24,13 +24,13 @@ export default class Properties extends Component {
         <div className='form-group'><label>margin</label>
           <input
             type='text' placeholder='1cm' value={phantom.margin || ''}
-            onChange={(v) => changePhantom({margin: v.target.value})}/>
+            onChange={(v) => changePhantom({margin: v.target.value})} />
         </div>
 
         <div className='form-group'><label>header height</label>
           <input
             type='text' placeholder='1cm' value={phantom.headerHeight || ''}
-            onChange={(v) => changePhantom({headerHeight: v.target.value})}/>
+            onChange={(v) => changePhantom({headerHeight: v.target.value})} />
         </div>
         <div className='form-group'>
           <label>header</label>
@@ -40,7 +40,7 @@ export default class Properties extends Component {
         <div className='form-group'><label>footer height</label>
           <input
             type='text' placeholder='1cm' value={phantom.footerHeight || ''}
-            onChange={(v) => changePhantom({footerHeight: v.target.value})}/>
+            onChange={(v) => changePhantom({footerHeight: v.target.value})} />
         </div>
         <div className='form-group'>
           <label>footer</label>
@@ -61,12 +61,12 @@ export default class Properties extends Component {
         <div className='form-group'><label>paper width</label>
           <input
             type='text' placeholder='1cm' value={phantom.paperWidth || ''}
-            onChange={(v) => changePhantom({paperWidth: v.target.value})}/>
+            onChange={(v) => changePhantom({paperWidth: v.target.value})} />
         </div>
         <div className='form-group'><label>paper height</label>
           <input
             type='text' placeholder='1cm' value={phantom.paperHeight || ''}
-            onChange={(v) => changePhantom({paperHeight: v.target.value})}/>
+            onChange={(v) => changePhantom({paperHeight: v.target.value})} />
         </div>
 
         <div className='form-group'><label>orientation</label>
@@ -79,34 +79,34 @@ export default class Properties extends Component {
         <div className='form-group'><label>print delay</label>
           <input
             type='text' placeholder='1000' value={phantom.printDelay || ''}
-            onChange={(v) => changePhantom({printDelay: v.target.value})}/>
+            onChange={(v) => changePhantom({printDelay: v.target.value})} />
         </div>
 
         <div className='form-group'><label>resource timeout</label>
           <input
             type='text' placeholder='1000' value={phantom.resourceTimeout || ''}
-            onChange={(v) => changePhantom({resourceTimeout: v.target.value})}/>
+            onChange={(v) => changePhantom({resourceTimeout: v.target.value})} />
         </div>
 
         <div className='form-group'>
           <label title='window.PHANTOM_HTML_TO_PDF_READY=true;'>wait for printing trigger</label>
           <input
             type='checkbox' title='window.PHANTOM_HTML_TO_PDF_READY=true;' checked={phantom.waitForJS === true}
-            onChange={(v) => changePhantom({waitForJS: v.target.checked})}/>
+            onChange={(v) => changePhantom({waitForJS: v.target.checked})} />
         </div>
 
         <div className='form-group'>
           <label>block javascript</label>
           <input
             type='checkbox' checked={phantom.blockJavaScript === true}
-            onChange={(v) => changePhantom({blockJavaScript: v.target.checked})}/>
+            onChange={(v) => changePhantom({blockJavaScript: v.target.checked})} />
         </div>
 
         <div className='form-group'>
           <label>use custom phantomjs</label>
           <input
             type='checkbox' checked={phantom.customPhantomJS === true}
-            onChange={(v) => changePhantom({customPhantomJS: v.target.checked})}/>
+            onChange={(v) => changePhantom({customPhantomJS: v.target.checked})} />
         </div>
       </div>
     )

@@ -34,6 +34,6 @@ export default class TextEditor extends Component {
       className='ace'
       width='100%'
       value={value || ''}
-      editorProps={{$blockScrolling: true}} />)
+      editorProps={{$blockScrolling: Infinity}} />)
   }
 }

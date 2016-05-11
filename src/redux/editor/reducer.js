@@ -65,3 +65,27 @@ reducer.handleAction(EntityActionTypes.SAVE_NEW, (state, action) => {
     lastActiveTemplateKey: state.lastActiveTemplateKey === action.oldId ? action.entity._id : state.lastActiveTemplateKey
   }
 })
+
+reducer.handleAction(EntityActionTypes.REPLACE, (state, action) => {
+  if (!state.tabs.filter((t) => t._id === action.oldId).length) {
+    return state
+  }
+
+  const tabs = state.tabs.map((t) => {
+    if (t._id !== action.oldId) {
+      return Object.assign({}, t)
+    }
+
+    return Object.assign({}, t, {
+      _id: action.entity._id,
+      key: t.key.replace(action.oldId, action.entity._id)
+    })
+  })
+
+  return {
+    ...state,
+    tabs: tabs,
+    activeTabKey: (state.activeTabKey && state.activeTabKey.indexOf(action.oldId) === 0) ? state.activeTabKey.replace(action.oldId, action.entity._id) : state.activeTabKey,
+    lastActiveTemplateKey: state.lastActiveTemplateKey === action.oldId ? action.entity._id : state.lastActiveTemplateKey
+  }
+})

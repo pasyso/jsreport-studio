@@ -1,10 +1,10 @@
 ﻿{
-    "authentication": {
+    "authentication" : {
         "cookieSession": {
             "secret": "dasd321as56d1sd5s61vdv32"
         },
         "admin": {
-            "username": "admin",
+            "username" : "admin",
             "password": "password"
         }
     },
@@ -15,7 +15,7 @@
     "connectionString": {
         "name": "fs",
         "address": "127.0.0.1",
-        "databaseName" : "multitenant"
+        "databaseName" : "playground2"
     },
     "httpPort": 3000,
     "electron": {
@@ -42,6 +42,9 @@
         "numberOfWorkers" : 2,
         "strategy": "dedicated-process",
         "allowedModules": "*"
+    },
+    "scheduling": {
+        "enabled": true
     },
     "scripts": {
         "allowedModules": "*"

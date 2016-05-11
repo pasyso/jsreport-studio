@@ -14,6 +14,7 @@ export default (aroutes) => {
         </Route>
       </Route>
       {routes.map((r) => <Route path={r.path} component={r.component} key={r.path} />)}
+      <Route path='*' component={App} />
     </Route>
   )
 }

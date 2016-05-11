@@ -1,41 +1,41 @@
 /******/ (function(modules) { // webpackBootstrap
 /******/ 	// The module cache
 /******/ 	var installedModules = {};
-
+/******/
 /******/ 	// The require function
 /******/ 	function __webpack_require__(moduleId) {
-
+/******/
 /******/ 		// Check if module is in cache
 /******/ 		if(installedModules[moduleId])
 /******/ 			return installedModules[moduleId].exports;
-
+/******/
 /******/ 		// Create a new module (and put it into the cache)
 /******/ 		var module = installedModules[moduleId] = {
 /******/ 			exports: {},
 /******/ 			id: moduleId,
 /******/ 			loaded: false
 /******/ 		};
-
+/******/
 /******/ 		// Execute the module function
 /******/ 		modules[moduleId].call(module.exports, module, module.exports, __webpack_require__);
-
+/******/
 /******/ 		// Flag the module as loaded
 /******/ 		module.loaded = true;
-
+/******/
 /******/ 		// Return the exports of the module
 /******/ 		return module.exports;
 /******/ 	}
-
-
+/******/
+/******/
 /******/ 	// expose the modules object (__webpack_modules__)
 /******/ 	__webpack_require__.m = modules;
-
+/******/
 /******/ 	// expose the module cache
 /******/ 	__webpack_require__.c = installedModules;
-
+/******/
 /******/ 	// __webpack_public_path__
 /******/ 	__webpack_require__.p = "";
-
+/******/
 /******/ 	// Load entry module and return exports
 /******/ 	return __webpack_require__(0);
 /******/ })
@@ -45,93 +45,93 @@
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
-
+	
 	var _ReportEditor = __webpack_require__(1);
-
+	
 	var _ReportEditor2 = _interopRequireDefault(_ReportEditor);
-
+	
 	var _ReportsButton = __webpack_require__(16);
-
+	
 	var _ReportsButton2 = _interopRequireDefault(_ReportsButton);
-
+	
 	var _DownloadButton = __webpack_require__(17);
-
+	
 	var _DownloadButton2 = _interopRequireDefault(_DownloadButton);
-
+	
 	var _DeleteButton = __webpack_require__(18);
-
+	
 	var _DeleteButton2 = _interopRequireDefault(_DeleteButton);
-
+	
 	var _jsreportStudio = __webpack_require__(15);
-
+	
 	var _jsreportStudio2 = _interopRequireDefault(_jsreportStudio);
-
+	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-	_jsreportStudio2.default.registerTabEditorComponent('reports', _ReportEditor2.default);
-	_jsreportStudio2.default.registerSettingsToolbarComponent(_ReportsButton2.default);
-
-	_jsreportStudio2.default.registerToolbarComponent(_DownloadButton2.default);
-	_jsreportStudio2.default.registerToolbarComponent(_DeleteButton2.default);
+	
+	_jsreportStudio2.default.addEditorComponent('reports', _ReportEditor2.default);
+	
+	_jsreportStudio2.default.addToolbarComponent(_ReportsButton2.default, 'settings');
+	_jsreportStudio2.default.addToolbarComponent(_DownloadButton2.default);
+	_jsreportStudio2.default.addToolbarComponent(_DeleteButton2.default);
 
 /***/ },
 /* 1 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
-
+	
 	Object.defineProperty(exports, "__esModule", {
 	  value: true
 	});
-
+	
 	var _regenerator = __webpack_require__(2);
-
+	
 	var _regenerator2 = _interopRequireDefault(_regenerator);
-
+	
 	var _asyncToGenerator2 = __webpack_require__(3);
-
+	
 	var _asyncToGenerator3 = _interopRequireDefault(_asyncToGenerator2);
-
+	
 	var _getPrototypeOf = __webpack_require__(4);
-
+	
 	var _getPrototypeOf2 = _interopRequireDefault(_getPrototypeOf);
-
+	
 	var _classCallCheck2 = __webpack_require__(5);
-
+	
 	var _classCallCheck3 = _interopRequireDefault(_classCallCheck2);
-
+	
 	var _possibleConstructorReturn2 = __webpack_require__(6);
-
+	
 	var _possibleConstructorReturn3 = _interopRequireDefault(_possibleConstructorReturn2);
-
+	
 	var _createClass2 = __webpack_require__(7);
-
+	
 	var _createClass3 = _interopRequireDefault(_createClass2);
-
+	
 	var _inherits2 = __webpack_require__(8);
-
+	
 	var _inherits3 = _interopRequireDefault(_inherits2);
-
+	
 	var _reactList = __webpack_require__(9);
-
+	
 	var _reactList2 = _interopRequireDefault(_reactList);
-
+	
 	var _ReportEditor = __webpack_require__(10);
-
+	
 	var _ReportEditor2 = _interopRequireDefault(_ReportEditor);
-
+	
 	var _react = __webpack_require__(14);
-
+	
 	var _react2 = _interopRequireDefault(_react);
-
+	
 	var _jsreportStudio = __webpack_require__(15);
-
+	
 	var _jsreportStudio2 = _interopRequireDefault(_jsreportStudio);
-
+	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
+	
 	var _instance = void 0;
-
+	
 	var ReportEditor = function (_Component) {
 	  (0, _inherits3.default)(ReportEditor, _Component);
 	  (0, _createClass3.default)(ReportEditor, null, [{
@@ -140,12 +140,12 @@
 	      return _instance;
 	    }
 	  }]);
-
+	
 	  function ReportEditor() {
 	    (0, _classCallCheck3.default)(this, ReportEditor);
-
+	
 	    var _this = (0, _possibleConstructorReturn3.default)(this, (0, _getPrototypeOf2.default)(ReportEditor).call(this));
-
+	
 	    _this.state = { reports: [], active: null };
 	    _this.skip = 0;
 	    _this.top = 50;
@@ -154,7 +154,7 @@
 	    _instance = _this;
 	    return _this;
 	  }
-
+	
 	  (0, _createClass3.default)(ReportEditor, [{
 	    key: 'componentWillMount',
 	    value: function componentWillMount() {
@@ -176,7 +176,7 @@
 	                _jsreportStudio2.default.setPreviewFrameSrc('/reports/' + r._id + '/content');
 	                this.setState({ active: r._id });
 	                this.ActiveReport = r;
-
+	
 	              case 3:
 	              case 'end':
 	                return _context.stop();
@@ -184,11 +184,11 @@
 	          }
 	        }, _callee, this);
 	      }));
-
+	
 	      function openReport(_x) {
 	        return ref.apply(this, arguments);
 	      }
-
+	
 	      return openReport;
 	    }()
 	  }, {
@@ -204,25 +204,25 @@
 	                  _context2.next = 2;
 	                  break;
 	                }
-
+	
 	                return _context2.abrupt('return');
-
+	
 	              case 2:
-
+	
 	                this.loading = true;
 	                _context2.next = 5;
 	                return _jsreportStudio2.default.api.get('/odata/reports?$orderby=creationDate desc&$count=true&$top=' + this.top + '&$skip=' + this.skip);
-
+	
 	              case 5:
 	                response = _context2.sent;
-
+	
 	                this.skip += this.top;
 	                this.loading = false;
 	                this.setState({ reports: this.state.reports.concat(response.value), count: response['@odata.count'] });
 	                if (this.state.reports.length <= this.pending && response.value.length) {
 	                  this.lazyFetch();
 	                }
-
+	
 	              case 10:
 	              case 'end':
 	                return _context2.stop();
@@ -230,11 +230,11 @@
 	          }
 	        }, _callee2, this);
 	      }));
-
+	
 	      function lazyFetch() {
 	        return ref.apply(this, arguments);
 	      }
-
+	
 	      return lazyFetch;
 	    }()
 	  }, {
@@ -254,7 +254,7 @@
 	          )
 	        );
 	      }
-
+	
 	      return this.renderItem(task, index);
 	    }
 	  }, {
@@ -267,16 +267,16 @@
 	            switch (_context3.prev = _context3.next) {
 	              case 0:
 	                id = this.ActiveReport._id;
-
+	
 	                this.ActiveReport = null;
 	                _context3.next = 4;
 	                return _jsreportStudio2.default.api.del('/odata/reports(' + id + ')');
-
+	
 	              case 4:
 	                this.setState({ reports: this.state.reports.filter(function (r) {
 	                    return r._id !== id;
 	                  }) });
-
+	
 	              case 5:
 	              case 'end':
 	                return _context3.stop();
@@ -284,18 +284,18 @@
 	          }
 	        }, _callee3, this);
 	      }));
-
+	
 	      function remove() {
 	        return ref.apply(this, arguments);
 	      }
-
+	
 	      return remove;
 	    }()
 	  }, {
 	    key: 'renderItem',
 	    value: function renderItem(report, index) {
 	      var _this2 = this;
-
+	
 	      return _react2.default.createElement(
 	        'tr',
 	        {
@@ -360,10 +360,10 @@
 	    key: 'render',
 	    value: function render() {
 	      var _this3 = this;
-
+	
 	      var count = this.state.count;
-
-
+	
+	
 	      return _react2.default.createElement(
 	        'div',
 	        { className: 'block custom-editor' },
@@ -447,7 +447,7 @@
 /***/ function(module, exports, __webpack_require__) {
 
 	// style-loader: Adds some css to the DOM by adding a <style> tag
-
+	
 	// load the styles
 	var content = __webpack_require__(11);
 	if(typeof content === 'string') content = [[module.id, content, '']];
@@ -474,11 +474,11 @@
 
 	exports = module.exports = __webpack_require__(12)();
 	// imports
-
-
+	
+	
 	// module
 	exports.push([module.id, ".listContainer___3gCYa {\n  margin-top: 1rem;\n  overflow: auto;\n  position: relative;\n  padding: 1rem;\n  min-height: 0;\n  height: auto;\n}\n\n.listContainer___3gCYa > div {\n  width: 95%;\n  position: absolute !important;\n}\n", "", {"version":3,"sources":["/./ReportEditor.scss"],"names":[],"mappings":"AAAA;EACE,iBAAiB;EACjB,eAAe;EACf,mBAAmB;EACnB,cAAc;EACd,cAAc;EACd,aAAa;CACd;;AAED;EAEE,WAAW;EAEX,8BAA8B;CAC/B","file":"ReportEditor.scss","sourcesContent":[".listContainer {\r\n  margin-top: 1rem;\r\n  overflow: auto;\r\n  position: relative;\r\n  padding: 1rem;\r\n  min-height: 0;\r\n  height: auto;\r\n}\r\n\r\n.listContainer > div {\r\n  // it somehow shows the horizontal scrollbar even when no needeit, this workaround to hide it\r\n  width: 95%;\r\n  // the tabs height based on flex box is otherwise wrongly calculated\r\n  position: absolute !important;\r\n}\r\n"],"sourceRoot":"webpack://"}]);
-
+	
 	// exports
 	exports.locals = {
 		"listContainer": "listContainer___3gCYa"
@@ -495,7 +495,7 @@
 	// css base code, injected by the css-loader
 	module.exports = function() {
 		var list = [];
-
+	
 		// return the list of modules as css string
 		list.toString = function toString() {
 			var result = [];
@@ -509,7 +509,7 @@
 			}
 			return result.join("");
 		};
-
+	
 		// import a list of modules into the list
 		list.i = function(modules, mediaQuery) {
 			if(typeof modules === "string")
@@ -565,23 +565,23 @@
 		singletonElement = null,
 		singletonCounter = 0,
 		styleElementsInsertedAtTop = [];
-
+	
 	module.exports = function(list, options) {
 		if(false) {
 			if(typeof document !== "object") throw new Error("The style-loader cannot be used in a non-browser environment");
 		}
-
+	
 		options = options || {};
 		// Force single-tag solution on IE6-9, which has a hard limit on the # of <style>
 		// tags it will allow on a page
 		if (typeof options.singleton === "undefined") options.singleton = isOldIE();
-
+	
 		// By default, add <style> tags to the bottom of <head>.
 		if (typeof options.insertAt === "undefined") options.insertAt = "bottom";
-
+	
 		var styles = listToStyles(list);
 		addStylesToDom(styles, options);
-
+	
 		return function update(newList) {
 			var mayRemove = [];
 			for(var i = 0; i < styles.length; i++) {
@@ -604,7 +604,7 @@
 			}
 		};
 	}
-
+	
 	function addStylesToDom(styles, options) {
 		for(var i = 0; i < styles.length; i++) {
 			var item = styles[i];
@@ -626,7 +626,7 @@
 			}
 		}
 	}
-
+	
 	function listToStyles(list) {
 		var styles = [];
 		var newStyles = {};
@@ -644,7 +644,7 @@
 		}
 		return styles;
 	}
-
+	
 	function insertStyleElement(options, styleElement) {
 		var head = getHeadElement();
 		var lastStyleElementInsertedAtTop = styleElementsInsertedAtTop[styleElementsInsertedAtTop.length - 1];
@@ -663,7 +663,7 @@
 			throw new Error("Invalid value for parameter 'insertAt'. Must be 'top' or 'bottom'.");
 		}
 	}
-
+	
 	function removeStyleElement(styleElement) {
 		styleElement.parentNode.removeChild(styleElement);
 		var idx = styleElementsInsertedAtTop.indexOf(styleElement);
@@ -671,24 +671,24 @@
 			styleElementsInsertedAtTop.splice(idx, 1);
 		}
 	}
-
+	
 	function createStyleElement(options) {
 		var styleElement = document.createElement("style");
 		styleElement.type = "text/css";
 		insertStyleElement(options, styleElement);
 		return styleElement;
 	}
-
+	
 	function createLinkElement(options) {
 		var linkElement = document.createElement("link");
 		linkElement.rel = "stylesheet";
 		insertStyleElement(options, linkElement);
 		return linkElement;
 	}
-
+	
 	function addStyle(obj, options) {
 		var styleElement, update, remove;
-
+	
 		if (options.singleton) {
 			var styleIndex = singletonCounter++;
 			styleElement = singletonElement || (singletonElement = createStyleElement(options));
@@ -714,9 +714,9 @@
 				removeStyleElement(styleElement);
 			};
 		}
-
+	
 		update(obj);
-
+	
 		return function updateStyle(newObj) {
 			if(newObj) {
 				if(newObj.css === obj.css && newObj.media === obj.media && newObj.sourceMap === obj.sourceMap)
@@ -727,19 +727,19 @@
 			}
 		};
 	}
-
+	
 	var replaceText = (function () {
 		var textStore = [];
-
+	
 		return function (index, replacement) {
 			textStore[index] = replacement;
 			return textStore.filter(Boolean).join('\n');
 		};
 	})();
-
+	
 	function applyToSingletonTag(styleElement, index, remove, obj) {
 		var css = remove ? "" : obj.css;
-
+	
 		if (styleElement.styleSheet) {
 			styleElement.styleSheet.cssText = replaceText(index, css);
 		} else {
@@ -753,15 +753,15 @@
 			}
 		}
 	}
-
+	
 	function applyToTag(styleElement, obj) {
 		var css = obj.css;
 		var media = obj.media;
-
+	
 		if(media) {
 			styleElement.setAttribute("media", media)
 		}
-
+	
 		if(styleElement.styleSheet) {
 			styleElement.styleSheet.cssText = css;
 		} else {
@@ -771,22 +771,22 @@
 			styleElement.appendChild(document.createTextNode(css));
 		}
 	}
-
+	
 	function updateLink(linkElement, obj) {
 		var css = obj.css;
 		var sourceMap = obj.sourceMap;
-
+	
 		if(sourceMap) {
 			// http://stackoverflow.com/a/26603875
 			css += "\n/*# sourceMappingURL=data:application/json;base64," + btoa(unescape(encodeURIComponent(JSON.stringify(sourceMap)))) + " */";
 		}
-
+	
 		var blob = new Blob([css], { type: "text/css" });
-
+	
 		var oldSrc = linkElement.href;
-
+	
 		linkElement.href = URL.createObjectURL(blob);
-
+	
 		if(oldSrc)
 			URL.revokeObjectURL(oldSrc);
 	}
@@ -809,45 +809,45 @@
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
-
+	
 	Object.defineProperty(exports, "__esModule", {
 	  value: true
 	});
-
+	
 	var _getPrototypeOf = __webpack_require__(4);
-
+	
 	var _getPrototypeOf2 = _interopRequireDefault(_getPrototypeOf);
-
+	
 	var _classCallCheck2 = __webpack_require__(5);
-
+	
 	var _classCallCheck3 = _interopRequireDefault(_classCallCheck2);
-
+	
 	var _createClass2 = __webpack_require__(7);
-
+	
 	var _createClass3 = _interopRequireDefault(_createClass2);
-
+	
 	var _possibleConstructorReturn2 = __webpack_require__(6);
-
+	
 	var _possibleConstructorReturn3 = _interopRequireDefault(_possibleConstructorReturn2);
-
+	
 	var _inherits2 = __webpack_require__(8);
-
+	
 	var _inherits3 = _interopRequireDefault(_inherits2);
-
+	
 	var _react = __webpack_require__(14);
-
+	
 	var _react2 = _interopRequireDefault(_react);
-
+	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
+	
 	var ReportsButton = function (_Component) {
 	  (0, _inherits3.default)(ReportsButton, _Component);
-
+	
 	  function ReportsButton() {
 	    (0, _classCallCheck3.default)(this, ReportsButton);
 	    return (0, _possibleConstructorReturn3.default)(this, (0, _getPrototypeOf2.default)(ReportsButton).apply(this, arguments));
 	  }
-
+	
 	  (0, _createClass3.default)(ReportsButton, [{
 	    key: 'openReports',
 	    value: function openReports() {
@@ -857,7 +857,7 @@
 	    key: 'render',
 	    value: function render() {
 	      var _this2 = this;
-
+	
 	      return _react2.default.createElement(
 	        'div',
 	        { onClick: function onClick() {
@@ -870,7 +870,7 @@
 	  }]);
 	  return ReportsButton;
 	}(_react.Component);
-
+	
 	ReportsButton.propTypes = {
 	  tab: _react2.default.PropTypes.object,
 	  onUpdate: _react2.default.PropTypes.func.isRequired
@@ -882,51 +882,51 @@
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
-
+	
 	Object.defineProperty(exports, "__esModule", {
 	  value: true
 	});
-
+	
 	var _getPrototypeOf = __webpack_require__(4);
-
+	
 	var _getPrototypeOf2 = _interopRequireDefault(_getPrototypeOf);
-
+	
 	var _classCallCheck2 = __webpack_require__(5);
-
+	
 	var _classCallCheck3 = _interopRequireDefault(_classCallCheck2);
-
+	
 	var _createClass2 = __webpack_require__(7);
-
+	
 	var _createClass3 = _interopRequireDefault(_createClass2);
-
+	
 	var _possibleConstructorReturn2 = __webpack_require__(6);
-
+	
 	var _possibleConstructorReturn3 = _interopRequireDefault(_possibleConstructorReturn2);
-
+	
 	var _inherits2 = __webpack_require__(8);
-
+	
 	var _inherits3 = _interopRequireDefault(_inherits2);
-
+	
 	var _react = __webpack_require__(14);
-
+	
 	var _react2 = _interopRequireDefault(_react);
-
+	
 	var _ReportEditor = __webpack_require__(1);
-
+	
 	var _ReportEditor2 = _interopRequireDefault(_ReportEditor);
-
+	
 	var _jsreportStudio = __webpack_require__(15);
-
+	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
+	
 	var DownloadButton = function (_Component) {
 	  (0, _inherits3.default)(DownloadButton, _Component);
-
+	
 	  function DownloadButton() {
 	    (0, _classCallCheck3.default)(this, DownloadButton);
 	    return (0, _possibleConstructorReturn3.default)(this, (0, _getPrototypeOf2.default)(DownloadButton).apply(this, arguments));
 	  }
-
+	
 	  (0, _createClass3.default)(DownloadButton, [{
 	    key: 'download',
 	    value: function download() {
@@ -938,11 +938,11 @@
 	    key: 'render',
 	    value: function render() {
 	      var _this2 = this;
-
+	
 	      if (!this.props.tab || this.props.tab.key !== 'Reports' || !_ReportEditor2.default.Instance || !_ReportEditor2.default.Instance.ActiveReport) {
 	        return _react2.default.createElement('div', null);
 	      }
-
+	
 	      return _react2.default.createElement(
 	        'div',
 	        { className: 'toolbar-button', onClick: function onClick() {
@@ -955,7 +955,7 @@
 	  }]);
 	  return DownloadButton;
 	}(_react.Component);
-
+	
 	DownloadButton.propTypes = {
 	  tab: _react2.default.PropTypes.object,
 	  onUpdate: _react2.default.PropTypes.func.isRequired
@@ -967,60 +967,60 @@
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
-
+	
 	Object.defineProperty(exports, "__esModule", {
 	  value: true
 	});
-
+	
 	var _getPrototypeOf = __webpack_require__(4);
-
+	
 	var _getPrototypeOf2 = _interopRequireDefault(_getPrototypeOf);
-
+	
 	var _classCallCheck2 = __webpack_require__(5);
-
+	
 	var _classCallCheck3 = _interopRequireDefault(_classCallCheck2);
-
+	
 	var _createClass2 = __webpack_require__(7);
-
+	
 	var _createClass3 = _interopRequireDefault(_createClass2);
-
+	
 	var _possibleConstructorReturn2 = __webpack_require__(6);
-
+	
 	var _possibleConstructorReturn3 = _interopRequireDefault(_possibleConstructorReturn2);
-
+	
 	var _inherits2 = __webpack_require__(8);
-
+	
 	var _inherits3 = _interopRequireDefault(_inherits2);
-
+	
 	var _react = __webpack_require__(14);
-
+	
 	var _react2 = _interopRequireDefault(_react);
-
+	
 	var _ReportEditor = __webpack_require__(1);
-
+	
 	var _ReportEditor2 = _interopRequireDefault(_ReportEditor);
-
+	
 	var _jsreportStudio = __webpack_require__(15);
-
+	
 	var _jsreportStudio2 = _interopRequireDefault(_jsreportStudio);
-
+	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
+	
 	var DeleteButton = function (_Component) {
 	  (0, _inherits3.default)(DeleteButton, _Component);
-
+	
 	  function DeleteButton() {
 	    (0, _classCallCheck3.default)(this, DeleteButton);
 	    return (0, _possibleConstructorReturn3.default)(this, (0, _getPrototypeOf2.default)(DeleteButton).apply(this, arguments));
 	  }
-
+	
 	  (0, _createClass3.default)(DeleteButton, [{
 	    key: 'render',
 	    value: function render() {
 	      if (!this.props.tab || this.props.tab.key !== 'Reports' || !_ReportEditor2.default.Instance || !_ReportEditor2.default.Instance.ActiveReport) {
 	        return _react2.default.createElement('div', null);
 	      }
-
+	
 	      return _react2.default.createElement(
 	        'div',
 	        { className: 'toolbar-button', onClick: function onClick() {
@@ -1033,7 +1033,7 @@
 	  }]);
 	  return DeleteButton;
 	}(_react.Component);
-
+	
 	DeleteButton.propTypes = {
 	  tab: _react2.default.PropTypes.object,
 	  onUpdate: _react2.default.PropTypes.func.isRequired

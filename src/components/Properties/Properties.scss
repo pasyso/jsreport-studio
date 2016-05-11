@@ -11,7 +11,7 @@
 .title {
   background-color: $primaryHoverBackgroundColor;
   color: $primaryHoverColor;
-  min-height: 1.3rem;
+  min-height: 1.7rem;
   font-size: 0.9rem;
   padding: 0.3rem;
 }
@@ -49,7 +49,7 @@
 }
 
 .propertyContentBox.expanded {
-  max-height: 60rem;
+  max-height: 70rem;
 }
 
 :global .properties-section {

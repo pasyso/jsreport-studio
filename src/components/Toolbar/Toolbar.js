@@ -1,6 +1,6 @@
 import React, {Component} from 'react'
 import style from './Toolbar.scss'
-import { toolbarComponents } from '../../lib/configuration.js'
+import { toolbarComponents, toolbarVisibilityResolver } from '../../lib/configuration.js'
 import logo from './js-logo.png'
 
 export default class Toolbar extends Component {
@@ -63,10 +63,14 @@ export default class Toolbar extends Component {
   }
 
   renderButton (onClick, enabled, text, imageClass, tooltip) {
+    if (toolbarVisibilityResolver && toolbarVisibilityResolver(text) === false) {
+      return false
+    }
+
     return <div
       title={tooltip} className={'toolbar-button ' + ' ' + (enabled ? '' : 'disabled')}
       onClick={enabled ? onClick : () => {}}>
-      <i className={imageClass} /><span>{text}</span></div>
+      <i className={imageClass}/><span>{text}</span></div>
   }
 
   renderToolbarComponents (position) {
@@ -74,8 +78,26 @@ export default class Toolbar extends Component {
       key: i,
       tab: this.props.activeTab,
       onUpdate: this.props.onUpdate,
-      canRun: this.props.canRun
+      canRun: this.props.canRun,
+      canSaveAll: this.props.canSaveAll,
+      canRemove: this.props.canRemove
     }))
+  }
+
+  renderSettings () {
+    if (toolbarVisibilityResolver && toolbarVisibilityResolver('settings') === false) {
+      return false
+    }
+
+    return <div
+      className='toolbar-button'
+      onClick={(e) => { e.stopPropagation(); this.setState({ expanded: !this.state.expanded }) }}>
+      <i className='fa fa-cog' />
+
+      <div className={style.popup} style={{display: this.state.expanded ? 'block' : 'none'}}>
+        {this.renderToolbarComponents('settings')}
+      </div>
+    </div>
   }
 
   render () {
@@ -92,15 +114,7 @@ export default class Toolbar extends Component {
         {isPending ? <i className='fa fa-spinner fa-spin fa-fw'></i> : ''}
       </div>
       {this.renderToolbarComponents('right')}
-      <div
-        className='toolbar-button'
-        onClick={(e) => { e.stopPropagation(); this.setState({ expanded: !this.state.expanded }) }}>
-        <i className='fa fa-cog'/>
-
-        <div className={style.popup} style={{display: this.state.expanded ? 'block' : 'none'}}>
-          {this.renderToolbarComponents('settings')}
-        </div>
-      </div>
+      {this.renderSettings('right')}
     </div>
   }
 }

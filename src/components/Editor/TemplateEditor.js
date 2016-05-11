@@ -40,7 +40,7 @@ export default class TemplateEditor extends Component {
     return (
       <SplitPane
         split='horizontal' resizerClassName='resizer-horizontal' onChange={() => this.handleSplitChanged()}
-        defaultSize={(window.innerHeight * 0.4) + 'px'}>
+        defaultSize={(window.innerHeight * 0.2) + 'px'}>
         <TextEditor
           key={entity._id}
           name={entity._id}

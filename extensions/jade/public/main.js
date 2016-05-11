@@ -54,7 +54,7 @@
 	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 	
-	_jsreportStudio2.default.templateEditorModeResovlers.push(function (template) {
+	_jsreportStudio2.default.templateEditorModeResolvers.push(function (template) {
 	  return template.engine === 'jade' ? 'jade' : null;
 	});
 

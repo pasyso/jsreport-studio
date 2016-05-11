@@ -50,6 +50,16 @@ reducer.handleAction(ActionTypes.SAVE_NEW, (state, action) => _omit({
   })
 }, action.oldId))
 
+reducer.handleAction(ActionTypes.REPLACE, (state, action) => _omit({
+  ...state,
+  [action.entity._id]: Object.assign({}, state[action.oldId], action.entity, {
+    __isDirty: false,
+    __isNew: false,
+    __isLoaded: action.entity.__isLoaded,
+    __name: action.entity[entitySets[action.entity.__entitySet].nameAttribute]
+  })
+}, action.oldId))
+
 reducer.handleAction(ActionTypes.LOAD_REFERENCES, (state, action) => {
   let newStateRef = Object.assign({}, state)
   action.entities.forEach((e) => {

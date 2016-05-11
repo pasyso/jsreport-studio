@@ -4,11 +4,14 @@ import superagent from 'superagent'
 import ReactDom from 'react-dom'
 import api from './helpers/api.js'
 import TextEditor from './components/Editor/TextEditor.js'
+import NewEntityModal from './components/Modals/NewEntityModal.js'
 import * as editor from './redux/editor'
 import * as entities from './redux/entities'
+import * as progress from './redux/progress'
 import * as configuration from './lib/configuration.js'
 import relativizeUrl from './helpers/relativizeUrl.js'
 import babelRuntime from './lib/babelRuntime.js'
+import bluebird from 'bluebird'
 
 /**
  * Main facade and API for extensions. Exposed as global variable Studio. It can be also imported from jsreport-studio
@@ -18,6 +21,36 @@ import babelRuntime from './lib/babelRuntime.js'
  * @public
  */
 class Studio {
+
+  /** event listeners **/
+
+  /**
+   * Array of async functions invoked in sequence during initialization
+   * @returns {function|Array}
+   */
+  get initializeListeners () {
+    return configuration.initializeListeners
+  }
+
+  /**
+   * Array of async functions invoked in sequence after the app has been rendered
+   * @returns {*|Array}
+   */
+  get readyListeners () {
+    return configuration.readyListeners
+  }
+
+  /**
+   * Array of async functions invoked in sequence when preview process starts.
+   * @returns {function|Array}
+   */
+  get previewListeners () {
+    return configuration.previewListeners
+  }
+
+  /** /event listeners **/
+
+  /** initial configuration **/
 
   /**
    * Add new entity set, which will be automatically loaded through OData and displayed in the entity tree
@@ -75,22 +108,6 @@ class Studio {
   }
 
   /**
-   * Array of async functions invoked in sequence during initialization
-   * @returns {function|Array}
-   */
-  get initializeListeners () {
-    return configuration.initializeListeners
-  }
-
-  /**
-   * Array of async functions invoked in sequence when preview process starts.
-   * @returns {function|Array}
-   */
-  get previewListeners () {
-    return configuration.previewListeners
-  }
-
-  /**
    * Array of functions used to resolve ace editor mode for template content. This is used by custom templating engines
    * to add highlighting support for jade,ejs...
    *
@@ -100,6 +117,59 @@ class Studio {
     return configuration.templateEditorModeResolvers
   }
 
+  /**
+   * Sets the function returning the browser url path
+   * (defaultCalculatedPath, currentEntity) => String
+   * @param {Function} fn
+   */
+  set locationResolver (fn) {
+    configuration.locationResolver = fn
+  }
+
+  /**
+   * Set the function retunring the visibility flag for particular toolbar button
+   * ('Save All') => return true
+   * @param {Function} fn
+   */
+  set toolbarVisibilityResolver (fn) {
+    configuration.toolbarVisibilityResolver = fn
+  }
+
+  /**
+   * Override the default entities references loading with custom function
+   * (entitySet) => Promise([array])
+   * @param fn
+   */
+  set referencesLoader (fn) {
+    configuration.referencesLoader = fn
+  }
+
+  /**
+   * Optionally you can avoid displaying default startup page
+   * @param {Boolean} trueOrFalse
+   */
+  set shouldOpenStartupPage (trueOrFalse) {
+    configuration.shouldOpenStartupPage = trueOrFalse
+  }
+
+  /**
+   * Set additional custom header to all api calls
+   * @param {String} key
+   * @param {String} value
+   */
+  setRequestHeader (key, value) {
+    configuration.apiHeaders[key] = value
+  }
+
+  /** /initial configuration **/
+
+  /** runtime helpers **/
+
+  /**
+   * Override the right preview pane with additional content
+   * setPreviewFrameSrc('data:text/html;charset=utf-8,foooooooo')
+   * @param {String} frameSrc
+   */
   setPreviewFrameSrc (frameSrc) {
     configuration.previewFrameChangeHandler(frameSrc)
   }
@@ -114,18 +184,6 @@ class Studio {
    */
   get api () {
     return api
-  }
-
-  /**
-   * Ace editor React wrapper
-   *
-   * @example
-   * export default class DataEditor extends Component { ... }
-   *
-   * @returns {TextEditor}
-   */
-  get TextEditor () {
-    return TextEditor
   }
 
   /**
@@ -146,11 +204,30 @@ class Studio {
     configuration.modalHandler.open(componentOrText, options)
   }
 
+  openNewModal (entitySet) {
+    configuration.modalHandler.open(NewEntityModal, { entitySet: entitySet })
+  }
+
+  /**
+   * Updates through editor are not immediately propagated to the redux state because of performance.
+   * Call this to force flush of updates into the redux state
+   */
+  flushUpdates () {
+    configuration.flushUpdates()
+  }
+
   /**
    * Invoke preview process for last active template
    */
   preview () {
     configuration.previewHandler()
+  }
+
+  /**
+   * Collapse left pane
+   */
+  collapseLeftPane () {
+    configuration.collapseLeftHandler()
   }
 
   /**
@@ -209,6 +286,47 @@ class Studio {
   }
 
   /**
+   * Replace the existing entity in the state
+   * @param {String} oldId
+   * @param {Object} entity
+   */
+  replaceEntity (oldId, entity) {
+    this.store.dispatch(entities.actions.replace(oldId, entity))
+  }
+
+  /**
+   * Remove entity from the state
+   * @param {String} id
+   */
+  removeEntity (id) {
+    this.store.dispatch({
+      type: entities.ActionTypes.REMOVE,
+      _id: id
+    })
+  }
+
+  /**
+   * Show ui signalization for running background operation
+   */
+  startProgress () {
+    this.store.dispatch(progress.actions.start())
+  }
+
+  /**
+   * Hide ui signalization for running background operation
+   */
+  stopProgress () {
+    this.store.dispatch(progress.actions.stop())
+  }
+
+  /**
+   * Synchronize the location with history
+   */
+  updateHistory () {
+    this.store.dispatch(editor.actions.updateHistory())
+  }
+
+  /**
    * Searches for the entity in the UI state based on specified the shortid
    * @param shortid
    * @param shouldThrow
@@ -220,6 +338,22 @@ class Studio {
   }
 
   /**
+   * Returns the currently selected entity or null
+   * @returns {Object}
+   */
+  getActiveEntity () {
+    return editor.selectors.getActiveEntity(this.store.getState())
+  }
+
+  /**
+   * Get all entities including meta attributes in array
+   * @returns {array}
+   */
+  getAllEntities () {
+    return entities.selectors.getAll(this.store.getState())
+  }
+
+  /**
    * Get the path in absolute form like /api/images and make it working also for jsreport running on subpath like myserver.com/reporting/api/images
    * @param {String} path
    * @returns {String}
@@ -228,9 +362,28 @@ class Studio {
     return relativizeUrl(path)
   }
 
+  /** /runtime helpers **/
+
+  /** react components **/
+
+  /**
+   * Ace editor React wrapper
+   *
+   * @example
+   * export default class DataEditor extends Component { ... }
+   *
+   * @returns {TextEditor}
+   */
+  get TextEditor () {
+    return TextEditor
+  }
+
+  /** /react components **/
+
   constructor (store) {
     this.editor = editor
     this.store = store
+    this.entities = entities
     this.references = {}
     // extensions can add routes, not yet prototyped
     this.routes = []
@@ -245,7 +398,8 @@ class Studio {
       react: React,
       'react-dom': ReactDom,
       'react-list': ReactList,
-      superagent: superagent
+      superagent: superagent,
+      bluebird: bluebird
     }
   }
 }

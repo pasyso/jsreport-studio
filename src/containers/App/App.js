@@ -16,7 +16,7 @@ import Modal from '../Modal/Modal.js'
 import NewEntityModal from '../../components/Modals/NewEntityModal.js'
 import DeleteConfirmationModal from '../../components/Modals/DeleteConfirmationModal.js'
 import * as progress from '../../redux/progress'
-import { triggerSplitResize, registerPreviewHandler, entitySets } from '../../lib/configuration.js'
+import { triggerSplitResize, registerPreviewHandler, registerUpdatesFlushHandler, entitySets, shouldOpenStartupPage, registerCollapseLeftHandler } from '../../lib/configuration.js'
 
 const progressActions = progress.actions
 
@@ -57,6 +57,12 @@ export default class App extends Component {
       }
     })
 
+    registerCollapseLeftHandler(() => {
+      this.refs.leftPane.collapse(true)
+    })
+
+    registerUpdatesFlushHandler(() => this.flush())
+
     if (this.props.params.shortid) {
       this.props.openTab({ shortid: this.props.params.shortid, entitySet: this.props.params.entitySet })
       return
@@ -74,7 +80,7 @@ export default class App extends Component {
   }
 
   async handleRun () {
-    this.update.flush()
+    this.flush()
 
     if (!/Trident/i.test(navigator.userAgent) && !/MSIE/i.test(navigator.userAgent) && !/Edge/i.test(navigator.userAgent)) {
       this.props.start()
@@ -87,15 +93,24 @@ export default class App extends Component {
     this.refs.modal.open(componentOrText, options)
   }
 
-  save () {
+  flush () {
     this.update.flush()
     this.setUpDebouncedUpdate()
+  }
+
+  save () {
+    this.flush()
     return this.props.save()
   }
 
+  componentWillReceiveProps (nextProps) {
+    if (this.props.activeTabKey !== nextProps.activeTabKey) {
+      this.flush()
+    }
+  }
+
   saveAll () {
-    this.update.flush()
-    this.setUpDebouncedUpdate()
+    this.flush()
     return this.props.saveAll()
   }
 
@@ -105,7 +120,9 @@ export default class App extends Component {
   }
 
   openStartup () {
-    this.props.openTab({ key: 'StartupPage', editorComponentKey: 'startup', title: 'Statup' })
+    if (shouldOpenStartupPage) {
+      this.props.openTab({ key: 'StartupPage', editorComponentKey: 'startup', title: 'Statup' })
+    }
   }
 
   handleSplitDragFinished () {
@@ -114,7 +131,7 @@ export default class App extends Component {
 
   render () {
     const { tabsWithEntities, references, isPending, canRun, canSave, canRemove, canSaveAll, activeTabWithEntity, entities,
-      openTab, end, activateTab, activeTabKey, activeEntity, update, closeTab } = this.props
+      openTab, stop, activateTab, activeTabKey, activeEntity, update, closeTab } = this.props
 
     return (
       <div className='container'>
@@ -131,11 +148,13 @@ export default class App extends Component {
 
             <div className='block'>
               <SplitPane
-                resizerClassName='resizer' defaultSize='80%' onChange={() => this.handleSplitChanged()}
+                ref='leftPane'
+                collapsedText='Objects / Properties' collapsable='first'
+                resizerClassName='resizer' defaultSize='85%' onChange={() => this.handleSplitChanged()}
                 onDragFinished={() => this.handleSplitDragFinished()}>
                 <SplitPane
                   resizerClassName='resizer-horizontal' split='horizontal'
-                  defaultSize={(window.innerHeight * 0.4) + 'px'}>
+                  defaultSize={(window.innerHeight * 0.5) + 'px'}>
                   <EntityTree
                     activeEntity={activeEntity} entities={references} onClick={(_id) => openTab({_id: _id})}
                     onNewClick={(es) => entitySets[es].onNew ? entitySets[es].onNew() : this.openModal(NewEntityModal, {entitySet: es})} />
@@ -146,11 +165,12 @@ export default class App extends Component {
                   <TabTitles
                     activeTabKey={activeTabKey} activateTab={activateTab} tabs={tabsWithEntities} closeTab={closeTab} />
                   <SplitPane
+                    collapsedText='preview' collapsable='second'
                     onChange={() => this.handleSplitChanged()} onDragFinished={() => this.handleSplitDragFinished()}
                     resizerClassName='resizer'>
                     <EditorTabs
                       activeTabKey={activeTabKey} onUpdate={(v) => this.update(v)} tabs={tabsWithEntities} />
-                    <Preview ref='preview' onLoad={end} />
+                    <Preview ref='preview' onLoad={stop} />
                   </SplitPane>
                 </div>
               </SplitPane>
