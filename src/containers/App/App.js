@@ -15,6 +15,7 @@ import TabTitles from '../../components/Tabs/TabTitles.js'
 import Modal from '../Modal/Modal.js'
 import NewEntityModal from '../../components/Modals/NewEntityModal.js'
 import DeleteConfirmationModal from '../../components/Modals/DeleteConfirmationModal.js'
+import CloseConfirmationModal from '../../components/Modals/CloseConfirmationModal.js'
 import * as progress from '../../redux/progress'
 import { triggerSplitResize, registerPreviewHandler, registerUpdatesFlushHandler, entitySets, shouldOpenStartupPage, registerCollapseLeftHandler } from '../../lib/configuration.js'
 
@@ -125,13 +126,21 @@ export default class App extends Component {
     }
   }
 
+  closeTab (key) {
+    const entity = entities.selectors.getById(this.context.store.getState(), key, false)
+    if (!entity || !entity.__isDirty) {
+      return this.props.closeTab(key)
+    }
+    this.openModal(CloseConfirmationModal, {_id: key})
+  }
+
   handleSplitDragFinished () {
     this.refs.preview.resizeEnded()
   }
 
   render () {
     const { tabsWithEntities, references, isPending, canRun, canSave, canRemove, canSaveAll, activeTabWithEntity, entities,
-      openTab, stop, activateTab, activeTabKey, activeEntity, update, closeTab } = this.props
+      openTab, stop, activateTab, activeTabKey, activeEntity, update } = this.props
 
     return (
       <div className='container'>
@@ -163,7 +172,7 @@ export default class App extends Component {
 
                 <div className='block'>
                   <TabTitles
-                    activeTabKey={activeTabKey} activateTab={activateTab} tabs={tabsWithEntities} closeTab={closeTab} />
+                    activeTabKey={activeTabKey} activateTab={activateTab} tabs={tabsWithEntities} closeTab={(k) => this.closeTab(k)} />
                   <SplitPane
                     collapsedText='preview' collapsable='second'
                     onChange={() => this.handleSplitChanged()} onDragFinished={() => this.handleSplitDragFinished()}
