@@ -81,6 +81,12 @@ module.exports = function (reporter, definition) {
         }
       })
     }
+
+    reporter.afterRenderListeners.add('playground', function (req, res) {
+      if (res.headers['Content-Type'] === 'text/html') {
+        res.content = new Buffer(res.content.toString().replace(/http:\/\/localhost:2500/g, 'https://playground.jsreport.net'))
+      }
+    })
   })
 }
 
