@@ -42,5 +42,6 @@ npm-debug.log
 
 data
 
-extensions/**/main.js
-extensions/**/main.js.map
+main.js
+main.js.map
+extensions_dev.js
