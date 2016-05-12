@@ -89,9 +89,9 @@ export default class Properties extends Component {
         </div>
 
         <div className='form-group'>
-          <label title='window.PHANTOM_HTML_TO_PDF_READY=true;'>wait for printing trigger</label>
+          <label title='window.JSREPORT_READY_TO_START=true;'>wait for printing trigger</label>
           <input
-            type='checkbox' title='window.PHANTOM_HTML_TO_PDF_READY=true;' checked={phantom.waitForJS === true}
+            type='checkbox' title='window.JSREPORT_READY_TO_START=true;' checked={phantom.waitForJS === true}
             onChange={(v) => changePhantom({waitForJS: v.target.checked})} />
         </div>
 

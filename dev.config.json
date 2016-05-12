@@ -31,11 +31,11 @@
     },
     "phantom": {
         "numberOfWorkers" : 2,
-        "timeout": 5200000,
+        "timeout": 8000,
         "strategy": "dedicated-process"
     },
     "electron": {
-        "timeout": 5200000,
+        "timeout": 8000,
         "strategy": "electron-ipc"
     },
     "tasks": {

@@ -51,6 +51,9 @@ module.exports = [{
 }, {
   name: 'freeze',
   directory: path.join(__dirname, 'freeze')
+}, {
+  name: 'phantom-image',
+  directory: path.join(__dirname, 'phantom-image')
 }]
 
 /*{

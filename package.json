@@ -33,6 +33,7 @@
     "jsreport": "^0.13.2",
     "jsreport-ejs": "^0.2.0",
     "jsreport-freeze": "^0.3.0",
+    "jsreport-phantom-image": "^0.2.0",
     "lodash": "^4.10.0",
     "serve-favicon": "^2.3.0",
     "socket.io-client": "^1.4.6"
