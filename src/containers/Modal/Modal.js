@@ -13,10 +13,18 @@ import style from './Modal.scss'
 }), { ...actions })
 export default class Modal extends Component {
 
+  static propTypes = {
+    openCallback: React.PropTypes.func.isRequired
+  }
+
   constructor () {
     super()
     this.state = {}
     registerModalHandler(this)
+  }
+
+  componentDidMount () {
+    this.props.openCallback(this.open.bind(this))
   }
 
   renderContent () {

@@ -13,6 +13,7 @@ import * as configuration from './lib/configuration.js'
 import relativizeUrl from './helpers/relativizeUrl.js'
 import babelRuntime from './lib/babelRuntime.js'
 import bluebird from 'bluebird'
+import io from 'socket.io-client'
 
 /**
  * Main facade and API for extensions. Exposed as global variable Studio. It can be also imported from jsreport-studio
@@ -448,7 +449,8 @@ class Studio {
       'react-dom': ReactDom,
       'react-list': ReactList,
       superagent: superagent,
-      bluebird: bluebird
+      bluebird: bluebird,
+      'socket.io-client': io
     }
   }
 }

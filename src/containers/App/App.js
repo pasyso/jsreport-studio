@@ -91,10 +91,9 @@ export default class App extends Component {
   }
 
   openModal (componentOrText, options) {
-    this.refs.modal.open(componentOrText, options)
+    console.log('open')
+    this.refOpenModal(componentOrText, options)
   }
-
-  //chceme otevrit modal pokud je tam nejaky stav, ale ten stav by se mel po zavrani vzdycky vynulovat...ok, to by slo,
 
   flush () {
     this.update.flush()
@@ -133,7 +132,7 @@ export default class App extends Component {
     if (!entity || !entity.__isDirty) {
       return this.props.closeTab(key)
     }
-    this.openModal(CloseConfirmationModal, {_id: key})
+    this.openModal(CloseConfirmationModal, { _id: key })
   }
 
   handleSplitDragFinished () {
@@ -147,7 +146,7 @@ export default class App extends Component {
     return (
       <div className='container'>
         <Helmet />
-        <Modal ref='modal' />
+        <Modal ref='modal' openCallback={(open) => {this.refOpenModal = open}} />
 
         <div className={style.appContent + ' container'}>
           <div className='block'>
@@ -174,7 +173,8 @@ export default class App extends Component {
 
                 <div className='block'>
                   <TabTitles
-                    activeTabKey={activeTabKey} activateTab={activateTab} tabs={tabsWithEntities} closeTab={(k) => this.closeTab(k)} />
+                    activeTabKey={activeTabKey} activateTab={activateTab} tabs={tabsWithEntities}
+                    closeTab={(k) => this.closeTab(k)} />
                   <SplitPane
                     collapsedText='preview' collapsable='second'
                     onChange={() => this.handleSplitChanged()} onDragFinished={() => this.handleSplitDragFinished()}
