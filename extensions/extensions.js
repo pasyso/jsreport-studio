@@ -48,6 +48,9 @@ module.exports = [{
 }, {
   name: 'public-templates',
   directory: path.join(__dirname, 'public-templates')
+}, {
+  name: 'freeze',
+  directory: path.join(__dirname, 'freeze')
 }]
 
 /*{

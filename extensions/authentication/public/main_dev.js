@@ -3,6 +3,7 @@ import LogoutSettingsButton from './LogoutSettingsButton.js'
 import ChangePasswordSettingsButton from './ChangePasswordSettingsButton.js'
 import ChangePasswordButton from './ChangePasswordButton.js'
 import Studio from 'jsreport-studio'
+import NewUserModal from './NewUserModal.js'
 
 // we want to be at the front, because other extension like scheduling relies on loaded user
 Studio.initializeListeners.unshift(async () => {
@@ -21,7 +22,7 @@ Studio.initializeListeners.unshift(async () => {
       faIcon: 'fa-user',
       visibleName: 'user',
       nameAttribute: 'username',
-      onNew: () => Studio.openModal('NEW_USER_MODAL')
+      onNew: () => Studio.openModal(NewUserModal)
     })
     Studio.addEditorComponent('users', UserEditor)
     Studio.addToolbarComponent(ChangePasswordButton)

@@ -8,6 +8,7 @@ import NewEntityModal from './components/Modals/NewEntityModal.js'
 import * as editor from './redux/editor'
 import * as entities from './redux/entities'
 import * as progress from './redux/progress'
+import * as settings from './redux/settings'
 import * as configuration from './lib/configuration.js'
 import relativizeUrl from './helpers/relativizeUrl.js'
 import babelRuntime from './lib/babelRuntime.js'
@@ -345,6 +346,14 @@ class Studio {
     this.store.dispatch(editor.actions.updateHistory())
   }
 
+  setSetting (key, value) {
+    return this.store.dispatch(settings.actions.update(key, value))
+  }
+
+  getSettingValueByKey (key, value, shouldThrow = true) {
+    return settings.selectors.getValueByKey(this.store.getState(), key, value, shouldThrow)
+  }
+
   /**
    * Searches for the entity in the UI state based on specified the shortid
    * @param shortid
@@ -378,6 +387,10 @@ class Studio {
    */
   getAllEntities () {
     return entities.selectors.getAll(this.store.getState())
+  }
+
+  getSettings () {
+    return settings.selectors.getAll(this.store.getState())
   }
 
   /**
@@ -419,6 +432,7 @@ class Studio {
     this.editor = editor
     this.store = store
     this.entities = entities
+    this.settings = settings
     this.references = {}
     // extensions can add routes, not yet prototyped
     this.routes = []

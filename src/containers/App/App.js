@@ -94,6 +94,8 @@ export default class App extends Component {
     this.refs.modal.open(componentOrText, options)
   }
 
+  //chceme otevrit modal pokud je tam nejaky stav, ale ten stav by se mel po zavrani vzdycky vynulovat...ok, to by slo,
+
   flush () {
     this.update.flush()
     this.setUpDebouncedUpdate()

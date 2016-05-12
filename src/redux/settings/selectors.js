@@ -13,6 +13,30 @@ const getLogs = (logs, state) => ((logs || []).map((l) => {
   }
 }))
 
-export const getFailedLogsWithTemplates = (state) => getLogs(state.settings.failedRequestsLog, state)
-export const getLogsWithTemplates = (state) => getLogs(state.settings.requestsLog, state)
+export const getByKey = (state, key, shouldThrow = true) => {
+  const entities = Object.keys(state.settings).map((k) => state.settings[k]).filter((s) => s.key === key)
 
+  if (!entities.length && shouldThrow) {
+    throw new Error(`settings with key ${key} was not found`)
+  }
+
+  if (!entities.length) {
+    return null
+  }
+
+  return entities[0]
+}
+
+export const getValueByKey = (state, key, shouldThrow = true) => {
+  const entry = getByKey(state, key, shouldThrow)
+
+  if (!entry) {
+    return
+  }
+
+  return entry.value
+}
+
+export const getAll = (state) => state
+export const getFailedLogsWithTemplates = (state) => getLogs(getValueByKey(state, 'failedRequestsLog', false), state)
+export const getLogsWithTemplates = (state) => getLogs(getValueByKey(state, 'requestsLog', false), state)

@@ -1,8 +1,16 @@
-import React, {Component, PropTypes} from 'react'
+import React, {Component} from 'react'
 import { registerModalHandler } from '../../lib/configuration.js'
 import ReactModal from 'react-modal'
+import {connect} from 'react-redux'
+import {actions} from 'redux/modal'
 import style from './Modal.scss'
 
+@connect((state) => ({
+  isOpen: state.modal.isOpen,
+  text: state.modal.text,
+  componentKey: state.modal.componentKey,
+  options: state.modal.options
+}), { ...actions })
 export default class Modal extends Component {
 
   constructor () {
@@ -12,10 +20,10 @@ export default class Modal extends Component {
   }
 
   renderContent () {
-    return (<div>{typeof this.componentOrText !== 'string' ? React.createElement(this.componentOrText, {
+    return (<div>{(this.componentOrText && typeof this.componentOrText !== 'string') ? React.createElement(this.componentOrText, {
       close: () => this.close(),
-      options: this.options
-    }) : this.componentKeyOrText}</div>)
+      options: this.options || this.props.options
+    }) : this.componentKeyOrText || this.props.text}</div>)
   }
 
   open (componentOrText, options) {
@@ -25,11 +33,15 @@ export default class Modal extends Component {
   }
 
   close () {
+    this.options = null
+    this.componentOrText = null
+    this.props.close()
     this.setState({ isOpen: false })
   }
 
   render () {
-    const { isOpen } = this.state
+    const isOpen = this.state.isOpen || this.props.isOpen
+
     return <ReactModal key='ReactModal'
       isOpen={isOpen} overlayClassName={style.overlay} className={style.content}
       onRequestClose={() => this.close()}>
