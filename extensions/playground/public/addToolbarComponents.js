@@ -26,12 +26,6 @@ const buttonsForFull = () => {
     className='toolbar-button' onClick={() => (window.location = '/')}>
     <i className='fa fa-plus' />New
   </div>, 'right')
-
-  Studio.addToolbarComponent((props) => <div
-    className='toolbar-button'
-    onClick={() => (Studio.openTab({ key: 'Help', editorComponentKey: 'Help', title: 'Get Started' }))}>
-    <i className='fa fa-question' />
-  </div>, 'right')
 }
 
 const buttonsForEmbed = () => {

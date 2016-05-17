@@ -5,6 +5,14 @@ import Promise from 'bluebird'
 export default async () => {
   Studio.startProgress()
   Studio.flushUpdates()
+  const entities = Studio.getAllEntities()
+
+  if (!Studio.workspaces.current.name) {
+    const template = entities.find((e) => e.__entitySet === 'templates')
+    if (template) {
+      Studio.workspaces.current.name = template.name
+    }
+  }
 
   const previousVersion = Studio.workspaces.current.version
   Studio.workspaces.current = await Studio.api.post('/odata/workspaces', {
@@ -17,8 +25,6 @@ export default async () => {
 
   Studio.setRequestHeader('workspace-shortid', Studio.workspaces.current.shortid)
   Studio.setRequestHeader('workspace-version', Studio.workspaces.current.version)
-
-  const entities = Studio.getAllEntities()
 
   await Promise.all(entities.map(async (e) => {
     let post = _assign({}, e)

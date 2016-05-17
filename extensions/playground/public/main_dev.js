@@ -11,6 +11,29 @@ const getQueryParameter = (name) => {
   return match && decodeURIComponent(match[1].replace(/\+/g, ' '))
 }
 
+const originalError = console.error.bind(console)
+let errorLimit = 10
+const logError = (m) => {
+  if (errorLimit-- < 0) {
+    return
+  }
+
+  Studio.api.post('/odata/errors', { data: { message: m, url: window.location.href } })
+}
+
+window.onerror = function (msg, url, line, col, error) {
+  var extra = !col ? '' : '\ncolumn: ' + col
+  extra += !error ? '' : '\nerror: ' + error
+  msg + '\nurl: ' + url + '\nline: ' + line + extra
+  logError(msg)
+}
+
+console.error = function (...args) {
+  const msg = args.map((a) => a.stack || a).join()
+  logError(msg)
+  originalError(...args)
+}
+
 Studio.workspaces = {
   current: {},
   save: save,

@@ -1,6 +1,15 @@
 module.exports = function (reporter, definition) {
   return
 
+  reporter.documentStore.registerEntityType('ErrorLogType', {
+    _id: { type: 'Edm.String', key: true },
+    creationDate: { type: 'Edm.DateTimeOffset' },
+    message: { type: 'Edm.String' },
+    url: { type: 'Edm.String' }
+  })
+
+  reporter.documentStore.registerEntitySet('errors', { entityType: 'jsreport.ErrorLogType' })
+
   reporter.documentStore.registerEntityType('WorskpaceType', {
     _id: { type: 'Edm.String', key: true },
     shortid: { type: 'Edm.String' },
@@ -43,6 +52,10 @@ module.exports = function (reporter, definition) {
         })
         doc.version = max + 1
       })
+    })
+
+    reporter.documentStore.collection('errors').beforeInsertListeners.add('playground', function (doc) {
+      doc.creationDate = doc.creationDate || new Date()
     })
 
     reporter.documentStore.collection('workspaces').beforeInsertListeners.add('playground', function (doc) {
