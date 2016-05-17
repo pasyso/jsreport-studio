@@ -124,5 +124,25 @@
   color: $primaryHoverBackgroundColor;
 }
 
+.help {
+  cursor: pointer;
+  text-decoration: none;
+}
 
+.help:after {
+  content: "\f128 ";
+  font-family: FontAwesome;
+  color: $secondaryColor;
+  padding: 0.1rem;
+  font-size: 1rem;
+  visibility: hidden;
+}
+
+.nodeBox:hover .help:after {
+  visibility: visible;
+}
+
+.help:hover:after {
+  color: $primaryHoverBackgroundColor;
+}
 

@@ -2,7 +2,13 @@ import DataEditor from './DataEditor.js'
 import Properties from './DataProperties.js'
 import Studio from 'jsreport-studio'
 
-Studio.addEntitySet({ name: 'data', faIcon: 'fa-database', visibleName: 'sample data' })
+Studio.addEntitySet({
+  name: 'data',
+  faIcon: 'fa-database',
+  visibleName: 'sample data',
+  helpUrl: 'http://jsreport.net/learn/inline-data'
+})
+
 Studio.addPropertiesComponent(Properties.title, Properties, (entity) => entity.__entitySet === 'templates')
 Studio.addEditorComponent('data', DataEditor)
 

@@ -76,7 +76,7 @@ export default class Properties extends Component {
 
     return (
       <div className='properties-section'>
-        <div className='form-group'><label>Default language</label>
+        <div className='form-group'><label>Default language <a href='http://jsreport.net/learn/resources' target='_blank'><i className='fa fa-question' /> </a></label>
           <input
             type='text' placeholder='en' value={defaultLanguage || ''}
             onChange={(v) => onChange({_id: entity._id, resources: {defaultLanguage: v.target.value, items: items}})} />
