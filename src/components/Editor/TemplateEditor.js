@@ -46,14 +46,14 @@ export default class TemplateEditor extends Component {
           name={entity._id}
           mode={this.resolveTemplateEditorMode(entity) || 'handlebars'}
           onUpdate={(v) => onUpdate(Object.assign({}, entity, {content: v}))}
-          value={entity.content}
+          value={entity.content || ''}
           />
         <TextEditor
           name={entity._id + '_helpers'}
           key={entity._id + '_helpers'}
           mode='javascript'
           onUpdate={(v) => onUpdate(Object.assign({}, entity, {helpers: v}))}
-          value={entity.helpers}
+          value={entity.helpers || ''}
           />
       </SplitPane>
     )
