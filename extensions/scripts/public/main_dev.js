@@ -2,7 +2,7 @@ import ScriptEditor from './ScriptEditor.js'
 import Properties from './ScriptProperties.js'
 import Studio from 'jsreport-studio'
 
-Studio.addEntitySet({ name: 'scripts', faIcon: 'fa-cogs', visibleName: 'script' })
+Studio.addEntitySet({ name: 'scripts', faIcon: 'fa-cogs', visibleName: 'script', helpUrl: 'http://jsreport.net/learn/scripts' })
 Studio.addPropertiesComponent(Properties.title, Properties, (entity) => entity.__entitySet === 'templates')
 Studio.addEditorComponent('scripts', ScriptEditor)
 
