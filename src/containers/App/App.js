@@ -88,7 +88,6 @@ export default class App extends Component {
     cookies.set('render-complete', false)
 
     const interval = setInterval(() => {
-      console.log('checking')
       if (cookies.get('render-complete') === 'true') {
         clearInterval(interval)
         this.props.stop()
