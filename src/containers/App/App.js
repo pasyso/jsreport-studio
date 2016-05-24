@@ -17,6 +17,7 @@ import NewEntityModal from '../../components/Modals/NewEntityModal.js'
 import DeleteConfirmationModal from '../../components/Modals/DeleteConfirmationModal.js'
 import CloseConfirmationModal from '../../components/Modals/CloseConfirmationModal.js'
 import * as progress from '../../redux/progress'
+import cookies from 'js-cookie'
 import { triggerSplitResize, registerPreviewHandler, registerUpdatesFlushHandler, entitySets, shouldOpenStartupPage, registerCollapseLeftHandler } from '../../lib/configuration.js'
 
 const progressActions = progress.actions
@@ -83,9 +84,16 @@ export default class App extends Component {
   async handleRun () {
     this.flush()
 
-    if (!/Trident/i.test(navigator.userAgent) && !/MSIE/i.test(navigator.userAgent) && !/Edge/i.test(navigator.userAgent)) {
-      this.props.start()
-    }
+    this.props.start()
+    cookies.set('render-complete', false)
+
+    const interval = setInterval(() => {
+      console.log('checking')
+      if (cookies.get('render-complete') === 'true') {
+        clearInterval(interval)
+        this.props.stop()
+      }
+    }, 1000)
 
     this.props.run()
   }
