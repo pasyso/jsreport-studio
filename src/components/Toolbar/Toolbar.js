@@ -37,13 +37,13 @@ export default class Toolbar extends Component {
   }
 
   handleShortcut (e) {
-    if (e.ctrlKey && e.shiftKey && e.which === 83 && this.props.canSaveAll) {
+    if (e.ctrlKey && e.shiftKey && e.which === 83 && this.props.canSaveAll && toolbarVisibilityResolver('SaveAll')) {
       e.preventDefault()
       this.props.onSaveAll()
       return false
     }
 
-    if (e.ctrlKey && e.which === 83 && this.props.canSave) {
+    if (e.ctrlKey && e.which === 83 && this.props.canSave && toolbarVisibilityResolver('SaveAll')) {
       e.preventDefault()
       this.props.onSave()
       return false
@@ -63,14 +63,14 @@ export default class Toolbar extends Component {
   }
 
   renderButton (onClick, enabled, text, imageClass, tooltip) {
-    if (toolbarVisibilityResolver && toolbarVisibilityResolver(text) === false) {
+    if (toolbarVisibilityResolver(text) === false) {
       return false
     }
 
     return <div
       title={tooltip} className={'toolbar-button ' + ' ' + (enabled ? '' : 'disabled')}
       onClick={enabled ? onClick : () => {}}>
-      <i className={imageClass}/><span>{text}</span></div>
+      <i className={imageClass} /><span>{text}</span></div>
   }
 
   renderToolbarComponents (position) {
@@ -85,7 +85,7 @@ export default class Toolbar extends Component {
   }
 
   renderSettings () {
-    if (toolbarVisibilityResolver && toolbarVisibilityResolver('settings') === false) {
+    if (toolbarVisibilityResolver('settings') === false) {
       return false
     }
 

@@ -14,7 +14,7 @@ export const toolbarComponents = {
 }
 export const tabTitleComponents = []
 
-export let toolbarVisibilityResolver
+export let toolbarVisibilityResolver = () => true
 
 export let _splitResizeHandlers = []
 
