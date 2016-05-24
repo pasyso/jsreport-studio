@@ -146,7 +146,7 @@ export default class App extends Component {
     return (
       <div className='container'>
         <Helmet />
-        <Modal ref='modal' openCallback={(open) => {this.refOpenModal = open}} />
+        <Modal ref='modal' openCallback={(open) => { this.refOpenModal = open }} />
 
         <div className={style.appContent + ' container'}>
           <div className='block'>
