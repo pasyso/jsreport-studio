@@ -3,7 +3,7 @@ import ReactList from 'react-list'
 import superagent from 'superagent'
 import fileSaver from 'filesaver.js-npm'
 import ReactDom from 'react-dom'
-import api from './helpers/api.js'
+import api, { methods } from './helpers/api.js'
 import TextEditor from './components/Editor/TextEditor.js'
 import NewEntityModal from './components/Modals/NewEntityModal.js'
 import * as editor from './redux/editor'
@@ -186,7 +186,7 @@ class Studio {
    * @returns {*}
    */
   get api () {
-    return api
+    return this.API
   }
 
   /**
@@ -398,7 +398,7 @@ class Studio {
 
   /**
    * absolute root url to the server, like http://localhost/reporting
-    * @returns {string}
+   * @returns {string}
    */
   get rootUrl () {
     return window.location.href.substring(0, window.location.href.indexOf('/studio'))
@@ -430,6 +430,16 @@ class Studio {
     this.references = {}
     // extensions can add routes, not yet prototyped
     this.routes = []
+
+    this.API = {}
+    methods.forEach((m) => {
+      this.API[m] = (...args) => {
+        return api[m](...args).catch((e) => {
+          this.store.dispatch(this.entities.actions.apiFailed(e))
+          throw e
+        })
+      }
+    })
 
     // webpack replaces all the babel runtime references in extensions with externals taking runtime from this field
     // this basically removes the duplicated babel runtime code from extensions and decrease its sizes

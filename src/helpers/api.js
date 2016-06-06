@@ -3,11 +3,19 @@ import Promise from 'bluebird'
 import parse from './parseJSON.js'
 import relativizeUrl from './relativizeUrl'
 import { apiHeaders } from '../lib/configuration.js'
-const methods = ['get', 'post', 'put', 'patch', 'del']
+export const methods = ['get', 'post', 'put', 'patch', 'del']
 
 let requestHandler = {}
 
 const createError = (err, body) => {
+
+  try {
+    let parsed = JSON.parse(body)
+    body = parsed
+  } catch (e) {
+
+  }
+
   if (body && body.error) {
     let e = new Error(body.error.message)
     e.stack = body.error.stack
@@ -18,6 +26,10 @@ const createError = (err, body) => {
     let e = new Error(body.message)
     e.stack = body.stack
     return e
+  }
+
+  if (body && typeof body === 'string') {
+    return new Error(body.substring(0, 1000) + '...')
   }
 
   return err || new Error('API call failed')
@@ -44,7 +56,7 @@ methods.forEach((m) => {
       request.send(data)
     }
 
-    request.end((err, { text } = {}) => err ? reject(createError(err, JSON.parse(text))) : resolve(parse(text)))
+    request.end((err, { text } = {}) => err ? reject(createError(err, text)) : resolve(parse(text)))
   })
 })
 
