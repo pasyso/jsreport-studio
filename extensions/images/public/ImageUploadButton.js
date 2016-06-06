@@ -29,6 +29,7 @@ export default class ImageUploadButton extends Component {
     const reader = new FileReader()
 
     reader.onloadend = async () => {
+      this.refs.file.value = ''
       // playground/workspaces extension needs to save the new version
       // so uploading of the new image goes into it
       if (Studio.workspaces) {
