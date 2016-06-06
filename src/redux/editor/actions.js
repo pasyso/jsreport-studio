@@ -114,6 +114,12 @@ export function update (entity) {
   }
 }
 
+export function groupedUpdate (entity) {
+  return async function (dispatch, getState) {
+    await entities.actions.groupedUpdate(entity)(dispatch, getState)
+  }
+}
+
 export function save () {
   return async function (dispatch, getState) {
     try {

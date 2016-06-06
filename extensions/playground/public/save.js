@@ -4,7 +4,7 @@ import Promise from 'bluebird'
 
 export default async () => {
   Studio.startProgress()
-  Studio.flushUpdates()
+
   const entities = Studio.getAllEntities()
 
   if (!Studio.workspaces.current.name) {

@@ -1,6 +1,4 @@
 module.exports = function (reporter, definition) {
-  return
-
   reporter.documentStore.registerEntityType('ErrorLogType', {
     _id: { type: 'Edm.String', key: true },
     creationDate: { type: 'Edm.DateTimeOffset' },
@@ -66,7 +64,7 @@ module.exports = function (reporter, definition) {
       var col = reporter.documentStore.collections[key]
 
       col.beforeRemoveListeners.add('playground', col, function (query, req) {
-        throw new Error('DELETE is not supported in playgorund')
+        throw new Error('DELETE is not supported in playground')
       })
 
       if (col.entitySet.shared || col.entitySet === 'workspaces' || col.entitySet === 'templates') {
@@ -88,10 +86,7 @@ module.exports = function (reporter, definition) {
       })
 
       col.beforeUpdateListeners.add('playground', col, function (query, update, req) {
-        if (req && req.headers && req.headers['workspace-shortid'] && update.$set) {
-          update.$set.workspaceShortid = req.headers['workspace-shortid']
-          update.$set.worskpaceVersion = parseInt(req.headers['workspace-version'])
-        }
+        throw new Error('Update is not supported in playground')
       })
     }
 

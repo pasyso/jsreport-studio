@@ -25,6 +25,17 @@ export function update (entity) {
   })
 }
 
+export function groupedUpdate (entity) {
+  if (!entity || !entity._id) {
+    throw new Error('Invalid entity submitted to debounced update')
+  }
+
+  return (dispatch) => dispatch({
+    type: ActionTypes.GROUPED_UPDATE,
+    entity: entity
+  })
+}
+
 export function remove (id) {
   return async function (dispatch, getState) {
     const entity = selectors.getById(getState(), id)

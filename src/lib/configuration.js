@@ -24,9 +24,6 @@ export let previewFrameChangeHandler = () => {}
 export const registerPreviewHandler = (fn) => { previewHandler = fn }
 export let previewHandler = () => {}
 
-export const registerUpdatesFlushHandler = (fn) => { flushUpdates = fn }
-export let flushUpdates = () => {}
-
 export const registerModalHandler = (fn) => { modalHandler = fn }
 export let modalHandler = () => {}
 

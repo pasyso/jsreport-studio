@@ -1,6 +1,6 @@
 var webpack = require('webpack')
 
-const exposedLibraries = ['react', 'react-dom', 'superagent', 'react-list', 'bluebird', 'socket.io-client']
+const exposedLibraries = ['react', 'react-dom', 'superagent', 'react-list', 'bluebird', 'socket.io-client', 'filesaver.js-npm']
 
 webpack({
   devtool: 'hidden-source-map',

@@ -7,7 +7,6 @@ import EntityTree from '../../components/EntityTree/EntityTree.js'
 import Properties from '../../components/Properties/Properties.js'
 import style from './App.scss'
 import Toolbar from '../../components/Toolbar/Toolbar.js'
-import _debounce from 'lodash/debounce'
 import Helmet from 'react-helmet'
 import SplitPane from '../../components/common/SplitPane/SplitPane.js'
 import EditorTabs from '../../components/Tabs/EditorTabs.js'
@@ -18,7 +17,7 @@ import DeleteConfirmationModal from '../../components/Modals/DeleteConfirmationM
 import CloseConfirmationModal from '../../components/Modals/CloseConfirmationModal.js'
 import * as progress from '../../redux/progress'
 import cookies from 'js-cookie'
-import { triggerSplitResize, registerPreviewHandler, registerUpdatesFlushHandler, entitySets, shouldOpenStartupPage, registerCollapseLeftHandler } from '../../lib/configuration.js'
+import { triggerSplitResize, registerPreviewHandler, entitySets, shouldOpenStartupPage, registerCollapseLeftHandler } from '../../lib/configuration.js'
 
 const progressActions = progress.actions
 
@@ -52,7 +51,6 @@ export default class App extends Component {
   };
 
   componentDidMount () {
-    this.setUpDebouncedUpdate()
     registerPreviewHandler((src) => {
       if (!src) {
         this.handleRun()
@@ -62,8 +60,6 @@ export default class App extends Component {
     registerCollapseLeftHandler(() => {
       this.refs.leftPane.collapse(true)
     })
-
-    registerUpdatesFlushHandler(() => this.flush())
 
     if (this.props.params.shortid) {
       this.props.openTab({ shortid: this.props.params.shortid, entitySet: this.props.params.entitySet })
@@ -77,13 +73,7 @@ export default class App extends Component {
     this.props.updateHistory()
   }
 
-  setUpDebouncedUpdate () {
-    this.update = _debounce(this.props.update, 5000, { leading: true })
-  }
-
   async handleRun () {
-    this.flush()
-
     this.props.start()
     cookies.set('render-complete', false)
 
@@ -102,24 +92,11 @@ export default class App extends Component {
     this.refOpenModal(componentOrText, options)
   }
 
-  flush () {
-    this.update.flush()
-    this.setUpDebouncedUpdate()
-  }
-
   save () {
-    this.flush()
     return this.props.save()
   }
 
-  componentWillReceiveProps (nextProps) {
-    if (this.props.activeTabKey !== nextProps.activeTabKey) {
-      this.flush()
-    }
-  }
-
   saveAll () {
-    this.flush()
     return this.props.saveAll()
   }
 
@@ -148,7 +125,7 @@ export default class App extends Component {
 
   render () {
     const { tabsWithEntities, references, isPending, canRun, canSave, canRemove, canSaveAll, activeTabWithEntity, entities,
-      openTab, stop, activateTab, activeTabKey, activeEntity, update } = this.props
+      openTab, stop, activateTab, activeTabKey, activeEntity, update, groupedUpdate } = this.props
 
     return (
       <div className='container'>
@@ -187,7 +164,7 @@ export default class App extends Component {
                     onChange={() => this.handleSplitChanged()} onDragFinished={() => this.handleSplitDragFinished()}
                     resizerClassName='resizer'>
                     <EditorTabs
-                      activeTabKey={activeTabKey} onUpdate={(v) => this.update(v)} tabs={tabsWithEntities} />
+                      activeTabKey={activeTabKey} onUpdate={(v) => groupedUpdate(v)} tabs={tabsWithEntities} />
                     <Preview ref='preview' onLoad={stop} />
                   </SplitPane>
                 </div>

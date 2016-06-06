@@ -16,7 +16,7 @@ reducer.handleAction(ActionTypes.LOAD, (state, action) => ({
   })
 }))
 
-reducer.handleAction(ActionTypes.UPDATE, (state, action) => ({
+reducer.handleActions([ActionTypes.UPDATE, ActionTypes.DEBOUNCED_UPDATE], (state, action) => ({
   ...state,
   [action.entity._id]: Object.assign({}, state[action.entity._id], action.entity, { __isDirty: true })
 }))

@@ -1,6 +1,7 @@
 import React from 'react'
 import ReactList from 'react-list'
 import superagent from 'superagent'
+import fileSaver from 'filesaver.js-npm'
 import ReactDom from 'react-dom'
 import api from './helpers/api.js'
 import TextEditor from './components/Editor/TextEditor.js'
@@ -215,14 +216,6 @@ class Studio {
 
   openNewModal (entitySet) {
     configuration.modalHandler.open(NewEntityModal, { entitySet: entitySet })
-  }
-
-  /**
-   * Updates through editor are not immediately propagated to the redux state because of performance.
-   * Call this to force flush of updates into the redux state
-   */
-  flushUpdates () {
-    configuration.flushUpdates()
   }
 
   /**
@@ -450,6 +443,7 @@ class Studio {
       'react-list': ReactList,
       superagent: superagent,
       bluebird: bluebird,
+      'filesaver.js-npm': fileSaver,
       'socket.io-client': io
     }
   }
