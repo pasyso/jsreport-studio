@@ -1,4 +1,6 @@
 module.exports = function (reporter, definition) {
+  return
+
   reporter.documentStore.registerEntityType('ErrorLogType', {
     _id: { type: 'Edm.String', key: true },
     creationDate: { type: 'Edm.DateTimeOffset' },
