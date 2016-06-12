@@ -3,7 +3,7 @@
   "description": "jsreport templates editor and designer",
   "author": "Jan Blaha",
   "license": "MIT",
-  "version": "0.0.1",
+  "version": "0.1.1",
   "repository": {
     "type": "git",
     "url": "https://github.com/jsreport/jsreport-studio"
@@ -30,10 +30,6 @@
   "dependencies": {
     "compression": "1.6.2",
     "express": "4.13.4",
-    "jsreport": "0.13.4",
-    "jsreport-ejs": "0.2.0",
-    "jsreport-freeze": "0.3.0",
-    "jsreport-phantom-image": "0.3.0",
     "lodash": "4.12.0",
     "serve-favicon": "2.3.0",
     "socket.io-client": "1.4.6"

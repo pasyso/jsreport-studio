@@ -1,6 +1,7 @@
 import * as configuration from './lib/configuration.js'
 import TemplateProperties from './components/Properties/TemplateProperties.js'
 import Startup from './containers/Startup/Startup.js'
+import ApiModal from './components/Modals/ApiModal.js'
 
 export default () => {
   configuration.propertiesComponents.push({
@@ -12,4 +13,23 @@ export default () => {
   configuration.editorComponents.templates = require('./components/Editor/TemplateEditor.js')
   configuration.editorComponents.startup = Startup
   configuration.entitySets.templates = { name: 'templates', visibleName: 'template', nameAttribute: 'name' }
+
+  configuration.apiSpecs = {
+    template: {
+      content: '...',
+      helpers: '...',
+      engine: '...',
+      recipe: '...'
+    },
+    data: {
+      aProperty: '...'
+    },
+    options: {
+
+    }
+  }
+
+  configuration.toolbarComponents.settings.push(() => <div
+    onClick={() => configuration.modalHandler.open(ApiModal, { apiSpecs: configuration.apiSpecs })}>
+    <i className='fa fa-plug'></i> API</div>)
 }

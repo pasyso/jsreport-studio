@@ -44,7 +44,7 @@
         "allowedModules": "*"
     },
     "scheduling": {
-        "enabled": true
+        "enabled": false
     },
     "scripts": {
         "allowedModules": "*"

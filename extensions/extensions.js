@@ -37,9 +37,6 @@ module.exports = [{
   name: 'electron-pdf',
   directory: path.join(__dirname, 'electron-pdf')
 }, {
-  name: 'scheduling',
-  directory: path.join(__dirname, 'scheduling')
-}, {
   name: 'fs-store',
   directory: path.join(__dirname, 'fs-store')
 }, {
@@ -57,9 +54,17 @@ module.exports = [{
 }, {
   name: 'text',
   directory: path.join(__dirname, 'text')
+}/*, {
+  name: 'playground',
+  directory: path.join(__dirname, 'playground')
+}*/, {
+  name: 'excel',
+  directory: path.join(__dirname, 'excel')
 }]
 
-/*{
- name: 'playground',
- directory: path.join(__dirname, 'playground')
- }*/
+//{
+//  name: 'playground',
+//    directory: path.join(__dirname, 'playground')
+//}
+
+

@@ -13,13 +13,13 @@
         "cert": "certificates/jsreport.net.cert"
     },
     "connectionString": {
-        "name": "fs",
+        "name": "mongodb",
         "address": "127.0.0.1",
         "databaseName" : "playground2"
     },
     "httpPort": 3000,
     "scheduling": {
-        "enabled": true
+        "enabled": false
     },
     "electron": {
         "strategy": "electron-server"

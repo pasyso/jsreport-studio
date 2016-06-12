@@ -6,7 +6,7 @@ var path = require('path')
 var webpack = require('webpack')
 var HtmlWebpackPlugin = require('html-webpack-plugin')
 var assetsPath = path.resolve(__dirname, '../static/dist')
-var babelrc = fs.readFileSync('./.babelrc')
+var babelrc = fs.readFileSync(path.join(__dirname, '../.babelrc'))
 var babelrcObject = {}
 
 try {
@@ -32,26 +32,40 @@ delete babelLoaderQuery.env
 babelLoaderQuery.plugins = babelLoaderQuery.plugins || []
 var reactTransform = null
 for (var i = 0; i < babelLoaderQuery.plugins.length; ++i) {
-  var plugin = babelLoaderQuery.plugins[ i ]
-  if (Array.isArray(plugin) && plugin[ 0 ] === 'react-transform') {
+  var plugin = babelLoaderQuery.plugins[i]
+  if (Array.isArray(plugin) && plugin[0] === 'react-transform') {
     reactTransform = plugin
   }
 }
 
 if (!reactTransform) {
-  reactTransform = [ 'react-transform', { transforms: [] } ]
+  reactTransform = [require.resolve('babel-plugin-react-transform'), { transforms: [] }]
   babelLoaderQuery.plugins.push(reactTransform)
 }
 
-if (!reactTransform[ 1 ] || !reactTransform[ 1 ].transforms) {
-  reactTransform[ 1 ] = Object.assign({}, reactTransform[ 1 ], { transforms: [] })
+for (var j = 0; j < babelLoaderQuery.plugins.length; j++) {
+  if (typeof babelLoaderQuery.plugins[j] === 'string') {
+    babelLoaderQuery.plugins[j] = require.resolve('babel-plugin-' + babelLoaderQuery.plugins[j])
+  }
+
+  if (Array.isArray(babelLoaderQuery.plugins[j])) {
+    babelLoaderQuery.plugins[j][0] = require.resolve('babel-plugin-' + babelLoaderQuery.plugins[j][0])
+  }
+}
+
+for (var p = 0; p < babelLoaderQuery.presets.length; p++) {
+  babelLoaderQuery.presets[p] = require.resolve('babel-preset-' + babelLoaderQuery.presets[p])
+}
+
+if (!reactTransform[1] || !reactTransform[1].transforms) {
+  reactTransform[1] = Object.assign({}, reactTransform[1], { transforms: [] })
 }
 
 // make sure react-transform-hmr is enabled
-reactTransform[ 1 ].transforms.push({
+reactTransform[1].transforms.push({
   transform: 'react-transform-hmr',
-  imports: [ 'react' ],
-  locals: [ 'module' ]
+  imports: ['react'],
+  locals: ['module']
 })
 
 module.exports = {
@@ -81,7 +95,7 @@ module.exports = {
   ],
   module: {
     loaders: [
-      { test: /\.jsx?$/, exclude: /node_modules/, loaders: [ 'babel?' + JSON.stringify(babelLoaderQuery) ] },
+      { test: /\.jsx?$/, exclude: /node_modules/, loaders: ['babel?' + JSON.stringify(babelLoaderQuery)] },
       { test: /\.json$/, loader: 'json-loader' },
       {
         test: /\.less$/,
@@ -90,11 +104,11 @@ module.exports = {
       {
         test: /\.scss$/,
         loader: 'style!css?modules&importLoaders=2&sourceMap&localIdentName=[local]___[hash:base64:5]!sass?outputStyle=expanded&sourceMap',
-        exclude: [ /.*theme.*/ ]
+        exclude: [/.*theme.*/]
       },
       {
         loader: 'style!css?importLoaders=2!sass?outputStyle=expanded',
-        include: [ /.*theme.*\.scss/ ]
+        include: [/.*theme.*\.scss/]
       },
       { test: /\.woff(\?v=\d+\.\d+\.\d+)?$/, loader: 'url?limit=10000&mimetype=application/font-woff' },
       { test: /\.woff2(\?v=\d+\.\d+\.\d+)?$/, loader: 'url?limit=10000&mimetype=application/font-woff' },
@@ -110,7 +124,7 @@ module.exports = {
       'src',
       'node_modules'
     ],
-    extensions: [ '', '.json', '.js', '.jsx' ],
+    extensions: ['', '.json', '.js', '.jsx'],
     fallback: path.join(__dirname, '../node_modules')
   },
   resolveLoader: {

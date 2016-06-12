@@ -6,6 +6,12 @@ import Studio from 'jsreport-studio'
 
 Studio.addEditorComponent('reports', ReportEditor)
 
+Studio.addApiSpec({
+  options: {
+    reports: { save: true }
+  }
+})
+
 Studio.addToolbarComponent(ReportsButton, 'settings')
 Studio.addToolbarComponent(DownloadButton)
 Studio.addToolbarComponent(DeleteButton)

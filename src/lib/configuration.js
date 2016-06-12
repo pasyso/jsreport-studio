@@ -10,7 +10,8 @@ export const editorComponents = []
 export const toolbarComponents = {
   left: [],
   right: [],
-  settings: []
+  settings: [],
+  settingsBottom: []
 }
 export const tabTitleComponents = []
 
@@ -46,3 +47,5 @@ export let locationResolver = null
 export let extensions = []
 
 export const triggerSplitResize = () => { _splitResizeHandlers.forEach((fn) => fn()) }
+
+export let apiSpecs = {}

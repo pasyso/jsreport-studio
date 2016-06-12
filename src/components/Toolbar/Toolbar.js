@@ -96,6 +96,8 @@ export default class Toolbar extends Component {
 
       <div className={style.popup} style={{display: this.state.expanded ? 'block' : 'none'}}>
         {this.renderToolbarComponents('settings')}
+        {toolbarComponents.settingsBottom.length ? <hr /> : ''}
+        {this.renderToolbarComponents('settingsBottom')}
       </div>
     </div>
   }
@@ -114,7 +116,7 @@ export default class Toolbar extends Component {
         {isPending ? <i className='fa fa-spinner fa-spin fa-fw'></i> : ''}
       </div>
       {this.renderToolbarComponents('right')}
-      {this.renderSettings('right')}
+      {this.renderSettings()}
     </div>
   }
 }

@@ -6,6 +6,15 @@ Studio.addEntitySet({ name: 'scripts', faIcon: 'fa-cogs', visibleName: 'script',
 Studio.addPropertiesComponent(Properties.title, Properties, (entity) => entity.__entitySet === 'templates')
 Studio.addEditorComponent('scripts', ScriptEditor)
 
+Studio.addApiSpec({
+  template: {
+    scripts: [{
+      shortid: '...',
+      content: 'function beforeRender...'
+    }]
+  }
+})
+
 Studio.previewListeners.push((request, entities) => {
   if (!request.template.scripts) {
     return

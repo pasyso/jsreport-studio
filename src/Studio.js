@@ -1,8 +1,9 @@
 import React from 'react'
+import ReactDom from 'react-dom'
 import ReactList from 'react-list'
 import superagent from 'superagent'
 import fileSaver from 'filesaver.js-npm'
-import ReactDom from 'react-dom'
+import _merge from 'lodash/merge'
 import api, { methods } from './helpers/api.js'
 import TextEditor from './components/Editor/TextEditor.js'
 import NewEntityModal from './components/Modals/NewEntityModal.js'
@@ -162,6 +163,14 @@ class Studio {
    */
   setRequestHeader (key, value) {
     configuration.apiHeaders[key] = value
+  }
+
+  /**
+   * Merges in the object defining the api which is used in api fialog
+   * @param {object} obj
+   */
+  addApiSpec (obj) {
+    _merge(configuration.apiSpecs, obj)
   }
 
   /** /initial configuration **/

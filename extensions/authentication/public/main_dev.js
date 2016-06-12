@@ -28,6 +28,8 @@ Studio.initializeListeners.unshift(async () => {
     Studio.addToolbarComponent(ChangePasswordButton)
   }
 
-  Studio.addToolbarComponent(LogoutSettingsButton, 'settings')
   Studio.addToolbarComponent(ChangePasswordSettingsButton, 'settings')
+  Studio.addToolbarComponent(() => <div className='toolbar-button'><span><i
+    className='fa fa-user' /> {Studio.authentication.user.username}</span></div>, 'settingsBottom')
+  Studio.addToolbarComponent(LogoutSettingsButton, 'settingsBottom')
 })
