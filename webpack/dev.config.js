@@ -68,78 +68,92 @@ reactTransform[1].transforms.push({
   locals: ['module']
 })
 
-module.exports = {
-  devtool: 'cheap-eval-source-map',
-  context: path.resolve(__dirname, '..'),
-  entry: {
-    'main': [
-      'webpack-hot-middleware/client',
-      'font-awesome-webpack!./src/theme/font-awesome.config.js',
-      './src/client.js'
-    ]
-  },
-  output: {
-    path: assetsPath,
-    filename: 'client.js',
-    publicPath: '/studio/assets/'
-  },
-  externals: [
-    function (context, request, callback) {
-      if (request === 'jsreport-studio') {
-        return callback(null, 'Studio')
-      }
-
-      callback()
+module.exports = function (extensions) {
+  return {
+    devtool: 'cheap-eval-source-map',
+    context: path.resolve(__dirname, '..'),
+    entry: {
+      'main': [
+        'webpack-hot-middleware/client',
+        'font-awesome-webpack!./src/theme/font-awesome.config.js',
+        './src/client.js'
+      ]
     },
-    'react/addons', 'react/lib/ExecutionEnvironment', 'react/lib/ReactContext'
-  ],
-  module: {
-    loaders: [
-      { test: /\.jsx?$/, exclude: /node_modules/, loaders: ['babel?' + JSON.stringify(babelLoaderQuery)] },
-      { test: /\.json$/, loader: 'json-loader' },
-      {
-        test: /\.less$/,
-        loader: 'style!css?modules&importLoaders=2&sourceMap&localIdentName=[local]___[hash:base64:5]!autoprefixer?browsers=last 2 version!less?outputStyle=expanded&sourceMap'
+    output: {
+      path: assetsPath,
+      filename: 'client.js',
+      publicPath: '/studio/assets/'
+    },
+    externals: [
+      function (context, request, callback) {
+        if (request === 'jsreport-studio') {
+          return callback(null, 'Studio')
+        }
+
+        callback()
       },
-      {
-        test: /\.scss$/,
-        loader: 'style!css?modules&importLoaders=2&sourceMap&localIdentName=[local]___[hash:base64:5]!sass?outputStyle=expanded&sourceMap',
-        exclude: [/.*theme.*/]
-      },
-      {
-        loader: 'style!css?importLoaders=2!sass?outputStyle=expanded',
-        include: [/.*theme.*\.scss/]
-      },
-      { test: /\.woff(\?v=\d+\.\d+\.\d+)?$/, loader: 'url?limit=10000&mimetype=application/font-woff' },
-      { test: /\.woff2(\?v=\d+\.\d+\.\d+)?$/, loader: 'url?limit=10000&mimetype=application/font-woff' },
-      { test: /\.ttf(\?v=\d+\.\d+\.\d+)?$/, loader: 'url?limit=10000&mimetype=application/octet-stream' },
-      { test: /\.eot(\?v=\d+\.\d+\.\d+)?$/, loader: 'file' },
-      { test: /\.svg(\?v=\d+\.\d+\.\d+)?$/, loader: 'url?limit=10000&mimetype=image/svg+xml' },
-      { test: /\.(png|jpg)$/, loader: 'url-loader?limit=8192' }
-    ]
-  },
-  progress: true,
-  resolve: {
-    modulesDirectories: [
-      'src',
-      'node_modules'
+      'react/addons', 'react/lib/ExecutionEnvironment', 'react/lib/ReactContext'
     ],
-    extensions: ['', '.json', '.js', '.jsx'],
-    fallback: path.join(__dirname, '../node_modules')
-  },
-  resolveLoader: {
-    root: path.join(__dirname, '../node_modules')
-  },
-  plugins: [
-    new HtmlWebpackPlugin({
-      hash: true,
-      template: path.join(__dirname, '../static/index.html')
-    }),
-    // hot reload
-    new webpack.HotModuleReplacementPlugin(),
-    new webpack.IgnorePlugin(/webpack-stats\.json$/),
-    new webpack.DefinePlugin({
-      __DEVELOPMENT__: true
-    })
-  ]
+    module: {
+      loaders: [
+        {
+          test: /\.js$/,
+          loaders: ['babel?' + JSON.stringify(babelLoaderQuery)],
+          exclude: function (modulePath) {
+            for (var key in extensions) {
+              if (modulePath.indexOf(extensions[key].directory) !== -1 && modulePath.replace(extensions[key].directory, '').indexOf('node_modules') === -1) {
+                return false
+              }
+            }
+
+            return true
+          }
+        },
+        { test: /\.json$/, loader: 'json-loader' },
+        {
+          test: /\.less$/,
+          loader: 'style!css?modules&importLoaders=2&sourceMap&localIdentName=[local]___[hash:base64:5]!autoprefixer?browsers=last 2 version!less?outputStyle=expanded&sourceMap'
+        },
+        {
+          test: /\.scss$/,
+          loader: 'style!css?modules&importLoaders=2&sourceMap&localIdentName=[local]___[hash:base64:5]!sass?outputStyle=expanded&sourceMap',
+          exclude: [/.*theme.*/]
+        },
+        {
+          loader: 'style!css?importLoaders=2!sass?outputStyle=expanded',
+          include: [/.*theme.*\.scss/]
+        },
+        { test: /\.woff(\?v=\d+\.\d+\.\d+)?$/, loader: 'url?limit=10000&mimetype=application/font-woff' },
+        { test: /\.woff2(\?v=\d+\.\d+\.\d+)?$/, loader: 'url?limit=10000&mimetype=application/font-woff' },
+        { test: /\.ttf(\?v=\d+\.\d+\.\d+)?$/, loader: 'url?limit=10000&mimetype=application/octet-stream' },
+        { test: /\.eot(\?v=\d+\.\d+\.\d+)?$/, loader: 'file' },
+        { test: /\.svg(\?v=\d+\.\d+\.\d+)?$/, loader: 'url?limit=10000&mimetype=image/svg+xml' },
+        { test: /\.(png|jpg)$/, loader: 'url-loader?limit=8192' }
+      ]
+    },
+    progress: true,
+    resolve: {
+      modulesDirectories: [
+        'src',
+        'node_modules'
+      ],
+      extensions: ['', '.json', '.js', '.jsx'],
+      fallback: path.join(__dirname, '../node_modules')
+    },
+    resolveLoader: {
+      root: path.join(__dirname, '../node_modules')
+    },
+    plugins: [
+      new HtmlWebpackPlugin({
+        hash: true,
+        template: path.join(__dirname, '../static/index.html')
+      }),
+      // hot reload
+      new webpack.HotModuleReplacementPlugin(),
+      new webpack.IgnorePlugin(/webpack-stats\.json$/),
+      new webpack.DefinePlugin({
+        __DEVELOPMENT__: true
+      })
+    ]
+  }
 }

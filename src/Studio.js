@@ -353,8 +353,8 @@ class Studio {
     return this.store.dispatch(settings.actions.update(key, value))
   }
 
-  getSettingValueByKey (key, value, shouldThrow = true) {
-    return settings.selectors.getValueByKey(this.store.getState(), key, value, shouldThrow)
+  getSettingValueByKey (key, shouldThrow = true) {
+    return settings.selectors.getValueByKey(this.store.getState(), key, shouldThrow)
   }
 
   /**
