@@ -28,10 +28,12 @@ export default class Modal extends Component {
   }
 
   renderContent () {
-    return (<div>{(this.componentOrText && typeof this.componentOrText !== 'string') ? React.createElement(this.componentOrText, {
-      close: () => this.close(),
-      options: this.options || this.props.options
-    }) : <div dangerouslySetInnerHTML={{ __html: this.componentKeyOrText || this.props.text }} /> }</div>)
+    return (<div className={style.contentWrap}>
+      <span className={style.close} onClick={() => this.close()}></span>
+      {(this.componentOrText && typeof this.componentOrText !== 'string') ? React.createElement(this.componentOrText, {
+        close: () => this.close(),
+        options: this.options || this.props.options
+      }) : <div dangerouslySetInnerHTML={{ __html: this.componentKeyOrText || this.props.text }} /> }</div>)
   }
 
   open (componentOrText, options) {
@@ -51,8 +53,8 @@ export default class Modal extends Component {
     const isOpen = this.state.isOpen || this.props.isOpen
 
     return <ReactModal key='ReactModal'
-      isOpen={isOpen} overlayClassName={style.overlay} className={style.content}
-      onRequestClose={() => this.close()}>
+                       isOpen={isOpen} overlayClassName={style.overlay} className={style.content}
+                       onRequestClose={() => this.close()}>
       {isOpen ? this.renderContent() : ''}
     </ReactModal>
   }

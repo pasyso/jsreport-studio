@@ -12,12 +12,16 @@ export default class Modal extends Component {
 
   handleKeyPress (e) {
     if (e.key === 'Enter') {
-      this.props.close()
-      this.props.openNewTab({
-        entitySet: this.props.options.entitySet,
-        name: e.target.value
-      })
+      this.submit(e.target.value)
     }
+  }
+
+  submit (val) {
+    this.props.close()
+    this.props.openNewTab({
+      entitySet: this.props.options.entitySet,
+      name: val || this.refs.nameInput.value
+    })
   }
 
   // the modal component for some reason after open focuses the panel itself
@@ -29,9 +33,12 @@ export default class Modal extends Component {
     const { entitySet } = this.props.options
 
     return <div>
-      <div>New {entitySets[entitySet].visibleName}</div>
       <div className='form-group'>
+        <label>New {entitySets[entitySet].visibleName}</label>
         <input type='text' placeholder='name...' ref='nameInput' onKeyPress={(e) => this.handleKeyPress(e)} />
+      </div>
+      <div className='button-bar'>
+        <button className='button confirmation' onClick={() => this.submit()}>ok</button>
       </div>
     </div>
   }

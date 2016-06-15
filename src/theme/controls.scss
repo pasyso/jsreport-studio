@@ -51,7 +51,7 @@ input[type=checkbox] {
 
 .button {
   margin-left: 1rem;
-  flex: 0.2;
+  flex: 0.1;
   border: none;
   color: $primarySelectionColor;
   padding: 0.5rem;
@@ -62,15 +62,15 @@ input[type=checkbox] {
 }
 
 .button:hover, .button:focus, button:active {
-  box-shadow: 0 0 0.5rem rgba(0, 0, 0, 0.6);
+  box-shadow: 0 0 0.1rem rgba(0, 0, 0, 0.6);
 }
 
 .button.confirmation {
-  background-color: #4CAF50;
+  background-color: #008CBA;
 }
 
 .button.danger {
-  background-color: #da532c;
+  background-color: #FCBE59;
 }
 
 :focus {
