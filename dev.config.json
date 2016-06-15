@@ -43,9 +43,6 @@
         "strategy": "dedicated-process",
         "allowedModules": "*"
     },
-    "scheduling": {
-        "enabled": false
-    },
     "scripts": {
         "allowedModules": "*"
     }

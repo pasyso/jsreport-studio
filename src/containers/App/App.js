@@ -73,7 +73,7 @@ export default class App extends Component {
     this.props.updateHistory()
   }
 
-  async handleRun () {
+  async handleRun (target) {
     this.props.start()
     cookies.set('render-complete', false)
 
@@ -84,11 +84,10 @@ export default class App extends Component {
       }
     }, 1000)
 
-    this.props.run()
+    this.props.run(target)
   }
 
   openModal (componentOrText, options) {
-    console.log('open')
     this.refOpenModal(componentOrText, options)
   }
 
@@ -138,7 +137,7 @@ export default class App extends Component {
               canRun={canRun} canSave={canSave} canSaveAll={canSaveAll} canRemove={canRemove} onSave={() => this.save()}
               onSaveAll={() => this.saveAll()} isPending={isPending} activeTab={activeTabWithEntity} onUpdate={update}
               onRemove={() => this.openModal(DeleteConfirmationModal, {_id: activeEntity._id})}
-              onRun={() => this.handleRun()} openStartup={() => this.openStartup()} />
+              onRun={(target) => this.handleRun(target)} openStartup={() => this.openStartup()} />
 
             <div className='block'>
               <SplitPane

@@ -19,6 +19,8 @@ $tertiaryBackgroundColor:rgb(85, 85, 85);
 $secondaryHoverColor: #c6c6c6;
 $secondaryHoverBackgroundColor: #73a2ff;
 
+$alternativeHoverColor: #4CAF50;
+
 
 @mixin no-select() {
   -webkit-touch-callout: none;

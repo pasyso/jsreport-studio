@@ -57,8 +57,12 @@ export default class Toolbar extends Component {
   }
 
   tryHide () {
-    if (this.state.expanded) {
-      this.setState({ expanded: false })
+    if (this.state.expandedSettings) {
+      this.setState({ expandedSettings: false })
+    }
+
+    if (this.state.expandedRun) {
+      this.setState({ expandedRun: false })
     }
   }
 
@@ -71,6 +75,20 @@ export default class Toolbar extends Component {
       title={tooltip} className={'toolbar-button ' + ' ' + (enabled ? '' : 'disabled')}
       onClick={enabled ? onClick : () => {}}>
       <i className={imageClass} /><span>{text}</span></div>
+  }
+
+  renderRun () {
+    const { onRun, canRun } = this.props
+
+    return <div
+      title='Preview report in the right pane (F8)' className={'toolbar-button ' + (canRun ? '' : 'disabled')}
+      onClick={canRun ? () => onRun() : () => {}}>
+      <i className='fa fa-play' /> Run <span className={style.runCaret} onClick={(e) => { e.stopPropagation(); this.setState({ expandedRun: !this.state.expandedRun }) }} />
+      <div className={style.runPopup} style={{display: this.state.expandedRun ? 'block' : 'none'}}>
+        {this.renderButton((e) => { e.stopPropagation(); this.tryHide(); onRun('_blank') }, canRun, 'Run to new tab', 'fa fa-tablet', 'Preview in new tab')}
+        {this.renderButton((e) => { e.stopPropagation(); this.tryHide(); onRun('_self') }, canRun, 'Download', 'fa fa-download', 'Download output')}
+      </div>
+    </div>
   }
 
   renderToolbarComponents (position) {
@@ -91,10 +109,10 @@ export default class Toolbar extends Component {
 
     return <div
       className='toolbar-button'
-      onClick={(e) => { e.stopPropagation(); this.setState({ expanded: !this.state.expanded }) }}>
+      onClick={(e) => { e.stopPropagation(); this.setState({ expandedSettings: !this.state.expandedSettings }) }}>
       <i className='fa fa-cog' />
 
-      <div className={style.popup} style={{display: this.state.expanded ? 'block' : 'none'}}>
+      <div className={style.popup} style={{display: this.state.expandedSettings ? 'block' : 'none'}}>
         {this.renderToolbarComponents('settings')}
         {toolbarComponents.settingsBottom.length ? <hr /> : ''}
         {this.renderToolbarComponents('settingsBottom')}
@@ -103,11 +121,11 @@ export default class Toolbar extends Component {
   }
 
   render () {
-    const { onRun, canRun, onSave, canSave, onSaveAll, canSaveAll, isPending, onRemove, canRemove, openStartup } = this.props
+    const { onSave, canSave, onSaveAll, canSaveAll, isPending, onRemove, canRemove, openStartup } = this.props
 
     return <div className={style.toolbar}>
       <div className={style.logo} onClick={() => openStartup()}><img src={logo} /></div>
-      {this.renderButton(onRun, canRun, 'Run', 'fa fa-play', 'Preview report in the right pane (F8)')}
+      {this.renderRun()}
       {this.renderButton(onSave, canSave, 'Save', 'fa fa-floppy-o', 'Save current tab (CTRL+S)')}
       {this.renderButton(onSaveAll, canSaveAll, 'SaveAll', 'fa fa-floppy-o', 'Save all tabs (CTRL+SHIFT+S')}
       {this.renderButton(onRemove, canRemove, 'Delete', 'fa fa-trash')}

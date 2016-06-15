@@ -69,7 +69,6 @@
 
 .popup {
   background-color: #424c57;
-  color: white;
   position: absolute;
   right: 0;
   padding: 0.5rem;
@@ -83,4 +82,26 @@
 
 .popup > div:hover {
   background-color: $primaryHoverBackgroundColor;
+}
+
+.runCaret {
+  font-family: FontAwesome;
+  padding: 0.5rem;
+  font-size: 0.7rem;
+}
+
+.runCaret:hover {
+  color: $formPrimaryColor;
+}
+
+.runCaret:after {
+  content: "\f0d7 "
+}
+
+.runPopup {
+  background-color: #424c57;
+  top: 2.4rem;
+  position: absolute;
+  padding: 0.5rem;
+  z-index: 200;
 }

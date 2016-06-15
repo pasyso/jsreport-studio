@@ -16,6 +16,11 @@ export default function (request, target) {
   request.options = request.options || {}
   request.options.preview = true
 
+  if (target === '_self') {
+    delete request.options.preview
+    request.options.download = true
+  }
+
   const mapForm = document.createElement('form')
   mapForm.target = target
   mapForm.method = 'POST'
