@@ -112,5 +112,8 @@
     "webpack": "1.13.1",
     "webpack-dev-middleware": "1.6.1",
     "webpack-hot-middleware": "2.10.0"
-  }
+  },
+  "files": [
+    "lib", "jsreport.config.js", "src", "static", "webpack"
+  ]
 }
