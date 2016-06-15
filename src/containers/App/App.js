@@ -50,6 +50,12 @@ export default class App extends Component {
   };
 
   componentDidMount () {
+    window.onbeforeunload = () => {
+      if (this.props.canSaveAll) {
+        return 'You may have unsaved changes'
+      }
+    }
+
     registerPreviewHandler((src) => {
       if (!src) {
         this.handleRun()
