@@ -10,6 +10,7 @@ export default class EntityTree extends Component {
     entities: React.PropTypes.object.isRequired,
     activeEntity: React.PropTypes.object,
     onClick: React.PropTypes.func.isRequired,
+    onRemove: React.PropTypes.func.isRequired,
     onNewClick: React.PropTypes.func.isRequired
   }
 
@@ -18,19 +19,51 @@ export default class EntityTree extends Component {
     this.state = { filter: '' }
   }
 
+  componentDidMount () {
+    window.addEventListener('click', () => this.tryHide())
+  }
+
+  componentWillUnmount () {
+    window.removeEventListener('click', () => this.tryHide())
+  }
+
   createRenderer (entities) {
     return (index, key) => this.renderNode(entities[index])
   }
 
+  tryHide () {
+    if (this.state.contextMenuId) {
+      this.setState({ contextMenuId: null })
+    }
+  }
+
+  contextMenu (e, entity) {
+    e.preventDefault()
+    this.setState({ contextMenuId: entity._id })
+  }
+
+  renderContextMenu (entity) {
+    const { onRemove } = this.props
+
+    return <div className={style.contextMenu}>
+      <div className={style.contextButton} onClick={() => onRemove(entity._id)}>
+        <i className='fa fa-trash' /> Delete
+      </div>
+    </div>
+  }
+
   renderNode (entity) {
     const { activeEntity } = this.props
+    const { contextMenuId } = this.state
 
     return <div
+      onContextMenu={(e) => this.contextMenu(e, entity)}
       onClick={() => this.props.onClick(entity._id)}
       key={entity._id}
       className={style.link + ' ' + ((activeEntity && entity._id === activeEntity._id) ? style.active : '')}>
       <i className={style.entityIcon + ' fa ' + (entitySets[entity.__entitySet].faIcon || style.entityDefaultIcon)}></i>
       <a>{entity[entitySets[entity.__entitySet].nameAttribute] + (entity.__isDirty ? '*' : '')}</a>
+      {contextMenuId === entity._id ? this.renderContextMenu(entity) : <div />}
     </div>
   }
 

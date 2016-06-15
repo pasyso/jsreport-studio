@@ -150,3 +150,22 @@
   color: $primaryHoverBackgroundColor;
 }
 
+.contextMenu {
+  background-color: $secondaryColor;
+  position: absolute;
+  min-width: 9rem;
+  z-index: 200;
+}
+
+.contextButton {
+  color: $primaryColor;
+  padding: 0.5rem;
+  font-size: 0.8rem;
+  cursor: pointer;
+  @include no-select();
+}
+
+.contextButton:hover {
+  background-color: $primaryHoverBackgroundColor;
+  color: $primaryHoverColor
+}

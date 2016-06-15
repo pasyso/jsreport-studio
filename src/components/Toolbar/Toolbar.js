@@ -13,8 +13,7 @@ export default class Toolbar extends Component {
     canSave: React.PropTypes.bool.isRequired,
     onSaveAll: React.PropTypes.func.isRequired,
     canSaveAll: React.PropTypes.bool.isRequired,
-    onRemove: React.PropTypes.func.isRequired,
-    canRemove: React.PropTypes.bool.isRequired,
+
     isPending: React.PropTypes.bool.isRequired,
     activeTab: React.PropTypes.object
   }
@@ -97,8 +96,7 @@ export default class Toolbar extends Component {
       tab: this.props.activeTab,
       onUpdate: this.props.onUpdate,
       canRun: this.props.canRun,
-      canSaveAll: this.props.canSaveAll,
-      canRemove: this.props.canRemove
+      canSaveAll: this.props.canSaveAll
     }))
   }
 
@@ -121,14 +119,13 @@ export default class Toolbar extends Component {
   }
 
   render () {
-    const { onSave, canSave, onSaveAll, canSaveAll, isPending, onRemove, canRemove, openStartup } = this.props
+    const { onSave, canSave, onSaveAll, canSaveAll, isPending, openStartup } = this.props
 
     return <div className={style.toolbar}>
       <div className={style.logo} onClick={() => openStartup()}><img src={logo} /></div>
       {this.renderRun()}
       {this.renderButton(onSave, canSave, 'Save', 'fa fa-floppy-o', 'Save current tab (CTRL+S)')}
       {this.renderButton(onSaveAll, canSaveAll, 'SaveAll', 'fa fa-floppy-o', 'Save all tabs (CTRL+SHIFT+S')}
-      {this.renderButton(onRemove, canRemove, 'Delete', 'fa fa-trash')}
       {this.renderToolbarComponents('left')}
       <div className={style.spinner}>
         {isPending ? <i className='fa fa-spinner fa-spin fa-fw'></i> : ''}

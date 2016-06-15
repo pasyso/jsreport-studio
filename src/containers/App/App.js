@@ -30,7 +30,6 @@ const progressActions = progress.actions
   canRun: selectors.canRun(state),
   canSave: selectors.canSave(state),
   canSaveAll: selectors.canSaveAll(state),
-  canRemove: selectors.canRemove(state),
   tabsWithEntities: selectors.getTabWithEntities(state),
   activeEntity: selectors.getActiveEntity(state),
   lastActiveTemplate: selectors.getLastActiveTemplate(state)
@@ -123,7 +122,7 @@ export default class App extends Component {
   }
 
   render () {
-    const { tabsWithEntities, references, isPending, canRun, canSave, canRemove, canSaveAll, activeTabWithEntity, entities,
+    const { tabsWithEntities, references, isPending, canRun, canSave, canSaveAll, activeTabWithEntity, entities,
       openTab, stop, activateTab, activeTabKey, activeEntity, update, groupedUpdate } = this.props
 
     return (
@@ -134,9 +133,8 @@ export default class App extends Component {
         <div className={style.appContent + ' container'}>
           <div className='block'>
             <Toolbar
-              canRun={canRun} canSave={canSave} canSaveAll={canSaveAll} canRemove={canRemove} onSave={() => this.save()}
+              canRun={canRun} canSave={canSave} canSaveAll={canSaveAll} onSave={() => this.save()}
               onSaveAll={() => this.saveAll()} isPending={isPending} activeTab={activeTabWithEntity} onUpdate={update}
-              onRemove={() => this.openModal(DeleteConfirmationModal, {_id: activeEntity._id})}
               onRun={(target) => this.handleRun(target)} openStartup={() => this.openStartup()} />
 
             <div className='block'>
@@ -149,6 +147,7 @@ export default class App extends Component {
                   resizerClassName='resizer-horizontal' split='horizontal'
                   defaultSize={(window.innerHeight * 0.5) + 'px'}>
                   <EntityTree
+                    onRemove={(id) => this.openModal(DeleteConfirmationModal, {_id: id})}
                     activeEntity={activeEntity} entities={references} onClick={(_id) => openTab({_id: _id})}
                     onNewClick={(es) => entitySets[es].onNew ? entitySets[es].onNew() : this.openModal(NewEntityModal, {entitySet: es})} />
                   <Properties entity={activeEntity} entities={entities} onChange={update} />
