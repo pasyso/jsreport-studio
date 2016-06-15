@@ -145,35 +145,6 @@ export default class SplitPane extends Component {
   }
 
   collapse (v) {
-    //const ref = this.props.collapsable === 'first' ? this.refs.pane2 : this.refs.pane1
-    //
-    //let newSize
-    //if (v) {
-    //  const node = ReactDOM.findDOMNode(ref)
-    //  this.lastSize = ref.state.size
-    //  const size = node.getBoundingClientRect().width
-    //  const current = 100
-    //  const position = this.state.position
-    //  const newPosition = (current - position)
-    //  newSize = size - newPosition
-    //} else {
-    //  newSize = this.lastSize
-    //}
-    //
-    //ref.setState({
-    //  size: newSize
-    //})
-
-    //let newSize
-    //if (v) {
-    //  this.lastSize = ref1.state.size
-    //  const node1 = ReactDOM.findDOMNode(ref1)
-    //  const node2 = ReactDOM.findDOMNode(ref2)
-    //  newSize = node1.getBoundingClientRect().width + node2.getBoundingClientRect().width - 25
-    //} else {
-    //  newSize = this.lastSize
-    //}
-
     let ref1 = this.props.collapsable === 'first' ? this.refs.pane2 : this.refs.pane1
     const ref2 = this.props.collapsable === 'first' ? this.refs.pane1 : this.refs.pane2
 

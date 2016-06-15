@@ -74,6 +74,10 @@
   transition: 0.15s;
 }
 
+.nodeContainer {
+  margin-top: 0.3rem;
+}
+
 .nodeContainer.collapsed {
   max-height: 0;
   overflow: hidden;

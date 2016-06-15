@@ -52,12 +52,13 @@
 .resizer:hover .docker {
   display: block;
   opacity:1;
-  transition:0s;
+  //transition:0s 1s;
+  transition: 2s opacity;
 }
 
 .docker {
   opacity:0;
-  font-size: 3rem;
+  font-size: 2rem;
   color: $secondaryColor;
   position: absolute;
   transition:0s 1s;
@@ -65,7 +66,7 @@
 }
 
 .docker.left {
-  margin-left: -4rem;
+  margin-left: -3rem;
 }
 
 .docker:hover {
