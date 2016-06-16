@@ -2,6 +2,7 @@ import React, { Component } from 'react'
 import AceEditor from 'react-ace'
 import 'brace/mode/handlebars'
 import 'brace/theme/chrome'
+import 'brace/ext/language_tools'
 import { subscribeToSplitResize } from '../../lib/configuration.js'
 
 export default class TextEditor extends Component {
