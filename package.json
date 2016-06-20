@@ -21,7 +21,7 @@
     "parser": "babel-eslint"
   },
   "scripts": {
-    "run": "node server.js",
+    "run": "cross-env NODE_ENV=jsreport-development node server.js",
     "test": "mocha test/.setup.js test --compilers js:babel-register --recursive --require mocha-clean --require ignore-styles",
     "test:watch": "npm test -- --watch",
     "prepublish": "in-publish && npm run build || not-in-publish",
@@ -101,9 +101,9 @@
     "redux-thunk": "2.1.0",
     "resolve-url-loader": "1.4.3",
     "sass-loader": "3.2.0",
-    "socket.io-client": "1.4.6",
     "shortid": "2.2.6",
     "should": "8.4.0",
+    "socket.io-client": "1.4.6",
     "standard": "7.1.0",
     "strip-loader": "0.1.2",
     "style-loader": "0.13.1",
@@ -114,6 +114,10 @@
     "webpack-hot-middleware": "2.10.0"
   },
   "files": [
-    "lib", "jsreport.config.js", "src", "static", "webpack"
+    "lib",
+    "jsreport.config.js",
+    "src",
+    "static",
+    "webpack"
   ]
 }

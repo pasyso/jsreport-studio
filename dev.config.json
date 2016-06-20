@@ -1,12 +1,13 @@
 ﻿{
     "authentication" : {
         "cookieSession": {
-            "secret": "dasd321as56d1sd5s61vdv32"
+            "secret": "<your strong secret>"
         },
         "admin": {
             "username" : "admin",
             "password": "password"
-        }
+        },
+        "enabled": true
     },
     "certificate": {
         "key": "certificates/jsreport.net.key",    
