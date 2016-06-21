@@ -13,6 +13,6 @@ npm start
 ```
 
 ##Studio extension development
-TODO
+The documentation can be found [here](http://jsreport.net/learn/extending-studio).
 
 

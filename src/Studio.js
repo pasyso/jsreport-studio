@@ -20,7 +20,6 @@ import io from 'socket.io-client'
 /**
  * Main facade and API for extensions. Exposed as global variable Studio. It can be also imported from jsreport-studio
  * when using extensions default webpack configuration
- *
  * @class
  * @public
  */
@@ -30,7 +29,7 @@ class Studio {
 
   /**
    * Array of async functions invoked in sequence during initialization
-   * @returns {function|Array}
+   * @returns {Function[]}
    */
   get initializeListeners () {
     return configuration.initializeListeners
@@ -38,7 +37,7 @@ class Studio {
 
   /**
    * Array of async functions invoked in sequence after the app has been rendered
-   * @returns {*|Array}
+   * @returns {Function[]}
    */
   get readyListeners () {
     return configuration.readyListeners
@@ -46,7 +45,7 @@ class Studio {
 
   /**
    * Array of async functions invoked in sequence when preview process starts.
-   * @returns {function|Array}
+   * @returns {Function[]}
    */
   get previewListeners () {
     return configuration.previewListeners
@@ -58,8 +57,8 @@ class Studio {
 
   /**
    * Add new entity set, which will be automatically loaded through OData and displayed in the entity tree
-   *
-   * @param {Object} entitySet For example { name: 'data', visibleName: 'sample data' }
+   * @example Studio.addEntitySet({ name: 'data', visibleName: 'sample data' })
+   * @param {Object} entitySet
    */
   addEntitySet (entitySet) {
     entitySet.nameAttribute = entitySet.nameAttribute || 'name'
@@ -69,7 +68,7 @@ class Studio {
   /**
    * Add React component which will be displayed in toolbar
    *
-   * @param {Component|function} toolbarComponent
+   * @param {ReactComponent|Function} toolbarComponent
    * @param {String} position left or settings
    */
   addToolbarComponent (toolbarComponent, position = 'left') {
@@ -79,8 +78,8 @@ class Studio {
   /**
    * Add React component which will be used as tab title
    *
-   * @param {String} key used in openTab({ titleComponentKey
-   * @param {Component|function} component
+   * @param {String} key used in openTab
+   * @param {ReactComponent|Function} component
    */
   addTabTitleComponent (key, component) {
     configuration.tabTitleComponents[key] = component
@@ -89,8 +88,8 @@ class Studio {
   /**
    * Add component used in tab as content editor
    *
-   * @param {String} key - key used id openTab({ editorComponentKey: ... , use entity set name if the editor should represent the main entity editor
-   * @param component
+   * @param {String} key - key used in openTab({ editorComponentKey: ... , use entity set name if the editor should represent the main entity editor
+   * @param {ReactComponent|Function} component
    */
   addEditorComponent (key, component) {
     configuration.editorComponents[key] = component
@@ -100,7 +99,7 @@ class Studio {
    * Add component used in the left Properties secion
    *
    * @param {Function|String} string or title function used to render the section title
-   * @param component
+   * @param {ReactComponent|Function} component
    * @param {Function} shouldDisplay
    */
   addPropertiesComponent (title, component, shouldDisplay) {
@@ -115,7 +114,7 @@ class Studio {
    * Array of functions used to resolve ace editor mode for template content. This is used by custom templating engines
    * to add highlighting support for jade,ejs...
    *
-   * @returns {*|Array}
+   * @returns {Function[]}
    */
   get templateEditorModeResolvers () {
     return configuration.templateEditorModeResolvers
@@ -142,7 +141,7 @@ class Studio {
   /**
    * Override the default entities references loading with custom function
    * (entitySet) => Promise([array])
-   * @param fn
+   * @param {Function} fn
    */
   set referencesLoader (fn) {
     configuration.referencesLoader = fn
@@ -167,7 +166,7 @@ class Studio {
 
   /**
    * Merges in the object defining the api which is used in api fialog
-   * @param {object} obj
+   * @param {Object} obj
    */
   addApiSpec (obj) {
     _merge(configuration.apiSpecs, obj)
@@ -190,7 +189,7 @@ class Studio {
    * Provides methods get,patch,post,del for accessing jsreport server
    *
    * @example
-   * await Studio.api.patch('/odata/tasks', { data: { foo: '1 } })
+   * await Studio.api.patch('/odata/tasks', { data: { foo: '1' } })
    *
    * @returns {*}
    */
@@ -200,7 +199,7 @@ class Studio {
 
   /**
    * Get registered entity sets, each one is object { visibleName: 'foo', nameAttribute: 'name' }
-   * @returns {Object|Array}
+   * @returns {Object[]}
    */
   get entitySets () {
     return configuration.entitySets
@@ -208,6 +207,7 @@ class Studio {
 
   /**
    * Object[name] with registered extensions and its options
+   * @returns {Object}
    */
   get extensions () {
     return configuration.extensions
@@ -216,11 +216,11 @@ class Studio {
   /**
    * Opens modal dialog.
    *
-   * @param {Component|String}componentOrText
+   * @param {ReacrComponent|String}componentOrText
    * @param {Object} options passed as props to the react component
    */
   openModal (componentOrText, options) {
-    configuration.modalHandler.open(componentOrText, options)
+    configuration.modalHandler.open(componentOrText, options || {})
   }
 
   openNewModal (entitySet) {
@@ -262,20 +262,22 @@ class Studio {
    * @param {String} id
    * @param {Boolean} force
    * @return {Promise}
-   * @public
    */
   loadEntity (id, force = false) {
     return this.store.dispatch(entities.actions.load(id, force))
   }
 
+  /**
+   * Remove the additional entity properties from the state, keep just meta and id
+   * @param {String} id
+   */
   unloadEntity (id) {
     return this.store.dispatch(entities.actions.unload(id))
   }
 
   /**
    * Add entity to the state
-   * @param {object} entity
-   * @public
+   * @param {Object} entity
    */
   addEntity (entity) {
     this.store.dispatch(entities.actions.add(entity))
@@ -283,7 +285,7 @@ class Studio {
 
   /**
    * Update entity in the state
-   * @param entity
+   * @param {Object} entity
    */
   updateEntity (entity) {
     this.store.dispatch(entities.actions.update(entity))
@@ -293,7 +295,6 @@ class Studio {
    * Call remote API and persist (insert or update) entity
    * @param {String} id
    * @return {Promise}
-   * @public
    */
   saveEntity (id) {
     return this.store.dispatch(entities.actions.save(id))
@@ -302,7 +303,6 @@ class Studio {
   /**
    * Adds already existing (persisted) entity into the UI state
    * @param entity
-   * @public
    */
   addExistingEntity (entity) {
     this.store.dispatch(entities.actions.addExisting(entity))
@@ -349,20 +349,37 @@ class Studio {
     this.store.dispatch(editor.actions.updateHistory())
   }
 
+  /**
+   * Get all settings from state
+   * @returns {Object[]}
+   */
+  getSettings () {
+    return settings.selectors.getAll(this.store.getState())
+  }
+
+  /**
+   * Save one setting in state and persist it on the server
+   * @param {String} key
+   * @param {Object} value
+   */
   setSetting (key, value) {
     return this.store.dispatch(settings.actions.update(key, value))
   }
 
+  /**
+   * Get one setting value from the state
+   * @param {String} key
+   * @param {Boolean} shouldThrow
+   */
   getSettingValueByKey (key, shouldThrow = true) {
     return settings.selectors.getValueByKey(this.store.getState(), key, shouldThrow)
   }
 
   /**
    * Searches for the entity in the UI state based on specified the shortid
-   * @param shortid
-   * @param shouldThrow
-   * @returns {object | null}
-   * @public
+   * @param {String} shortid
+   * @param {Boolean} shouldThrow
+   * @returns {Object|null}
    */
   getEntityByShortid (shortid, shouldThrow = true) {
     return entities.selectors.getByShortid(this.store.getState(), shortid, shouldThrow)
@@ -378,7 +395,7 @@ class Studio {
 
   /**
    * Returns last active entity
-   * @returns {Object|nu;;}
+   * @returns {Object|null}
    */
   getLastActiveTemplate () {
     return editor.selectors.getLastActiveTemplate(this.store.getState())
@@ -386,14 +403,10 @@ class Studio {
 
   /**
    * Get all entities including meta attributes in array
-   * @returns {array}
+   * @returns {Object[]}
    */
   getAllEntities () {
     return entities.selectors.getAll(this.store.getState())
-  }
-
-  getSettings () {
-    return settings.selectors.getAll(this.store.getState())
   }
 
   /**
@@ -421,15 +434,13 @@ class Studio {
    * Ace editor React wrapper
    *
    * @example
-   * export default class DataEditor extends Component { ... }
+   * export default class DataEditor extends TextEditor { ... }
    *
    * @returns {TextEditor}
    */
   get TextEditor () {
     return TextEditor
   }
-
-  /** /react components **/
 
   constructor (store) {
     this.editor = editor
