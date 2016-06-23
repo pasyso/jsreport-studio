@@ -1,5 +1,6 @@
 import 'should'
 import { actions } from '../../../src/redux/editor'
+import resolveUrl from '../../../src/helpers/resolveUrl.js'
 import { ActionTypes as EntitiesActionTypes } from '../../../src/redux/entities'
 import { describeAsyncStore, itAsync } from './../asyncStore.js'
 
@@ -29,6 +30,6 @@ describeAsyncStore('editor.actions.openTab', ({ store, api, history }) => {
   itAsync('should change route to / if the entity is not found by its shortid', async () => {
     await store.dispatch(actions.openTab({ shortid: 'foo' }))
 
-    history['@@router/CALL_HISTORY_METHOD'].payload.args.should.containEql('/')
+    history['@@router/CALL_HISTORY_METHOD'].payload.args.should.containEql(resolveUrl('/'))
   })
 })

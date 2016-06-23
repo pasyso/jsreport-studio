@@ -1,5 +1,6 @@
 import 'should'
 import { actions } from '../../../src/redux/editor'
+import resolveUrl from '../../../src/helpers/resolveUrl.js'
 import { describeAsyncStore, itAsync } from './../asyncStore.js'
 
 describeAsyncStore('editor.actions.updateHistory', ({ store, api, history }) => {
@@ -7,19 +8,19 @@ describeAsyncStore('editor.actions.updateHistory', ({ store, api, history }) => 
     store.update({
       entities: { '1': { __entitySet: 'testEntity', _id: '1', shortid: 'foo' } },
       editor: { tabs: [{ key: '1', _id: '1', type: 'entity', entitySet: 'testEntity' }], activeTabKey: '1' },
-      routing: { locationBeforeTransitions: { pathname: '/' } }
+      routing: { locationBeforeTransitions: { pathname: resolveUrl('/') } }
     })
 
     await store.dispatch(actions.updateHistory())
 
-    history['@@router/CALL_HISTORY_METHOD'].payload.args.should.containEql('/studio/testEntity/foo')
+    history['@@router/CALL_HISTORY_METHOD'].payload.args.should.containEql(resolveUrl('/studio/testEntity/foo'))
   })
 
   itAsync('should push to history only if the route is different', async () => {
     store.update({
       entities: { '1': { __entitySet: 'testEntity', _id: '1', shortid: 'foo' } },
       editor: { tabs: [{ key: '1', _id: '1', type: 'entity', entitySet: 'testEntity' }], activeTabKey: '1' },
-      routing: { locationBeforeTransitions: { pathname: '/studio/testEntity/foo' } }
+      routing: { locationBeforeTransitions: { pathname: resolveUrl('/studio/testEntity/foo') } }
     })
 
     await store.dispatch(actions.updateHistory())

@@ -76,10 +76,6 @@ export default class EntityTree extends Component {
       className={style.nodeTitle + ' ' + (this.state[k] ? style.collapsed : '')}
       onClick={() => this.collapse(k)}>{k}</span>
       <a key={k + 'new'} onClick={() => this.props.onNewClick(k)} className={style.add}></a>
-      {entitySets[k].helpUrl ? <a
-        key={k + 'help'} href={entitySets[k].helpUrl} target='_blank' className={style.help}></a>
-        : <span />}
-
       <div className={style.nodeContainer + ' ' + (this.state[k] ? style.collapsed : '')}>
         <ReactList itemRenderer={this.createRenderer(entities)} length={entities.length} />
       </div>

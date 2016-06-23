@@ -49,3 +49,7 @@ export let extensions = []
 export const triggerSplitResize = () => { _splitResizeHandlers.forEach((fn) => fn()) }
 
 export let apiSpecs = {}
+
+let _rootPath = window.location.pathname.indexOf('/studio') === -1 ? window.location.pathname : window.location.pathname.substring(0, window.location.pathname.indexOf('/studio'))
+_rootPath = _rootPath[_rootPath.length - 1] === '/' ? _rootPath.substring(0, _rootPath.length - 1) : _rootPath
+export const rootPath = _rootPath

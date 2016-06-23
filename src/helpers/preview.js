@@ -1,5 +1,5 @@
 import isObject from 'lodash/isObject'
-import relativizeUrl from '../helpers/relativizeUrl.js'
+import resolveUrl from '../helpers/resolveUrl.js'
 
 function addInput (form, name, value) {
   const input = document.createElement('input')
@@ -24,7 +24,7 @@ export default function (request, target) {
   const mapForm = document.createElement('form')
   mapForm.target = target
   mapForm.method = 'POST'
-  mapForm.action = relativizeUrl('/api/report')
+  mapForm.action = resolveUrl('/api/report')
 
   function addBody (path, body) {
     if (body === undefined) {

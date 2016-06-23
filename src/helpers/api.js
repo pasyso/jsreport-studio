@@ -1,14 +1,13 @@
 import superagent from 'superagent'
 import Promise from 'bluebird'
 import parse from './parseJSON.js'
-import relativizeUrl from './relativizeUrl'
+import resolveUrl from './resolveUrl'
 import { apiHeaders } from '../lib/configuration.js'
 export const methods = ['get', 'post', 'put', 'patch', 'del']
 
 let requestHandler = {}
 
 const createError = (err, body) => {
-
   try {
     let parsed = JSON.parse(body)
     body = parsed
@@ -37,7 +36,7 @@ const createError = (err, body) => {
 
 methods.forEach((m) => {
   requestHandler[m] = (path, { params, data, attach } = {}) => new Promise((resolve, reject) => {
-    const request = superagent[m](relativizeUrl(path))
+    const request = superagent[m](resolveUrl(path))
 
     Object.keys(apiHeaders).forEach((k) => request.set(k, apiHeaders[k]))
     request.set('X-Requested-With', 'XMLHttpRequest')

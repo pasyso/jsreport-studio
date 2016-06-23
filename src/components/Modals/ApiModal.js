@@ -74,7 +74,6 @@ export default class ApiModal extends Component {
           <i className='fa fa-lightbulb-o' /> open odata metadata</a>
       </div>
 
-
       <h3>all possible overrides</h3>
 
       <div className={style.overridesBox}>

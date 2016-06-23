@@ -12,7 +12,7 @@ import * as entities from './redux/entities'
 import * as progress from './redux/progress'
 import * as settings from './redux/settings'
 import * as configuration from './lib/configuration.js'
-import relativizeUrl from './helpers/relativizeUrl.js'
+import resolveUrl from './helpers/resolveUrl.js'
 import babelRuntime from './lib/babelRuntime.js'
 import bluebird from 'bluebird'
 import io from 'socket.io-client'
@@ -414,8 +414,13 @@ class Studio {
    * @param {String} path
    * @returns {String}
    */
+  resolveUrl (path) {
+    return resolveUrl(path)
+  }
+
   relativizeUrl (path) {
-    return relativizeUrl(path)
+    console.trace('relativizeUrl is deprecated, use resolveUrl')
+    return resolveUrl(path)
   }
 
   /**

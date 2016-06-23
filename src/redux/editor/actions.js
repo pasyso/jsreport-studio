@@ -5,6 +5,7 @@ import * as selectors from './selectors.js'
 import { push } from 'react-router-redux'
 import shortid from 'shortid'
 import preview from '../../helpers/preview'
+import resolveUrl from '../../helpers/resolveUrl.js'
 import { engines, recipes, entitySets, previewListeners, locationResolver } from '../../lib/configuration.js'
 
 export function closeTab (id) {
@@ -28,7 +29,7 @@ export function openTab (tab) {
       try {
         tab._id = entities.selectors.getByShortid(getState(), tab.shortid)._id
       } catch (e) {
-        dispatch(push('/'))
+        dispatch(push(resolveUrl('/')))
         return
       }
     }
@@ -93,9 +94,9 @@ export function updateHistory () {
     let path
 
     if (entity && entity.shortid) {
-      path = `/studio/${entity.__entitySet}/${entity.shortid}`
+      path = resolveUrl(`/studio/${entity.__entitySet}/${entity.shortid}`)
     } else {
-      path = '/'
+      path = resolveUrl('/')
     }
 
     if (locationResolver) {

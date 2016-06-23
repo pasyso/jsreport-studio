@@ -1,5 +1,5 @@
 import React, {Component} from 'react'
-import relativizeUrl from '../../helpers/relativizeUrl.js'
+import resolveUrl from '../../helpers/resolveUrl.js'
 import { registerPreviewFrameChangeHandler } from '../../lib/configuration.js'
 
 export default class Preview extends Component {
@@ -13,7 +13,7 @@ export default class Preview extends Component {
   }
 
   componentDidMount () {
-    registerPreviewFrameChangeHandler((src) => this.setState({ src: relativizeUrl(src) }))
+    registerPreviewFrameChangeHandler((src) => this.setState({ src: resolveUrl(src) }))
   }
 
   resizeStarted () {
