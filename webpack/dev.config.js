@@ -74,15 +74,14 @@ module.exports = function (extensions) {
     context: path.resolve(__dirname, '..'),
     entry: {
       'main': [
+        './src/client.js',
         'webpack-hot-middleware/client',
-        'font-awesome-webpack!./src/theme/font-awesome.config.js',
-        './src/client.js'
+        'font-awesome-webpack!./src/theme/font-awesome.config.js'
       ]
     },
     output: {
       path: assetsPath,
-      filename: 'client.js',
-      publicPath: '/studio/assets/'
+      filename: 'client.js'
     },
     externals: [
       function (context, request, callback) {
