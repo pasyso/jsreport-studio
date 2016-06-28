@@ -62,12 +62,6 @@ const start = async () => {
   for (const key in Studio.readyListeners) {
     await Studio.readyListeners[key]()
   }
-
-  Studio.api.patch('/odata/images(\'Lx7iamo3AXI3up4r\')', {
-    data: {
-      name: 'bbb'
-    }
-  })
 }
 
 start()
