@@ -17,7 +17,7 @@ import DeleteConfirmationModal from '../../components/Modals/DeleteConfirmationM
 import CloseConfirmationModal from '../../components/Modals/CloseConfirmationModal.js'
 import * as progress from '../../redux/progress'
 import cookies from 'js-cookie'
-import { triggerSplitResize, registerPreviewHandler, entitySets, shouldOpenStartupPage, registerCollapseLeftHandler } from '../../lib/configuration.js'
+import { triggerSplitResize, removeHandler, registerPreviewHandler, entitySets, shouldOpenStartupPage, registerCollapseLeftHandler } from '../../lib/configuration.js'
 
 const progressActions = progress.actions
 
@@ -153,7 +153,7 @@ export default class App extends Component {
                   resizerClassName='resizer-horizontal' split='horizontal'
                   defaultSize={(window.innerHeight * 0.5) + 'px'}>
                   <EntityTree
-                    onRemove={(id) => this.openModal(DeleteConfirmationModal, {_id: id})}
+                    onRemove={(id) => removeHandler ? removeHandler(id) : this.openModal(DeleteConfirmationModal, {_id: id})}
                     activeEntity={activeEntity} entities={references} onClick={(_id) => openTab({_id: _id})}
                     onNewClick={(es) => entitySets[es].onNew ? entitySets[es].onNew() : this.openModal(NewEntityModal, {entitySet: es})} />
                   <Properties entity={activeEntity} entities={entities} onChange={update} />

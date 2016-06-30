@@ -156,6 +156,15 @@ class Studio {
   }
 
   /**
+   * Override the default entity remove behavior
+   * (id) => {})
+   * @param {Function} fn
+   */
+  set removeHandler (fn) {
+    configuration.removeHandler = fn
+  }
+
+  /**
    * Set additional custom header to all api calls
    * @param {String} key
    * @param {String} value
@@ -253,7 +262,7 @@ class Studio {
    * @param {Object} tab
    */
   openTab (tab) {
-    this.store.dispatch(editor.actions.openTab(tab))
+    return this.store.dispatch(editor.actions.openTab(tab))
   }
 
   /**
