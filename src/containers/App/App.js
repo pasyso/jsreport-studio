@@ -111,7 +111,7 @@ export default class App extends Component {
 
   openStartup () {
     if (shouldOpenStartupPage) {
-      this.props.openTab({ key: 'StartupPage', editorComponentKey: 'startup', title: 'Statup' })
+      this.props.openTab({ key: 'StartupPage', editorComponentKey: 'startup', title: 'Startup' })
     }
   }
 
