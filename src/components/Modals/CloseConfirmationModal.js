@@ -26,7 +26,7 @@ export default class CloseConfirmationModal extends Component {
   render () {
     const { entity } = this.props
     return <div>
-      <div>Are you sure you want to close {entity.name} and loose the changes ? </div>
+      <div>Are you sure you want to close {entity.name} and lose the changes ? </div>
 
       <div className='button-bar'>
         <button className='button danger' onClick={() => this.remove()}>Yes</button>
