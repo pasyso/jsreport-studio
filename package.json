@@ -120,6 +120,7 @@
     "src",
     "static",
     "webpack",
-    ".babelrc"
+    ".babelrc",
+    "index.js"
   ]
 }
