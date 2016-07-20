@@ -5,6 +5,10 @@ export default (str) => {
     return str
   }
 
+  if (typeof str !== 'string') {
+    return str
+  }
+
   return JSON.parse(str, (k, v) => {
     if (v && typeof v === 'string' && iso.test(v)) {
       return new Date(Date.parse(v))

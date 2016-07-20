@@ -14,6 +14,8 @@ export const load = () => {
 }
 
 export const update = (key, value) => {
+  const svalue = typeof value !== 'string' ? JSON.stringify(value) : value
+
   return async (dispatch, getState) => {
     const existingEntry = selectors.getByKey(getState(), key, false)
     let _id
@@ -21,12 +23,12 @@ export const update = (key, value) => {
       _id = existingEntry._id
       await api.patch(`/odata/settings(${existingEntry._id})`, { data: {
         ...existingEntry,
-        value: value
+        value: svalue
       }})
     } else {
       const response = await api.post('/odata/settings', { data: {
         key: key,
-        value: value
+        value: svalue
       }})
       _id = response._id
     }
@@ -36,7 +38,7 @@ export const update = (key, value) => {
       setting: {
         _id: _id,
         key: key,
-        value: value
+        value: svalue
       }
     })
   }
