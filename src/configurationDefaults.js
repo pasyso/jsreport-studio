@@ -11,8 +11,21 @@ export default () => {
   })
 
   configuration.editorComponents.templates = require('./components/Editor/TemplateEditor.js')
+  configuration.editorComponents.templates.reformat = (reformatter, entity) => {
+    const content = reformatter(entity.content, 'html')
+    const helpers = reformatter(entity.helpers, 'js')
+
+    return {
+      content: content,
+      helpers: helpers
+    }
+  }
   configuration.editorComponents.startup = Startup
-  configuration.entitySets.templates = { name: 'templates', visibleName: 'template', nameAttribute: 'name' }
+  configuration.entitySets.templates = {
+    name: 'templates',
+    visibleName: 'template',
+    nameAttribute: 'name'
+  }
 
   configuration.apiSpecs = {
     template: {
@@ -24,9 +37,7 @@ export default () => {
     data: {
       aProperty: '...'
     },
-    options: {
-
-    }
+    options: {}
   }
 
   configuration.toolbarComponents.settings.push(() => <div

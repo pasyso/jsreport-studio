@@ -132,6 +132,10 @@ export function loadReferences (entitySet) {
   }
 }
 
+export const flushUpdates = () => ({
+  type: ActionTypes.FLUSH_UPDATES
+})
+
 export const apiDone = () => ({
   type: ActionTypes.API_DONE
 })

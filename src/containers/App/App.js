@@ -30,6 +30,7 @@ const progressActions = progress.actions
   canRun: selectors.canRun(state),
   canSave: selectors.canSave(state),
   canSaveAll: selectors.canSaveAll(state),
+  canReformat: selectors.canReformat(state),
   tabsWithEntities: selectors.getTabWithEntities(state),
   activeEntity: selectors.getActiveEntity(state),
   lastActiveTemplate: selectors.getLastActiveTemplate(state)
@@ -128,8 +129,8 @@ export default class App extends Component {
   }
 
   render () {
-    const { tabsWithEntities, references, isPending, canRun, canSave, canSaveAll, activeTabWithEntity, entities,
-      openTab, stop, activateTab, activeTabKey, activeEntity, update, groupedUpdate } = this.props
+    const { tabsWithEntities, references, isPending, canRun, canSave, canSaveAll, canReformat, activeTabWithEntity, entities,
+      openTab, stop, activateTab, activeTabKey, activeEntity, update, groupedUpdate, reformat } = this.props
 
     return (
       <div className='container'>
@@ -141,6 +142,7 @@ export default class App extends Component {
             <Toolbar
               canRun={canRun} canSave={canSave} canSaveAll={canSaveAll} onSave={() => this.save()}
               onSaveAll={() => this.saveAll()} isPending={isPending} activeTab={activeTabWithEntity} onUpdate={update}
+              canReformat={canReformat} onReformat={reformat}
               onRun={(target) => this.handleRun(target)} openStartup={() => this.openStartup()} />
 
             <div className='block'>

@@ -90,9 +90,11 @@ class Studio {
    *
    * @param {String} key - key used in openTab({ editorComponentKey: ... , use entity set name if the editor should represent the main entity editor
    * @param {ReactComponent|Function} component
+   * @param {Function} reformat - function handling reformatting code
    */
-  addEditorComponent (key, component) {
+  addEditorComponent (key, component, reformat) {
     configuration.editorComponents[key] = component
+    configuration.editorComponents[key].reformat = reformat
   }
 
   /**

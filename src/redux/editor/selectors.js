@@ -1,4 +1,5 @@
 import { selectors } from '../entities'
+import { editorComponents } from '../../lib/configuration.js'
 
 export const getTabWithEntities = (state) => state.editor.tabs.map((t) => ({
   entity: t.type === 'entity' ? selectors.getById(state, t._id) : null,
@@ -56,4 +57,10 @@ export const canSave = (state) => {
 
 export const canSaveAll = (state) => {
   return getTabWithEntities(state).filter((t) => t.entity && t.entity.__isDirty).length > 0
+}
+
+export const canReformat = (state) => {
+  const tab = getActiveTab(state)
+
+  return tab && editorComponents[tab.editorComponentKey || tab.entitySet].reformat && true
 }

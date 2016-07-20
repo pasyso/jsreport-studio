@@ -17,8 +17,6 @@ export const tabTitleComponents = []
 
 export let toolbarVisibilityResolver = () => true
 
-export let _splitResizeHandlers = []
-
 export const registerPreviewFrameChangeHandler = (fn) => { previewFrameChangeHandler = fn }
 export let previewFrameChangeHandler = () => {}
 
@@ -35,10 +33,12 @@ export let shouldOpenStartupPage = true
 
 export let apiHeaders = {}
 
+export let _splitResizeHandlers = []
 export const subscribeToSplitResize = (fn) => {
   _splitResizeHandlers.push(fn)
   return () => { _splitResizeHandlers = _splitResizeHandlers.filter((s) => s !== fn) }
 }
+export const triggerSplitResize = () => { _splitResizeHandlers.forEach((fn) => fn()) }
 
 export let referencesLoader = null
 
@@ -47,8 +47,6 @@ export let removeHandler = null
 export let locationResolver = null
 
 export let extensions = []
-
-export const triggerSplitResize = () => { _splitResizeHandlers.forEach((fn) => fn()) }
 
 export let apiSpecs = {}
 

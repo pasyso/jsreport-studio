@@ -13,6 +13,8 @@ export default class Toolbar extends Component {
     canSave: React.PropTypes.bool.isRequired,
     onSaveAll: React.PropTypes.func.isRequired,
     canSaveAll: React.PropTypes.bool.isRequired,
+    onReformat: React.PropTypes.func.isRequired,
+    canReformat: React.PropTypes.bool.isRequired,
 
     isPending: React.PropTypes.bool.isRequired,
     activeTab: React.PropTypes.object
@@ -39,6 +41,12 @@ export default class Toolbar extends Component {
     if (e.ctrlKey && e.shiftKey && e.which === 83 && this.props.canSaveAll && toolbarVisibilityResolver('SaveAll')) {
       e.preventDefault()
       this.props.onSaveAll()
+      return false
+    }
+
+    if (e.ctrlKey && e.shiftKey && e.which === 70 && this.props.canReformat && toolbarVisibilityResolver('Reformat')) {
+      e.preventDefault()
+      this.props.onReformat()
       return false
     }
 
@@ -119,13 +127,14 @@ export default class Toolbar extends Component {
   }
 
   render () {
-    const { onSave, canSave, onSaveAll, canSaveAll, isPending, openStartup } = this.props
+    const { onSave, canSave, onSaveAll, canSaveAll, isPending, openStartup, onReformat, canReformat } = this.props
 
     return <div className={style.toolbar}>
       <div className={style.logo} onClick={() => openStartup()}><img src={logo} /></div>
       {this.renderRun()}
       {this.renderButton(onSave, canSave, 'Save', 'fa fa-floppy-o', 'Save current tab (CTRL+S)')}
       {this.renderButton(onSaveAll, canSaveAll, 'SaveAll', 'fa fa-floppy-o', 'Save all tabs (CTRL+SHIFT+S')}
+      {this.renderButton(onReformat, canReformat, 'Reformat', 'fa fa-indent', 'Reformat code (CTRL+SHIFT+F)')}
       {this.renderToolbarComponents('left')}
       <div className={style.spinner}>
         {isPending ? <i className='fa fa-spinner fa-spin fa-fw'></i> : ''}

@@ -6,7 +6,8 @@ import { push } from 'react-router-redux'
 import shortid from 'shortid'
 import preview from '../../helpers/preview'
 import resolveUrl from '../../helpers/resolveUrl.js'
-import { engines, recipes, entitySets, previewListeners, locationResolver } from '../../lib/configuration.js'
+import beautify from 'js-beautify'
+import { engines, recipes, entitySets, previewListeners, locationResolver, editorComponents } from '../../lib/configuration.js'
 
 export function closeTab (id) {
   return async (dispatch, getState) => {
@@ -149,6 +150,32 @@ export function saveAll () {
       dispatch({
         type: ActionTypes.SAVE_SUCCESS
       })
+    } catch (e) {
+      console.error(e)
+    }
+  }
+}
+
+const reformatter = function (code, mode) {
+  return beautify[mode](code || '', {
+    unformatted: ['script']
+  })
+}
+
+export function reformat () {
+  return async function (dispatch, getState) {
+    try {
+      // this flushed the updates
+      dispatch(entities.actions.flushUpdates())
+
+      const tab = selectors.getActiveTab(getState())
+
+      const editorReformat = editorComponents[tab.editorComponentKey || tab.entitySet].reformat
+
+      const activeEntity = selectors.getActiveEntity(getState())
+      const toUpdate = editorReformat(reformatter, activeEntity, tab)
+
+      dispatch(update(Object.assign({ _id: activeEntity._id }, toUpdate)))
     } catch (e) {
       console.error(e)
     }
