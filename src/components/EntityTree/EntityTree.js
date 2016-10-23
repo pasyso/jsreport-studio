@@ -45,11 +45,13 @@ export default class EntityTree extends Component {
   renderContextMenu (entity) {
     const { onRemove } = this.props
 
-    return <div className={style.contextMenu}>
-      <div
-        className={style.contextButton}
-        onClick={(e) => { e.stopPropagation(); onRemove(entity._id); this.tryHide() }}>
-        <i className='fa fa-trash' /> Delete
+    return <div className={style.contextMenuContainer}>
+      <div className={style.contextMenu}>
+        <div
+          className={style.contextButton}
+          onClick={(e) => { e.stopPropagation(); onRemove(entity._id); this.tryHide() }}>
+          <i className='fa fa-trash' /> Delete
+        </div>
       </div>
     </div>
   }

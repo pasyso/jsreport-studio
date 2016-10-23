@@ -153,7 +153,13 @@
 .contextMenu {
   background-color: $secondaryColor;
   position: absolute;
+  padding: 0.5rem;
   min-width: 9rem;
+  z-index: 200;
+}
+
+.contextMenuContainer {
+  position: relative;
   z-index: 200;
 }
 
