@@ -35,7 +35,7 @@ const createError = (err, body) => {
 }
 
 methods.forEach((m) => {
-  requestHandler[m] = (path, { params, data, attach } = {}) => new Promise((resolve, reject) => {
+  requestHandler[m] = (path, { params, data, attach, parseJSON } = {}) => new Promise((resolve, reject) => {
     const request = superagent[m](resolveUrl(path))
 
     Object.keys(apiHeaders).forEach((k) => request.set(k, apiHeaders[k]))
@@ -55,7 +55,7 @@ methods.forEach((m) => {
       request.send(data)
     }
 
-    request.end((err, { text } = {}) => err ? reject(createError(err, text)) : resolve(parse(text)))
+    request.end((err, { text } = {}) => err ? reject(createError(err, text)) : (parseJSON === false ? resolve(text) : resolve(parse(text))))
   })
 })
 
