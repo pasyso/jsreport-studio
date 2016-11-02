@@ -10,12 +10,21 @@ export default class EditorTabs extends Component {
     tabs: React.PropTypes.array.isRequired
   }
 
+  handleTabClick (t, e) {
+    if (e.nativeEvent.which === 2) {
+      e.stopPropagation()
+      return this.props.closeTab(t.tab.key)
+    }
+
+    this.props.activateTab(t.tab.key)
+  }
+
   renderTitle (t) {
-    const { activeTabKey, activateTab, closeTab } = this.props
+    const { activeTabKey, closeTab } = this.props
 
     return <div
       className={style.tabTitle + ' ' + (t.tab.key === activeTabKey ? style.active : '')} key={t.tab.key}
-      onClick={() => activateTab(t.tab.key)}> <span>
+      onClick={(e) => this.handleTabClick(t, e)}> <span>
           {t.tab.titleComponentKey ? React.createElement(tabTitleComponents[t.tab.titleComponentKey], {
             entity: t.entity,
             tab: t.tab
