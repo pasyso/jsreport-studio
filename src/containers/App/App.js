@@ -15,6 +15,7 @@ import Modal from '../Modal/Modal.js'
 import NewEntityModal from '../../components/Modals/NewEntityModal.js'
 import DeleteConfirmationModal from '../../components/Modals/DeleteConfirmationModal.js'
 import CloseConfirmationModal from '../../components/Modals/CloseConfirmationModal.js'
+import RenameModal from '../../components/Modals/RenameModal.js'
 import * as progress from '../../redux/progress'
 import cookies from 'js-cookie'
 import { triggerSplitResize, removeHandler, registerPreviewHandler, entitySets, shouldOpenStartupPage, registerCollapseLeftHandler } from '../../lib/configuration.js'
@@ -155,6 +156,7 @@ export default class App extends Component {
                   resizerClassName='resizer-horizontal' split='horizontal'
                   defaultSize={(window.innerHeight * 0.5) + 'px'}>
                   <EntityTree
+                    onRename={(id) => this.openModal(RenameModal, { _id: id })}
                     onRemove={(id) => removeHandler ? removeHandler(id) : this.openModal(DeleteConfirmationModal, {_id: id})}
                     activeEntity={activeEntity} entities={references} onClick={(_id) => openTab({_id: _id})}
                     onNewClick={(es) => entitySets[es].onNew ? entitySets[es].onNew() : this.openModal(NewEntityModal, {entitySet: es})} />

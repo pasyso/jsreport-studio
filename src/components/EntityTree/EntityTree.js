@@ -11,6 +11,7 @@ export default class EntityTree extends Component {
     activeEntity: React.PropTypes.object,
     onClick: React.PropTypes.func.isRequired,
     onRemove: React.PropTypes.func.isRequired,
+    onRename: React.PropTypes.func.isRequired,
     onNewClick: React.PropTypes.func.isRequired
   }
 
@@ -43,10 +44,15 @@ export default class EntityTree extends Component {
   }
 
   renderContextMenu (entity) {
-    const { onRemove } = this.props
+    const { onRemove, onRename } = this.props
 
     return <div className={style.contextMenuContainer}>
       <div className={style.contextMenu}>
+        <div
+          className={style.contextButton}
+          onClick={(e) => { e.stopPropagation(); onRename(entity._id); this.tryHide() }}>
+          <i className='fa fa-pencil' /> Rename
+        </div>
         <div
           className={style.contextButton}
           onClick={(e) => { e.stopPropagation(); onRemove(entity._id); this.tryHide() }}>
