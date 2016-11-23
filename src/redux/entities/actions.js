@@ -121,7 +121,8 @@ export function loadReferences (entitySet) {
       entities = await referencesLoader(entitySet)
     } else {
       const nameAttribute = entitySets[entitySet].nameAttribute
-      entities = (await api.get(`/odata/${entitySet}?$select=${nameAttribute},shortid&$orderby=${nameAttribute}`)).value
+      const referenceAttributes = entitySets[entitySet].referenceAttributes
+      entities = (await api.get(`/odata/${entitySet}?$select=${referenceAttributes}&$orderby=${nameAttribute}`)).value
     }
 
     dispatch({

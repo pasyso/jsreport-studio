@@ -24,8 +24,11 @@ export default () => {
   configuration.entitySets.templates = {
     name: 'templates',
     visibleName: 'template',
-    nameAttribute: 'name'
+    nameAttribute: 'name',
+    referenceAttributes: ['name', 'recipe', 'shortid']
   }
+
+  configuration.entityTreeIconResolvers.push((entity) => (entity.__entitySet === 'templates' && entity.recipe === 'html') ? 'fa-html5' : null)
 
   configuration.apiSpecs = {
     template: {

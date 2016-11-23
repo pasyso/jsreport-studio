@@ -15,7 +15,7 @@ export const getActiveEntity = (state) => {
 
   const tab = getActiveTab(state)
 
-  return tab.type === 'entity' ? selectors.getById(state, tab._id) : null
+  return tab.type === 'entity' ? selectors.getById(state, tab._id, false) : null
 }
 
 export const getActiveTabWithEntity = (state) => {

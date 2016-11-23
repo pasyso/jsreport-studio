@@ -62,6 +62,7 @@ class Studio {
    */
   addEntitySet (entitySet) {
     entitySet.nameAttribute = entitySet.nameAttribute || 'name'
+    entitySet.referenceAttributes = [...new Set([...(entitySet.referenceAttributes || []), entitySet.nameAttribute, 'shortid'])]
     configuration.entitySets[entitySet.name] = entitySet
   }
 
@@ -120,6 +121,15 @@ class Studio {
    */
   get templateEditorModeResolvers () {
     return configuration.templateEditorModeResolvers
+  }
+
+  /**
+   * Array of functions used to resolve entity icon in entity tree, function accepts entity and returns string like fa-cog
+   *
+   * @returns {Function[]}
+   */
+  get entityTreeIconResolvers () {
+    return configuration.entityTreeIconResolvers
   }
 
   /**

@@ -10,17 +10,17 @@ import beautify from 'js-beautify'
 import { engines, recipes, entitySets, previewListeners, locationResolver, editorComponents } from '../../lib/configuration.js'
 
 export function closeTab (id) {
-  return async (dispatch, getState) => {
+  return (dispatch, getState) => {
     const activeEntity = selectors.getActiveEntity(getState())
-
-    if (activeEntity && activeEntity._id === id) {
-      await entities.actions.unload(id)(dispatch, getState)
-    }
 
     dispatch({
       type: ActionTypes.CLOSE_TAB,
       key: id
     })
+
+    if (activeEntity && activeEntity._id === id) {
+      dispatch(entities.actions.unload(id))
+    }
   }
 }
 

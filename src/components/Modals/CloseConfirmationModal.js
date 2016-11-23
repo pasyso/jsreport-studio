@@ -3,7 +3,7 @@ import {connect} from 'react-redux'
 import {selectors} from '../../redux/entities'
 import {actions} from '../../redux/editor'
 
-@connect((state, props) => ({ entity: selectors.getById(state, props.options._id) }), { ...actions })
+@connect((state, props) => ({ entity: selectors.getById(state, props.options._id, false) }), { ...actions })
 export default class CloseConfirmationModal extends Component {
   static propTypes = {
     close: PropTypes.func.isRequired,
@@ -11,8 +11,8 @@ export default class CloseConfirmationModal extends Component {
   }
 
   remove () {
-    this.props.closeTab(this.props.entity._id)
     this.props.close()
+    this.props.closeTab(this.props.entity._id)
   }
 
   cancel () {
@@ -25,6 +25,11 @@ export default class CloseConfirmationModal extends Component {
 
   render () {
     const { entity } = this.props
+
+    if (!entity) {
+      return <div/>
+    }
+
     return <div>
       <div>Are you sure you want to close {entity.name} and lose the changes ? </div>
 

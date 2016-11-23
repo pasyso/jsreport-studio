@@ -1,3 +1,7 @@
+import { entitySets } from '../../lib/configuration.js'
+
+const getEntityName = (e) => entitySets[e.__entitySet].nameAttribute ? e[entitySets[e.__entitySet].nameAttribute] : e.name
+
 export const getById = (state, id, shouldThrow = true) => {
   if (!state.entities[id] && shouldThrow) {
     throw new Error(`Unable to find entity with id ${id}`)
@@ -21,6 +25,10 @@ export const getReferences = (state) => {
   getAll(state).forEach((entity) => {
     result[entity.__entitySet] = result[entity.__entitySet] || []
     result[entity.__entitySet].push(entity)
+  })
+
+  Object.keys(result).forEach((k) => {
+    result[k] = result[k].sort((a, b) => getEntityName(a).toLowerCase().localeCompare(getEntityName(b).toLowerCase()))
   })
 
   return result

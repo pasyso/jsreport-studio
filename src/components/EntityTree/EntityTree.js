@@ -1,7 +1,7 @@
 import React, {Component} from 'react'
 import ReactList from 'react-list'
 import style from './EntityTree.scss'
-import { entitySets } from '../../lib/configuration.js'
+import { entitySets, entityTreeIconResolvers } from '../../lib/configuration.js'
 
 const getEntityName = (e) => entitySets[e.__entitySet].nameAttribute ? e[entitySets[e.__entitySet].nameAttribute] : e.name
 
@@ -62,16 +62,29 @@ export default class EntityTree extends Component {
     </div>
   }
 
+  resolveEntityTreeIconStyle (entity) {
+    for (const k in entityTreeIconResolvers) {
+      const mode = entityTreeIconResolvers[k](entity)
+      if (mode) {
+        return mode
+      }
+    }
+
+    return null
+  }
+
   renderNode (entity) {
     const { activeEntity } = this.props
     const { contextMenuId } = this.state
+
+    const enityStyle = this.resolveEntityTreeIconStyle(entity)
 
     return <div
       onContextMenu={(e) => this.contextMenu(e, entity)}
       onClick={() => this.props.onClick(entity._id)}
       key={entity._id}
       className={style.link + ' ' + ((activeEntity && entity._id === activeEntity._id) ? style.active : '')}>
-      <i className={style.entityIcon + ' fa ' + (entitySets[entity.__entitySet].faIcon || style.entityDefaultIcon)}></i>
+      <i className={style.entityIcon + ' fa ' +  (enityStyle || (entitySets[entity.__entitySet].faIcon || style.entityDefaultIcon))}></i>
       <a>{entity[entitySets[entity.__entitySet].nameAttribute] + (entity.__isDirty ? '*' : '')}</a>
       {contextMenuId === entity._id ? this.renderContextMenu(entity) : <div />}
     </div>

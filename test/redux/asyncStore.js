@@ -37,7 +37,7 @@ export const describeAsyncStore = (name, nestedDescribe) => {
   describe(name, () => {
     beforeEach(() => {
       Object.keys(history).forEach((a) => delete history[a])
-      configuration.entitySets = { 'testEntity': { nameAttribute: 'name' } }
+      configuration.entitySets = { 'testEntity': { nameAttribute: 'name', referenceAttributes: ['name', 'shortid'] } }
 
       let _store = createStore(rootReducer, applyMiddleware(thunk, Invariant(), actionHistoryMiddleware(history)))
       _store.dispatch({ type: '@RESET' })
