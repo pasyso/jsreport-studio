@@ -28,8 +28,6 @@ export default () => {
     referenceAttributes: ['name', 'recipe', 'shortid']
   }
 
-  configuration.entityTreeIconResolvers.push((entity) => (entity.__entitySet === 'templates' && entity.recipe === 'html') ? 'fa-html5' : null)
-
   configuration.apiSpecs = {
     template: {
       content: '...',
@@ -46,4 +44,28 @@ export default () => {
   configuration.toolbarComponents.settings.push(() => <div
     onClick={() => configuration.modalHandler.open(ApiModal, { apiSpecs: configuration.apiSpecs })}>
     <i className='fa fa-plug'></i> API</div>)
+
+  configuration.initializeListeners.push(() => {
+    configuration.entityTreeIconResolvers.push((entity) => {
+      if (entity.__entitySet !== 'templates') {
+        return
+      }
+
+      if (entity.recipe === 'html') {
+        return 'fa-html5'
+      }
+
+      if (entity.recipe.indexOf('xlsx') !== -1) {
+        return 'fa-table'
+      }
+
+      if (entity.recipe.indexOf('pdf') !== -1) {
+        return 'fa-file-pdf-o'
+      }
+
+      if (entity.recipe.indexOf('html') !== -1) {
+        return 'fa-html5'
+      }
+    })
+  })
 }
