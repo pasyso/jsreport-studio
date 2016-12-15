@@ -6,6 +6,7 @@ import fileSaver from 'filesaver.js-npm'
 import _merge from 'lodash/merge'
 import api, { methods } from './helpers/api.js'
 import TextEditor from './components/Editor/TextEditor.js'
+import EntityTree from './components/EntityTree/EntityTree.js'
 import NewEntityModal from './components/Modals/NewEntityModal.js'
 import * as editor from './redux/editor'
 import * as entities from './redux/entities'
@@ -431,6 +432,14 @@ class Studio {
   }
 
   /**
+   * Get references to entities
+   * @returns {Object[]}
+   */
+  getReferences () {
+    return entities.selectors.getReferences(this.store.getState())
+  }
+
+  /**
    * Get the path in absolute form like /api/images and make it working also for jsreport running on subpath like myserver.com/reporting/api/images
    * @param {String} path
    * @returns {String}
@@ -466,6 +475,15 @@ class Studio {
    */
   get TextEditor () {
     return TextEditor
+  }
+
+  /**
+   * Component used to visualise entities
+   *
+   * @returns {EntityTree}
+   */
+  get EntityTree () {
+    return EntityTree
   }
 
   constructor (store) {

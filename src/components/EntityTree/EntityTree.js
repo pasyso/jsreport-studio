@@ -9,10 +9,10 @@ export default class EntityTree extends Component {
   static propTypes = {
     entities: React.PropTypes.object.isRequired,
     activeEntity: React.PropTypes.object,
-    onClick: React.PropTypes.func.isRequired,
-    onRemove: React.PropTypes.func.isRequired,
-    onRename: React.PropTypes.func.isRequired,
-    onNewClick: React.PropTypes.func.isRequired
+    onClick: React.PropTypes.func,
+    onRemove: React.PropTypes.func,
+    onRename: React.PropTypes.func,
+    onNewClick: React.PropTypes.func
   }
 
   constructor () {
@@ -74,17 +74,18 @@ export default class EntityTree extends Component {
   }
 
   renderNode (entity) {
-    const { activeEntity } = this.props
+    const { activeEntity, onSelect, onClick, selectable } = this.props
     const { contextMenuId } = this.state
 
     const enityStyle = this.resolveEntityTreeIconStyle(entity)
 
     return <div
       onContextMenu={(e) => this.contextMenu(e, entity)}
-      onClick={() => this.props.onClick(entity._id)}
+      onClick={() => selectable ? onSelect(entity) : onClick(entity._id)}
       key={entity._id}
       className={style.link + ' ' + ((activeEntity && entity._id === activeEntity._id) ? style.active : '')}>
-      <i className={style.entityIcon + ' fa ' +  (enityStyle || (entitySets[entity.__entitySet].faIcon || style.entityDefaultIcon))}></i>
+      {selectable ? <input type='checkbox' readOnly checked={entity.__selected !== false} /> : <span />}
+      <i className={style.entityIcon + ' fa ' + (enityStyle || (entitySets[entity.__entitySet].faIcon || style.entityDefaultIcon))}></i>
       <a>{entity[entitySets[entity.__entitySet].nameAttribute] + (entity.__isDirty ? '*' : '')}</a>
       {contextMenuId === entity._id ? this.renderContextMenu(entity) : <div />}
     </div>
@@ -95,11 +96,14 @@ export default class EntityTree extends Component {
   }
 
   renderObjectSubTree (k, entities) {
-    return <div key={k} className={style.nodeBox}><span
+    const { onNodeSelect, selectable } = this.props
+
+    return <div key={k} className={style.nodeBox}>
+      {selectable ? <input type='checkbox' defaultChecked onChange={(v) => onNodeSelect(k, !!v.target.checked)} />: <span/>}
+      <span
       className={style.nodeTitle + ' ' + (this.state[k] ? style.collapsed : '')}
       onClick={() => this.collapse(k)}>{k}</span>
-      <a key={k + 'new'} onClick={() => this.props.onNewClick(k)} className={style.add}></a>
-
+      {!this.props.selectable ? <a key={k + 'new'} onClick={() => this.props.onNewClick(k)} className={style.add}></a> : <span/>}
       <div className={style.nodeContainer + ' ' + (this.state[k] ? style.collapsed : '')}>
         <ReactList itemRenderer={this.createRenderer(entities)} length={entities.length} />
       </div>
@@ -129,8 +133,8 @@ export default class EntityTree extends Component {
 
     return <div className={style.treeListContainer}>
       <div>
-        <div className={style.search}><input type='text' onChange={(ev) => this.setFilter(ev.target.value)}></input>
-        </div>
+        {!this.props.selectable ? <div className={style.search}><input type='text' onChange={(ev) => this.setFilter(ev.target.value)}></input>
+        </div> : <div />}
       </div>
       <div className={style.nodesBox}>
         {Object.keys(entitySets).map((k) => this.renderObjectSubTree(k, entities[k] || []))}

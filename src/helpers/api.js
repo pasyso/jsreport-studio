@@ -35,7 +35,7 @@ const createError = (err, body) => {
 }
 
 methods.forEach((m) => {
-  requestHandler[m] = (path, { params, data, attach, parseJSON } = {}) => new Promise((resolve, reject) => {
+  requestHandler[m] = (path, { params, data, attach, parseJSON, responseType } = {}) => new Promise((resolve, reject) => {
     const request = superagent[m](resolveUrl(path))
 
     Object.keys(apiHeaders).forEach((k) => request.set(k, apiHeaders[k]))
@@ -47,6 +47,10 @@ methods.forEach((m) => {
       request.query(params)
     }
 
+    if (responseType) {
+      request.responseType(responseType)
+    }
+
     if (attach) {
       request.attach(attach.filename, attach.file)
     }
@@ -55,7 +59,21 @@ methods.forEach((m) => {
       request.send(data)
     }
 
-    request.end((err, { text } = {}) => err ? reject(createError(err, text)) : (parseJSON === false ? resolve(text) : resolve(parse(text))))
+    request.end((err, res) => {
+      if (err) {
+        return reject(createError(err, res.text))
+      }
+
+      if (parseJSON === false) {
+        resolve(res.text)
+      }
+
+      if (responseType) {
+        resolve(res.xhr.response)
+      }
+
+      resolve(parse(res.text))
+    })
   })
 })
 
