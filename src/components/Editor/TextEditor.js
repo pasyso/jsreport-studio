@@ -15,11 +15,16 @@ export default class TextEditor extends Component {
 
   componentDidMount () {
     this.refs.ace.editor.renderer.setScrollMargin(5, 0)
+    this.refs.ace.editor.focus()
     this.unsubscribe = subscribeToSplitResize(() => this.refs.ace.editor.resize())
   }
 
   componentWillUnmount () {
     this.unsubscribe()
+  }
+
+  get ace() {
+    return this.refs.ace
   }
 
   render () {

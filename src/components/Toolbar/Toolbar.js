@@ -38,10 +38,13 @@ export default class Toolbar extends Component {
   }
 
   handleShortcut (e) {
-    if (e.ctrlKey && e.shiftKey && e.which === 83 && this.props.canSaveAll && toolbarVisibilityResolver('SaveAll')) {
+    if (e.ctrlKey && e.shiftKey && e.which === 83) {
       e.preventDefault()
-      this.props.onSaveAll()
-      return false
+
+      if (this.props.canSaveAll && toolbarVisibilityResolver('SaveAll')) {
+        this.props.onSaveAll()
+        return false
+      }
     }
 
     if (e.ctrlKey && e.shiftKey && e.which === 70 && this.props.canReformat && toolbarVisibilityResolver('Reformat')) {
@@ -50,10 +53,13 @@ export default class Toolbar extends Component {
       return false
     }
 
-    if (e.ctrlKey && e.which === 83 && this.props.canSave && toolbarVisibilityResolver('SaveAll')) {
+    if (e.ctrlKey && e.which === 83) {
       e.preventDefault()
-      this.props.onSave()
-      return false
+
+      if (this.props.canSave && toolbarVisibilityResolver('SaveAll')) {
+        this.props.onSave()
+        return false
+      }
     }
 
     if (e.which === 119 && this.props.canRun) {

@@ -61,7 +61,7 @@ methods.forEach((m) => {
 
     request.end((err, res) => {
       if (err) {
-        return reject(createError(err, res.text))
+        return reject(createError(err, res ? res.text : null))
       }
 
       if (parseJSON === false) {

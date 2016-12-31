@@ -34,6 +34,10 @@ export default class TemplateEditor extends Component {
     return null
   }
 
+  componentDidMount () {
+    this.refs.contentEditor.ace.editor.focus()
+  }
+
   render () {
     const { entity, onUpdate } = this.props
 
@@ -43,6 +47,7 @@ export default class TemplateEditor extends Component {
         defaultSize={(window.innerHeight * 0.2) + 'px'}>
         <TextEditor
           key={entity._id}
+          ref='contentEditor'
           name={entity._id}
           mode={this.resolveTemplateEditorMode(entity) || 'handlebars'}
           onUpdate={(v) => onUpdate(Object.assign({ _id: entity._id }, {content: v}))}

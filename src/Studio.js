@@ -5,6 +5,7 @@ import superagent from 'superagent'
 import fileSaver from 'filesaver.js-npm'
 import _merge from 'lodash/merge'
 import api, { methods } from './helpers/api.js'
+import SplitPane from './components/common/SplitPane/SplitPane.js'
 import TextEditor from './components/Editor/TextEditor.js'
 import EntityTree from './components/EntityTree/EntityTree.js'
 import NewEntityModal from './components/Modals/NewEntityModal.js'
@@ -475,6 +476,15 @@ class Studio {
    */
   get TextEditor () {
     return TextEditor
+  }
+
+  /**
+   * Component used to split content with sliders
+   *
+   * @returns {SplitPane}
+   */
+  get SplitPane () {
+    return SplitPane
   }
 
   /**

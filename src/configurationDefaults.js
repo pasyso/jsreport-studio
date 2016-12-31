@@ -1,5 +1,6 @@
 import * as configuration from './lib/configuration.js'
 import TemplateProperties from './components/Properties/TemplateProperties.js'
+import EntityTree from './components/EntityTree/EntityTree.js'
 import Startup from './containers/Startup/Startup.js'
 import ApiModal from './components/Modals/ApiModal.js'
 
@@ -27,6 +28,8 @@ export default () => {
     nameAttribute: 'name',
     referenceAttributes: ['name', 'recipe', 'shortid']
   }
+
+  configuration.sharedComponents.EntityTree = EntityTree
 
   configuration.apiSpecs = {
     template: {
