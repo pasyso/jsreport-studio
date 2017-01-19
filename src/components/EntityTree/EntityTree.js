@@ -87,7 +87,7 @@ export default class EntityTree extends Component {
       {selectable ? <input type='checkbox' readOnly checked={entity.__selected !== false} /> : <span/>}
       <i className={style.entityIcon + ' fa ' + (entityStyle || (entitySets[entity.__entitySet].faIcon || style.entityDefaultIcon))}></i>
       <a>{entity[entitySets[entity.__entitySet].nameAttribute] + (entity.__isDirty ? '*' : '')}</a>
-      {contextMenuId === entity._id ? this.renderContextMenu(entity) : <div />}
+      {!selectable && contextMenuId === entity._id ? this.renderContextMenu(entity) : <div />}
     </div>
   }
 
