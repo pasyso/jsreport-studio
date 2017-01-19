@@ -77,7 +77,7 @@ export default class EntityTree extends Component {
     const { activeEntity, onSelect, onClick, selectable } = this.props
     const { contextMenuId } = this.state
 
-    const enityStyle = this.resolveEntityTreeIconStyle(entity)
+    const entityStyle = this.resolveEntityTreeIconStyle(entity)
 
     return <div
       onContextMenu={(e) => this.contextMenu(e, entity)}
@@ -85,7 +85,7 @@ export default class EntityTree extends Component {
       key={entity._id}
       className={style.link + ' ' + ((activeEntity && entity._id === activeEntity._id) ? style.active : '')}>
       {selectable ? <input type='checkbox' readOnly checked={entity.__selected !== false} /> : <span/>}
-      <i className={style.entityIcon + ' fa ' +  (enityStyle || (entitySets[entity.__entitySet].faIcon || style.entityDefaultIcon))}></i>
+      <i className={style.entityIcon + ' fa ' + (entityStyle || (entitySets[entity.__entitySet].faIcon || style.entityDefaultIcon))}></i>
       <a>{entity[entitySets[entity.__entitySet].nameAttribute] + (entity.__isDirty ? '*' : '')}</a>
       {contextMenuId === entity._id ? this.renderContextMenu(entity) : <div />}
     </div>
