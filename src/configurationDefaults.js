@@ -1,6 +1,7 @@
 import * as configuration from './lib/configuration.js'
 import TemplateProperties from './components/Properties/TemplateProperties.js'
 import EntityTree from './components/EntityTree/EntityTree.js'
+import EntityTreeInputSearch from './components/EntityTree/EntityTreeInputSearch'
 import Startup from './containers/Startup/Startup.js'
 import ApiModal from './components/Modals/ApiModal.js'
 
@@ -43,6 +44,10 @@ export default () => {
     },
     options: {}
   }
+
+  configuration.entityTreeToolbarComponents.push((props) => (
+    <EntityTreeInputSearch {...props} />
+  ))
 
   configuration.toolbarComponents.settings.push(() => <div
     onClick={() => configuration.modalHandler.open(ApiModal, { apiSpecs: configuration.apiSpecs })}>

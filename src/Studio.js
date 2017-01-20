@@ -79,6 +79,24 @@ class Studio {
   }
 
   /**
+   * Add React component which will be displayed in toolbar of entity tree
+   *
+   * @param {ReactComponent|Function} entityTreeToolbarComponent
+   */
+  addEntityTreeToolbarComponent (entityTreeToolbarComponent) {
+    configuration.entityTreeToolbarComponents.push(entityTreeToolbarComponent)
+  }
+
+  /**
+   * Add React component which will be displayed when rendering an item of entity tree
+   *
+   * @param {ReactComponent|Function} entityTreeItemComponent
+   */
+  addEntityTreeItemComponent (entityTreeItemComponent, position = 'right') {
+    configuration.entityTreeItemComponents[position].push(entityTreeItemComponent)
+  }
+
+  /**
    * Add React component which will be used as tab title
    *
    * @param {String} key used in openTab

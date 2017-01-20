@@ -1,7 +1,7 @@
 import React, {Component} from 'react'
 import ReactList from 'react-list'
 import style from './EntityTree.scss'
-import { entitySets, entityTreeIconResolvers } from '../../lib/configuration.js'
+import { entitySets, entityTreeToolbarComponents, entityTreeItemComponents, entityTreeIconResolvers } from '../../lib/configuration.js'
 
 const getEntityName = (e) => entitySets[e.__entitySet].nameAttribute ? e[entitySets[e.__entitySet].nameAttribute] : e.name
 
@@ -9,15 +9,22 @@ export default class EntityTree extends Component {
   static propTypes = {
     entities: React.PropTypes.object.isRequired,
     activeEntity: React.PropTypes.object,
-    //onClick: React.PropTypes.func.isRequired,
-    //onRemove: React.PropTypes.func.isRequired,
-    //onRename: React.PropTypes.func.isRequired,
-    //onNewClick: React.PropTypes.func.isRequired
+    // specifies if the tree should render a toolbar in his header
+    toolbar: React.PropTypes.bool,
+    // specifies that the tree is in selectable mode,
+    // in this mode, filtering is disabled, all items (incluiding in subtrees)
+    // have a checkbox for single or multiple selection and contextmenu actions are disabled
+    selectable: React.PropTypes.bool
+    // onClick: React.PropTypes.func.isRequired,
+    // onRemove: React.PropTypes.func.isRequired,
+    // onRename: React.PropTypes.func.isRequired,
+    // onNewClick: React.PropTypes.func.isRequired
   }
 
   constructor () {
     super()
     this.state = { filter: '' }
+    this.setFilter = this.setFilter.bind(this)
   }
 
   componentDidMount () {
@@ -79,16 +86,22 @@ export default class EntityTree extends Component {
 
     const entityStyle = this.resolveEntityTreeIconStyle(entity)
 
-    return <div
-      onContextMenu={(e) => this.contextMenu(e, entity)}
-      onClick={() => selectable ? onSelect(entity) : onClick(entity._id)}
-      key={entity._id}
-      className={style.link + ' ' + ((activeEntity && entity._id === activeEntity._id) ? style.active : '')}>
-      {selectable ? <input type='checkbox' readOnly checked={entity.__selected !== false} /> : <span/>}
-      <i className={style.entityIcon + ' fa ' + (entityStyle || (entitySets[entity.__entitySet].faIcon || style.entityDefaultIcon))}></i>
-      <a>{entity[entitySets[entity.__entitySet].nameAttribute] + (entity.__isDirty ? '*' : '')}</a>
-      {!selectable && contextMenuId === entity._id ? this.renderContextMenu(entity) : <div />}
-    </div>
+    return (
+      <div
+        onContextMenu={(e) => this.contextMenu(e, entity)}
+        onClick={() => selectable ? onSelect(entity) : onClick(entity._id)}
+        key={entity._id}
+        className={style.link + ' ' + ((activeEntity && entity._id === activeEntity._id) ? style.active : '')}
+      >
+        {this.renderEntityTreeItemComponents('container', entity, [
+          selectable ? <input type='checkbox' readOnly checked={entity.__selected !== false} /> : <span />,
+          <i className={style.entityIcon + ' fa ' + (entityStyle || (entitySets[entity.__entitySet].faIcon || style.entityDefaultIcon))}></i>,
+          <a>{entity[entitySets[entity.__entitySet].nameAttribute] + (entity.__isDirty ? '*' : '')}</a>,
+          this.renderEntityTreeItemComponents('right', entity),
+          !selectable && contextMenuId === entity._id ? this.renderContextMenu(entity) : <div />
+        ])}
+      </div>
+    )
   }
 
   collapse (k) {
@@ -128,14 +141,57 @@ export default class EntityTree extends Component {
     this.setState({ filter: text })
   }
 
+  renderEntityTreeToolbarComponents () {
+    return entityTreeToolbarComponents.map((p, i) => (
+      React.createElement(p, {
+        key: i,
+        setFilter: this.setFilter
+      })
+    ))
+  }
+
+  renderEntityTreeItemComponents (position, entity, originalChildren) {
+    if (position === 'container') {
+      // if there are no components registered, defaults to original children
+      if (!entityTreeItemComponents[position].length) {
+        return originalChildren
+      }
+
+      // composing components when position is container
+      const wrappedItemComponent = entityTreeItemComponents[position].reduce((prevElement, b) => {
+        if (prevElement == null) {
+          return React.createElement(b, { entity }, originalChildren)
+        }
+
+        return React.createElement(b, { entity }, prevElement)
+      }, null)
+
+      if (!wrappedItemComponent) {
+        return null
+      }
+
+      return React.createElement(wrappedItemComponent, { entity })
+    }
+
+    return entityTreeItemComponents[position].map((p, i) => (
+      React.createElement(p, {
+        key: i,
+        entity
+      }))
+    )
+  }
+
   render () {
     const entities = this.filterEntities(this.props.entities)
 
     return <div className={style.treeListContainer}>
-      <div>
-        {!this.props.selectable ? <div className={style.search}><input type='text' onChange={(ev) => this.setFilter(ev.target.value)}></input>
-        </div> : <div/>}
-      </div>
+      {
+        this.props.toolbar && entityTreeToolbarComponents.length > 0 && (
+          <div className={style.toolbar}>
+            {this.renderEntityTreeToolbarComponents()}
+          </div>
+        )
+      }
       <div className={style.nodesBox}>
         {Object.keys(entitySets).map((k) => this.renderObjectSubTree(k, entities[k] || []))}
       </div>

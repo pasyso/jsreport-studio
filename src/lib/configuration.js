@@ -6,6 +6,11 @@ export const previewListeners = []
 export const entitySets = {}
 export const templateEditorModeResolvers = []
 export const entityTreeIconResolvers = []
+export const entityTreeToolbarComponents = []
+export const entityTreeItemComponents = {
+  container: [],
+  right: []
+}
 export const propertiesComponents = []
 export const editorComponents = []
 export const toolbarComponents = {

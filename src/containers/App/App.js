@@ -156,6 +156,7 @@ export default class App extends Component {
                   resizerClassName='resizer-horizontal' split='horizontal'
                   defaultSize={(window.innerHeight * 0.5) + 'px'}>
                   <EntityTree
+                    toolbar
                     onRename={(id) => this.openModal(RenameModal, { _id: id })}
                     onRemove={(id) => removeHandler ? removeHandler(id) : this.openModal(DeleteConfirmationModal, {_id: id})}
                     activeEntity={activeEntity} entities={references} onClick={(_id) => openTab({_id: _id})}
