@@ -1,24 +1,13 @@
 import React, {Component} from 'react'
 import ReactList from 'react-list'
 import style from './EntityTree.scss'
-import { entitySets, entityTreeToolbarComponents, entityTreeItemComponents, entityTreeIconResolvers } from '../../lib/configuration.js'
-
-const getEntityName = (e) => entitySets[e.__entitySet].nameAttribute ? e[entitySets[e.__entitySet].nameAttribute] : e.name
-
-// default filter strategy, filter by name
-let currentFilterStrategy = (entities, { name }) => {
-  if (name == null || name === '') {
-    return entities
-  }
-
-  let result = {}
-
-  Object.keys(entities).forEach((k) => {
-    result[k] = entities[k].filter((e) => getEntityName(e).indexOf(name) !== -1)
-  })
-
-  return result
-}
+import {
+  entitySets,
+  entityTreeToolbarComponents,
+  entityTreeItemComponents,
+  entityTreeFilterItemResolvers,
+  entityTreeIconResolvers
+} from '../../lib/configuration.js'
 
 export default class EntityTree extends Component {
   static propTypes = {
@@ -34,11 +23,6 @@ export default class EntityTree extends Component {
     // onRemove: React.PropTypes.func.isRequired,
     // onRename: React.PropTypes.func.isRequired,
     // onNewClick: React.PropTypes.func.isRequired
-  }
-
-  // function to allow registering a custom logic for filtering
-  static setFilterStrategy (filterStrategy) {
-    currentFilterStrategy = filterStrategy
   }
 
   constructor () {
@@ -73,7 +57,7 @@ export default class EntityTree extends Component {
   renderContextMenu (entity) {
     const { onRemove, onRename } = this.props
 
-    return <div className={style.contextMenuContainer}>
+    return <div key='entity-contextmenu' className={style.contextMenuContainer}>
       <div className={style.contextMenu}>
         <div
           className={style.contextButton}
@@ -114,11 +98,11 @@ export default class EntityTree extends Component {
         className={style.link + ' ' + ((activeEntity && entity._id === activeEntity._id) ? style.active : '')}
       >
         {this.renderEntityTreeItemComponents('container', { entity, entities: originalEntities }, [
-          selectable ? <input type='checkbox' readOnly checked={entity.__selected !== false} /> : <span />,
-          <i className={style.entityIcon + ' fa ' + (entityStyle || (entitySets[entity.__entitySet].faIcon || style.entityDefaultIcon))}></i>,
-          <a>{entity[entitySets[entity.__entitySet].nameAttribute] + (entity.__isDirty ? '*' : '')}</a>,
+          selectable ? <input key='search-name' type='checkbox' readOnly checked={entity.__selected !== false} /> : <span key='empty-search-name' />,
+          <i key='entity-icon' className={style.entityIcon + ' fa ' + (entityStyle || (entitySets[entity.__entitySet].faIcon || style.entityDefaultIcon))}></i>,
+          <a key='entity-name'>{entity[entitySets[entity.__entitySet].nameAttribute] + (entity.__isDirty ? '*' : '')}</a>,
           this.renderEntityTreeItemComponents('right', { entity, entities: originalEntities }),
-          !selectable && contextMenuId === entity._id ? this.renderContextMenu(entity) : <div />
+          !selectable && contextMenuId === entity._id ? this.renderContextMenu(entity) : <div key='empty-contextmenu' />
         ])}
       </div>
     )
@@ -144,7 +128,38 @@ export default class EntityTree extends Component {
   }
 
   filterEntities (entities) {
-    return currentFilterStrategy(entities, this.state.filter)
+    const filterInfo = this.state.filter
+    let result = {}
+
+    const allFiltersAreEmpty = Object.keys(filterInfo).every((filterKey) => {
+      const filterValue = filterInfo[filterKey]
+
+      if (Array.isArray(filterValue)) {
+        return filterValue.length === 0
+      }
+
+      return (filterValue === '' || filterValue == null)
+    })
+
+    if (allFiltersAreEmpty) {
+      return entities
+    }
+
+    Object.keys(entities).forEach((k) => {
+      result[k] = entities[k].filter((entity) => {
+        return entityTreeFilterItemResolvers.every((filterResolver) => {
+          const filterResult = filterResolver(entity, entitySets, filterInfo)
+
+          if (typeof filterResult !== 'boolean') {
+            throw new Error('filterItemResolver must return boolean values, invalid return found in resolvers')
+          }
+
+          return filterResult
+        })
+      })
+    })
+
+    return result
   }
 
   setFilter (newFilterState) {

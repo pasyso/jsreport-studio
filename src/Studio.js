@@ -153,6 +153,17 @@ class Studio {
   }
 
   /**
+   * Array of functions used to resolve filtering in entity tree,
+   * function accepts entity, entitySets and filter info, should return boolean to determine if
+   * item should be skipped or not
+   *
+   * @returns {Function[]}
+   */
+  get entityTreeFilterItemResolvers () {
+    return configuration.entityTreeFilterItemResolvers
+  }
+
+  /**
    * Sets the function returning the browser url path
    * (defaultCalculatedPath, currentEntity) => String
    * @param {Function} fn

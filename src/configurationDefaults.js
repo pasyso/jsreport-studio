@@ -45,6 +45,14 @@ export default () => {
     options: {}
   }
 
+  // default filter by name strategy
+  configuration.entityTreeFilterItemResolvers.push((entity, entitySets, filterInfo) => {
+    const { name } = filterInfo
+    const entityName = entitySets[entity.__entitySet].nameAttribute ? entity[entitySets[entity.__entitySet].nameAttribute] : entity.name
+
+    return entityName.indexOf(name) !== -1
+  })
+
   configuration.entityTreeToolbarComponents.push((props) => (
     <EntityTreeInputSearch {...props} />
   ))
