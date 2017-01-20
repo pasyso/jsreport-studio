@@ -101,7 +101,7 @@ export default class EntityTree extends Component {
   }
 
   renderNode (entity) {
-    const { activeEntity, onSelect, onClick, selectable } = this.props
+    const { activeEntity, onSelect, onClick, selectable, entities: originalEntities } = this.props
     const { contextMenuId } = this.state
 
     const entityStyle = this.resolveEntityTreeIconStyle(entity)
@@ -113,11 +113,11 @@ export default class EntityTree extends Component {
         key={entity._id}
         className={style.link + ' ' + ((activeEntity && entity._id === activeEntity._id) ? style.active : '')}
       >
-        {this.renderEntityTreeItemComponents('container', entity, [
+        {this.renderEntityTreeItemComponents('container', { entity, entities: originalEntities }, [
           selectable ? <input type='checkbox' readOnly checked={entity.__selected !== false} /> : <span />,
           <i className={style.entityIcon + ' fa ' + (entityStyle || (entitySets[entity.__entitySet].faIcon || style.entityDefaultIcon))}></i>,
           <a>{entity[entitySets[entity.__entitySet].nameAttribute] + (entity.__isDirty ? '*' : '')}</a>,
-          this.renderEntityTreeItemComponents('right', entity),
+          this.renderEntityTreeItemComponents('right', { entity, entities: originalEntities }),
           !selectable && contextMenuId === entity._id ? this.renderContextMenu(entity) : <div />
         ])}
       </div>
@@ -167,7 +167,7 @@ export default class EntityTree extends Component {
     ))
   }
 
-  renderEntityTreeItemComponents (position, entity, originalChildren) {
+  renderEntityTreeItemComponents (position, propsToItem, originalChildren) {
     if (position === 'container') {
       // if there are no components registered, defaults to original children
       if (!entityTreeItemComponents[position].length) {
@@ -177,23 +177,23 @@ export default class EntityTree extends Component {
       // composing components when position is container
       const wrappedItemComponent = entityTreeItemComponents[position].reduce((prevElement, b) => {
         if (prevElement == null) {
-          return React.createElement(b, { entity }, originalChildren)
+          return React.createElement(b, propsToItem, originalChildren)
         }
 
-        return React.createElement(b, { entity }, prevElement)
+        return React.createElement(b, propsToItem, prevElement)
       }, null)
 
       if (!wrappedItemComponent) {
         return null
       }
 
-      return React.createElement(wrappedItemComponent, { entity })
+      return React.createElement(wrappedItemComponent, propsToItem)
     }
 
     return entityTreeItemComponents[position].map((p, i) => (
       React.createElement(p, {
         key: i,
-        entity
+        ...propsToItem
       }))
     )
   }
