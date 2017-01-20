@@ -175,7 +175,7 @@ export default class EntityTree extends Component {
       }
 
       // composing components when position is container
-      const wrappedItemComponent = entityTreeItemComponents[position].reduce((prevElement, b) => {
+      const wrappedItemElement = entityTreeItemComponents[position].reduce((prevElement, b) => {
         if (prevElement == null) {
           return React.createElement(b, propsToItem, originalChildren)
         }
@@ -183,11 +183,11 @@ export default class EntityTree extends Component {
         return React.createElement(b, propsToItem, prevElement)
       }, null)
 
-      if (!wrappedItemComponent) {
+      if (!wrappedItemElement) {
         return null
       }
 
-      return React.createElement(wrappedItemComponent, propsToItem)
+      return wrappedItemElement
     }
 
     return entityTreeItemComponents[position].map((p, i) => (
