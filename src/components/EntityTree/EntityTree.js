@@ -5,6 +5,21 @@ import { entitySets, entityTreeToolbarComponents, entityTreeItemComponents, enti
 
 const getEntityName = (e) => entitySets[e.__entitySet].nameAttribute ? e[entitySets[e.__entitySet].nameAttribute] : e.name
 
+// default filter strategy, filter by name
+let currentFilterStrategy = (entities, { name }) => {
+  if (name == null || name === '') {
+    return entities
+  }
+
+  let result = {}
+
+  Object.keys(entities).forEach((k) => {
+    result[k] = entities[k].filter((e) => getEntityName(e).indexOf(name) !== -1)
+  })
+
+  return result
+}
+
 export default class EntityTree extends Component {
   static propTypes = {
     entities: React.PropTypes.object.isRequired,
@@ -21,9 +36,14 @@ export default class EntityTree extends Component {
     // onNewClick: React.PropTypes.func.isRequired
   }
 
+  // function to allow registering a custom logic for filtering
+  static setFilterStrategy (filterStrategy) {
+    currentFilterStrategy = filterStrategy
+  }
+
   constructor () {
     super()
-    this.state = { filter: '' }
+    this.state = { filter: {} }
     this.setFilter = this.setFilter.bind(this)
   }
 
@@ -124,21 +144,18 @@ export default class EntityTree extends Component {
   }
 
   filterEntities (entities) {
-    const filter = this.state.filter
-    if (filter === '') {
-      return entities
-    }
-
-    let result = {}
-    Object.keys(entities).forEach((k) => {
-      result[k] = entities[k].filter((e) => getEntityName(e).indexOf(filter) !== -1)
-    })
-
-    return result
+    return currentFilterStrategy(entities, this.state.filter)
   }
 
-  setFilter (text) {
-    this.setState({ filter: text })
+  setFilter (newFilterState) {
+    this.setState((prevState) => {
+      return {
+        filter: {
+          ...prevState.filter,
+          ...newFilterState
+        }
+      }
+    })
   }
 
   renderEntityTreeToolbarComponents () {
