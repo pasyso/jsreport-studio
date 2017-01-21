@@ -54,77 +54,8 @@ export default class EntityTree extends Component {
     this.setState({ contextMenuId: entity._id })
   }
 
-  renderContextMenu (entity) {
-    const { onRemove, onRename } = this.props
-
-    return <div key='entity-contextmenu' className={style.contextMenuContainer}>
-      <div className={style.contextMenu}>
-        <div
-          className={style.contextButton}
-          onClick={(e) => { e.stopPropagation(); onRename(entity._id); this.tryHide() }}>
-          <i className='fa fa-pencil' /> Rename
-        </div>
-        <div
-          className={style.contextButton}
-          onClick={(e) => { e.stopPropagation(); onRemove(entity._id); this.tryHide() }}>
-          <i className='fa fa-trash' /> Delete
-        </div>
-      </div>
-    </div>
-  }
-
-  resolveEntityTreeIconStyle (entity) {
-    for (const k in entityTreeIconResolvers) {
-      const mode = entityTreeIconResolvers[k](entity)
-      if (mode) {
-        return mode
-      }
-    }
-
-    return null
-  }
-
-  renderNode (entity) {
-    const { activeEntity, onSelect, onClick, selectable, entities: originalEntities } = this.props
-    const { contextMenuId } = this.state
-
-    const entityStyle = this.resolveEntityTreeIconStyle(entity)
-
-    return (
-      <div
-        onContextMenu={(e) => this.contextMenu(e, entity)}
-        onClick={() => selectable ? onSelect(entity) : onClick(entity._id)}
-        key={entity._id}
-        className={style.link + ' ' + ((activeEntity && entity._id === activeEntity._id) ? style.active : '')}
-      >
-        {this.renderEntityTreeItemComponents('container', { entity, entities: originalEntities }, [
-          selectable ? <input key='search-name' type='checkbox' readOnly checked={entity.__selected !== false} /> : <span key='empty-search-name' />,
-          <i key='entity-icon' className={style.entityIcon + ' fa ' + (entityStyle || (entitySets[entity.__entitySet].faIcon || style.entityDefaultIcon))}></i>,
-          <a key='entity-name'>{entity[entitySets[entity.__entitySet].nameAttribute] + (entity.__isDirty ? '*' : '')}</a>,
-          this.renderEntityTreeItemComponents('right', { entity, entities: originalEntities }),
-          !selectable && contextMenuId === entity._id ? this.renderContextMenu(entity) : <div key='empty-contextmenu' />
-        ])}
-      </div>
-    )
-  }
-
   collapse (k) {
     this.setState({ [k]: !this.state[k] })
-  }
-
-  renderObjectSubTree (k, entities) {
-    const {  onNodeSelect, selectable } = this.props
-
-    return <div key={k} className={style.nodeBox}>
-      {selectable ? <input type='checkbox' defaultChecked={true} onChange={(v) => onNodeSelect(k, !!v.target.checked)} />: <span/>}
-      <span
-      className={style.nodeTitle + ' ' + (this.state[k] ? style.collapsed : '')}
-      onClick={() => this.collapse(k)}>{k}</span>
-      {!this.props.selectable ? <a key={k + 'new'} onClick={() => this.props.onNewClick(k)} className={style.add}></a> : <span/>}
-      <div className={style.nodeContainer + ' ' + (this.state[k] ? style.collapsed : '')}>
-        <ReactList itemRenderer={this.createRenderer(entities)} length={entities.length} />
-      </div>
-    </div>
   }
 
   filterEntities (entities) {
@@ -173,13 +104,34 @@ export default class EntityTree extends Component {
     })
   }
 
-  renderEntityTreeToolbarComponents () {
-    return entityTreeToolbarComponents.map((p, i) => (
-      React.createElement(p, {
-        key: i,
-        setFilter: this.setFilter
-      })
-    ))
+  resolveEntityTreeIconStyle (entity) {
+    for (const k in entityTreeIconResolvers) {
+      const mode = entityTreeIconResolvers[k](entity)
+      if (mode) {
+        return mode
+      }
+    }
+
+    return null
+  }
+
+  renderContextMenu (entity) {
+    const { onRemove, onRename } = this.props
+
+    return <div key='entity-contextmenu' className={style.contextMenuContainer}>
+      <div className={style.contextMenu}>
+        <div
+          className={style.contextButton}
+          onClick={(e) => { e.stopPropagation(); onRename(entity._id); this.tryHide() }}>
+          <i className='fa fa-pencil' /> Rename
+        </div>
+        <div
+          className={style.contextButton}
+          onClick={(e) => { e.stopPropagation(); onRemove(entity._id); this.tryHide() }}>
+          <i className='fa fa-trash' /> Delete
+        </div>
+      </div>
+    </div>
   }
 
   renderEntityTreeItemComponents (position, propsToItem, originalChildren) {
@@ -211,6 +163,59 @@ export default class EntityTree extends Component {
         ...propsToItem
       }))
     )
+  }
+
+  renderNode (entity) {
+    const { activeEntity, onSelect, onClick, selectable, entities: originalEntities } = this.props
+    const { contextMenuId } = this.state
+
+    const entityStyle = this.resolveEntityTreeIconStyle(entity)
+
+    return (
+      <div
+        onContextMenu={(e) => this.contextMenu(e, entity)}
+        onClick={() => selectable ? onSelect(entity) : onClick(entity._id)}
+        key={entity._id}
+        className={style.link + ' ' + ((activeEntity && entity._id === activeEntity._id) ? style.active : '')}
+      >
+        {this.renderEntityTreeItemComponents('container', { entity, entities: originalEntities }, [
+          selectable ? <input key='search-name' type='checkbox' readOnly checked={entity.__selected !== false} /> : <span key='empty-search-name' />,
+          <i key='entity-icon' className={style.entityIcon + ' fa ' + (entityStyle || (entitySets[entity.__entitySet].faIcon || style.entityDefaultIcon))}></i>,
+          <a key='entity-name'>{entity[entitySets[entity.__entitySet].nameAttribute] + (entity.__isDirty ? '*' : '')}</a>,
+          this.renderEntityTreeItemComponents('right', { entity, entities: originalEntities }),
+          !selectable && contextMenuId === entity._id ? this.renderContextMenu(entity) : <div key='empty-contextmenu' />
+        ])}
+      </div>
+    )
+  }
+
+  renderObjectSubTree (k, entities) {
+    const { onNodeSelect, selectable } = this.props
+
+    return (
+      <div key={k} className={style.nodeBox}>
+        {selectable ? <input type='checkbox' defaultChecked onChange={(v) => onNodeSelect(k, !!v.target.checked)} /> : <span />}
+        <span
+          className={style.nodeTitle + ' ' + (this.state[k] ? style.collapsed : '')}
+          onClick={() => this.collapse(k)}
+        >
+          {k}
+        </span>
+        {!this.props.selectable ? <a key={k + 'new'} onClick={() => this.props.onNewClick(k)} className={style.add}></a> : <span />}
+        <div className={style.nodeContainer + ' ' + (this.state[k] ? style.collapsed : '')}>
+          <ReactList itemRenderer={this.createRenderer(entities)} length={entities.length} />
+        </div>
+      </div>
+    )
+  }
+
+  renderEntityTreeToolbarComponents () {
+    return entityTreeToolbarComponents.map((p, i) => (
+      React.createElement(p, {
+        key: i,
+        setFilter: this.setFilter
+      })
+    ))
   }
 
   render () {
