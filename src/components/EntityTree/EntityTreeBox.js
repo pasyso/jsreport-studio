@@ -4,7 +4,7 @@ import style from './EntityTreeBox.scss'
 class EntityTreeBox extends Component {
   render () {
     return (
-      <div className={style.treeListContainer}>
+      <div className={style.boxContainer}>
         {this.props.children}
       </div>
     )

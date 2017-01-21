@@ -274,7 +274,7 @@ export default class EntityTree extends Component {
     const children = this.props.children
 
     return (
-      <div>
+      <div className={style.treeListContainer}>
         {
           this.props.toolbar && entityTreeToolbarComponents.length > 0 && (
             <div className={style.toolbar}>
