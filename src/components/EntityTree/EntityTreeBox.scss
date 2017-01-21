@@ -1,0 +1,8 @@
+@import "../../theme/common";
+
+.treeListContainer {
+  flex: 1;
+  background-color: $secondaryBackgroundColor;
+  display: flex;
+  flex-direction: column;
+}

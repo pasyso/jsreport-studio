@@ -5,6 +5,7 @@ export const readyListeners = []
 export const previewListeners = []
 export const entitySets = {}
 export const templateEditorModeResolvers = []
+export const entityTreeWrapperComponents = []
 export const entityTreeIconResolvers = []
 export const entityTreeFilterItemResolvers = []
 export const entityTreeToolbarComponents = []

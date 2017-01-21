@@ -3,6 +3,7 @@ import {connect} from 'react-redux'
 import { actions, selectors } from 'redux/editor'
 import * as entities from 'redux/entities'
 import Preview from '../../components/Preview/Preview.js'
+import EntityTreeBox from '../../components/EntityTree/EntityTreeBox.js'
 import EntityTree from '../../components/EntityTree/EntityTree.js'
 import Properties from '../../components/Properties/Properties.js'
 import style from './App.scss'
@@ -18,7 +19,15 @@ import CloseConfirmationModal from '../../components/Modals/CloseConfirmationMod
 import RenameModal from '../../components/Modals/RenameModal.js'
 import * as progress from '../../redux/progress'
 import cookies from 'js-cookie'
-import { triggerSplitResize, removeHandler, registerPreviewHandler, entitySets, shouldOpenStartupPage, registerCollapseLeftHandler } from '../../lib/configuration.js'
+import {
+  triggerSplitResize,
+  removeHandler,
+  registerPreviewHandler,
+  entitySets,
+  shouldOpenStartupPage,
+  registerCollapseLeftHandler,
+  entityTreeWrapperComponents
+} from '../../lib/configuration.js'
 
 const progressActions = progress.actions
 
@@ -50,6 +59,12 @@ export default class App extends Component {
     loading: PropTypes.bool,
     loaded: PropTypes.bool
   };
+
+  constructor(props) {
+    super(props)
+
+    this.openModal = this.openModal.bind(this)
+  }
 
   componentDidMount () {
     window.onbeforeunload = () => {
@@ -129,9 +144,65 @@ export default class App extends Component {
     this.refs.preview.resizeEnded()
   }
 
+  renderEntityTree () {
+    const { activeEntity, references, openTab } = this.props
+    const entityTreeProps = {
+      toolbar: true,
+      onRename: (id) => this.openModal(RenameModal, { _id: id }),
+      onRemove: (id) => removeHandler ? removeHandler(id) : this.openModal(DeleteConfirmationModal, {_id: id}),
+      activeEntity,
+      entities: references,
+      onClick: (_id) => openTab({_id: _id}),
+      onNewClick: (es) => entitySets[es].onNew ? entitySets[es].onNew() : this.openModal(NewEntityModal, {entitySet: es})
+    }
+
+    // if there are no components registered, defaults to rendering the EntityTree alone
+    if (!entityTreeWrapperComponents.length) {
+      return React.createElement(EntityTree, entityTreeProps)
+    }
+
+    // composing components
+    const wrappedEntityTree = entityTreeWrapperComponents.reduce((prevElement, component) => {
+      if (prevElement == null) {
+        return React.createElement(
+          component,
+          { entities: references, entitySets: entitySets },
+          React.createElement(EntityTree, entityTreeProps)
+        )
+      }
+
+      return React.createElement(
+        component,
+        { entities: references, entitySets: entitySets },
+        prevElement
+      )
+    }, null)
+
+    if (!wrappedEntityTree) {
+      return null
+    }
+
+    return wrappedEntityTree
+  }
+
   render () {
-    const { tabsWithEntities, references, isPending, canRun, canSave, canSaveAll, canReformat, activeTabWithEntity, entities,
-      openTab, stop, activateTab, activeTabKey, activeEntity, update, groupedUpdate, reformat } = this.props
+    const {
+      tabsWithEntities,
+      isPending,
+      canRun,
+      canSave,
+      canSaveAll,
+      canReformat,
+      activeTabWithEntity,
+      entities,
+      stop,
+      activateTab,
+      activeTabKey,
+      activeEntity,
+      update,
+      groupedUpdate,
+      reformat
+    } = this.props
 
     return (
       <div className='container'>
@@ -155,12 +226,9 @@ export default class App extends Component {
                 <SplitPane
                   resizerClassName='resizer-horizontal' split='horizontal'
                   defaultSize={(window.innerHeight * 0.5) + 'px'}>
-                  <EntityTree
-                    toolbar
-                    onRename={(id) => this.openModal(RenameModal, { _id: id })}
-                    onRemove={(id) => removeHandler ? removeHandler(id) : this.openModal(DeleteConfirmationModal, {_id: id})}
-                    activeEntity={activeEntity} entities={references} onClick={(_id) => openTab({_id: _id})}
-                    onNewClick={(es) => entitySets[es].onNew ? entitySets[es].onNew() : this.openModal(NewEntityModal, {entitySet: es})} />
+                  <EntityTreeBox>
+                    {this.renderEntityTree()}
+                  </EntityTreeBox>
                   <Properties entity={activeEntity} entities={entities} onChange={update} />
                 </SplitPane>
 

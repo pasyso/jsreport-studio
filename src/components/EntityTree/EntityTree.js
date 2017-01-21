@@ -18,7 +18,10 @@ export default class EntityTree extends Component {
     // specifies that the tree is in selectable mode,
     // in this mode, filtering is disabled, all items (incluiding in subtrees)
     // have a checkbox for single or multiple selection and contextmenu actions are disabled
-    selectable: React.PropTypes.bool
+    selectable: React.PropTypes.bool,
+    // tree accepts a render callback (function as child) to allow extensions to
+    // control how entity items are rendered
+    children: React.PropTypes.func
     // onClick: React.PropTypes.func.isRequired,
     // onRemove: React.PropTypes.func.isRequired,
     // onRename: React.PropTypes.func.isRequired,
@@ -29,6 +32,8 @@ export default class EntityTree extends Component {
     super()
     this.state = { filter: {} }
     this.setFilter = this.setFilter.bind(this)
+    this.renderClassicTree = this.renderClassicTree.bind(this)
+    this.renderObjectSubTree = this.renderObjectSubTree.bind(this)
   }
 
   componentDidMount () {
@@ -189,24 +194,70 @@ export default class EntityTree extends Component {
     )
   }
 
-  renderObjectSubTree (k, entities) {
+  renderObjectSubTree (entitiesType, entities, depth, entitiesTypeId) {
     const { onNodeSelect, selectable } = this.props
+    let treeDepth = depth || 0
+    let isGroup = false
+
+    if (entitiesTypeId == null) {
+      entitiesTypeId = entitiesType
+    }
+
+    if (treeDepth <= 0) {
+      treeDepth = 0
+    }
+
+    if (!Array.isArray(entities) && entities.__hasChildEntitiesSet__) {
+      isGroup = true
+      entitiesTypeId += '--group'
+    }
 
     return (
-      <div key={k} className={style.nodeBox}>
-        {selectable ? <input type='checkbox' defaultChecked onChange={(v) => onNodeSelect(k, !!v.target.checked)} /> : <span />}
+      <div
+        key={entitiesType}
+        className={style.nodeBox}
+        style={{ marginLeft: `${treeDepth * 0.8}rem` }}
+      >
+        {selectable ? <input type='checkbox' defaultChecked onChange={(v) => onNodeSelect(entitiesType, !!v.target.checked)} /> : <span />}
         <span
-          className={style.nodeTitle + ' ' + (this.state[k] ? style.collapsed : '')}
-          onClick={() => this.collapse(k)}
+          className={style.nodeTitle + ' ' + (this.state[entitiesTypeId] ? style.collapsed : '')}
+          onClick={() => this.collapse(entitiesTypeId)}
         >
-          {k}
+          {entitiesType}
         </span>
-        {!this.props.selectable ? <a key={k + 'new'} onClick={() => this.props.onNewClick(k)} className={style.add}></a> : <span />}
-        <div className={style.nodeContainer + ' ' + (this.state[k] ? style.collapsed : '')}>
-          <ReactList itemRenderer={this.createRenderer(entities)} length={entities.length} />
+        {
+          isGroup ? <span /> : (
+            !this.props.selectable ? <a key={entitiesTypeId + 'new'} onClick={() => this.props.onNewClick(entitiesType)} className={style.add}></a> : <span />
+          )
+        }
+        <div className={style.nodeContainer + ' ' + (this.state[entitiesTypeId] ? style.collapsed : '')}>
+          {
+            isGroup ? (
+              <div>
+                {
+                  Object.keys(entities.__entitiesSet__ || {}).map((entityType) => {
+                    return this.renderObjectSubTree(
+                      entityType,
+                      entities.__entitiesSet__[entityType],
+                      treeDepth + 1,
+                      `${entitiesTypeId}--${entityType}`
+                    )
+                  })
+                }
+              </div>
+            ) : (
+              <ReactList itemRenderer={this.createRenderer(entities)} length={entities.length} />
+            )
+          }
         </div>
       </div>
     )
+  }
+
+  renderClassicTree (sets, entitiesByType) {
+    return Object.keys(sets).map((entitiesType) => {
+      return this.renderObjectSubTree(entitiesType, entitiesByType[entitiesType] || [], 0)
+    })
   }
 
   renderEntityTreeToolbarComponents () {
@@ -220,18 +271,35 @@ export default class EntityTree extends Component {
 
   render () {
     const entities = this.filterEntities(this.props.entities)
+    const children = this.props.children
 
-    return <div className={style.treeListContainer}>
-      {
-        this.props.toolbar && entityTreeToolbarComponents.length > 0 && (
-          <div className={style.toolbar}>
-            {this.renderEntityTreeToolbarComponents()}
-          </div>
-        )
-      }
-      <div className={style.nodesBox}>
-        {Object.keys(entitySets).map((k) => this.renderObjectSubTree(k, entities[k] || []))}
+    return (
+      <div>
+        {
+          this.props.toolbar && entityTreeToolbarComponents.length > 0 && (
+            <div className={style.toolbar}>
+              {this.renderEntityTreeToolbarComponents()}
+            </div>
+          )
+        }
+        <div className={style.nodesBox}>
+          {/*
+            When a render callback (function as child) is passed it means that an extension
+            wants to control how entity tree is rendered and we should pass all useful
+            information to the callback
+          */}
+          {
+            typeof children === 'function' ? children({
+              renderClassicTree: this.renderClassicTree,
+              renderObjectSubTree: this.renderObjectSubTree,
+              entitySets,
+              entities
+            }) : (
+              this.renderClassicTree(entitySets, entities)
+            )
+          }
+        </div>
       </div>
-    </div>
+    )
   }
 }

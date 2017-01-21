@@ -79,6 +79,15 @@ class Studio {
   }
 
   /**
+   * Add React component which will be displayed as a wrapper/container for entity tree
+   *
+   * @param {ReactComponent|Function} entityTreeWrapperComponent
+   */
+  addEntityTreeWrapperComponent (entityTreeWrapperComponent) {
+    configuration.entityTreeWrapperComponents.push(entityTreeWrapperComponent)
+  }
+
+  /**
    * Add React component which will be displayed in toolbar of entity tree
    *
    * @param {ReactComponent|Function} entityTreeToolbarComponent
