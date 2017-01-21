@@ -145,7 +145,14 @@ export default class App extends Component {
   }
 
   renderEntityTree () {
+    const containerStyles = {
+      display: 'flex',
+      flex: 1,
+      flexDirection: 'column'
+    }
+
     const { activeEntity, references, openTab } = this.props
+
     const entityTreeProps = {
       toolbar: true,
       onRename: (id) => this.openModal(RenameModal, { _id: id }),
@@ -163,17 +170,23 @@ export default class App extends Component {
 
     // composing components
     const wrappedEntityTree = entityTreeWrapperComponents.reduce((prevElement, component) => {
+      const propsToWrapper = {
+        entities: references,
+        entitySets: entitySets,
+        containerStyles
+      }
+
       if (prevElement == null) {
         return React.createElement(
           component,
-          { entities: references, entitySets: entitySets },
+          propsToWrapper,
           React.createElement(EntityTree, entityTreeProps)
         )
       }
 
       return React.createElement(
         component,
-        { entities: references, entitySets: entitySets },
+        propsToWrapper,
         prevElement
       )
     }, null)
