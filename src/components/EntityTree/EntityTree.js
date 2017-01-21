@@ -235,10 +235,10 @@ export default class EntityTree extends Component {
             isGroup ? (
               <div>
                 {
-                  Object.keys(entities.__entitiesSet__ || {}).map((entityType) => {
+                  Object.keys(entities.entitiesSet || {}).map((entityType) => {
                     return this.renderObjectSubTree(
                       entityType,
-                      entities.__entitiesSet__[entityType],
+                      entities.entitiesSet[entityType],
                       treeDepth + 1,
                       `${entitiesTypeId}--${entityType}`
                     )
