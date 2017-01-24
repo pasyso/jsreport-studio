@@ -1,9 +1,13 @@
 @import "../../theme/common";
 
-.search {
+.container {
   display: inline-block;
   margin-left: 0.2rem;
   margin-right: 0.2rem;
+}
+
+.search {
+  display: inline-block;
 }
 
 .search > input {
