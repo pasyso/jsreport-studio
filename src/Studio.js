@@ -8,6 +8,7 @@ import api, { methods } from './helpers/api.js'
 import SplitPane from './components/common/SplitPane/SplitPane.js'
 import TextEditor from './components/Editor/TextEditor.js'
 import EntityTree from './components/EntityTree/EntityTree.js'
+import EntityTreeButton from './components/EntityTree/EntityTreeButton.js'
 import NewEntityModal from './components/Modals/NewEntityModal.js'
 import * as editor from './redux/editor'
 import * as entities from './redux/entities'
@@ -532,6 +533,14 @@ class Studio {
    */
   get EntityTree () {
     return EntityTree
+  }
+
+  /**
+   * Component used to add actions in EntityTree toolbar
+   * @returns {EntityTreeButton}
+   */
+  get EntityTreeButton () {
+    return EntityTreeButton
   }
 
   constructor (store) {

@@ -1,0 +1,13 @@
+
+.entityTreeButton {
+  background-color: #fff;
+  border-radius: 20%;
+  border: 1px solid #cacaca;
+  color: #000;
+}
+
+.entityTreeButton.active {
+  background-color: #1c97ea;
+  border-color: #789bea;
+  color: #fff;
+}

@@ -1,7 +1,7 @@
 import * as configuration from './lib/configuration.js'
 import TemplateProperties from './components/Properties/TemplateProperties.js'
 import EntityTree from './components/EntityTree/EntityTree.js'
-import EntityTreeInputSearch from './components/EntityTree/EntityTreeInputSearch'
+import EntityTreeInputSearch from './components/EntityTree/EntityTreeInputSearch.js'
 import Startup from './containers/Startup/Startup.js'
 import ApiModal from './components/Modals/ApiModal.js'
 
