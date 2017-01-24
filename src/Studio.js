@@ -6,6 +6,7 @@ import fileSaver from 'filesaver.js-npm'
 import _merge from 'lodash/merge'
 import api, { methods } from './helpers/api.js'
 import SplitPane from './components/common/SplitPane/SplitPane.js'
+import Popover from './components/common/Popover/index.js'
 import TextEditor from './components/Editor/TextEditor.js'
 import EntityTree from './components/EntityTree/EntityTree.js'
 import EntityTreeButton from './components/EntityTree/EntityTreeButton.js'
@@ -524,6 +525,15 @@ class Studio {
    */
   get SplitPane () {
     return SplitPane
+  }
+
+  /**
+   * Component used to show content in a popover
+   *
+   * @returns {Popover}
+   */
+  get Popover () {
+    return Popover
   }
 
   /**
