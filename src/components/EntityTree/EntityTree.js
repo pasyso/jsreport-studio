@@ -198,6 +198,7 @@ export default class EntityTree extends Component {
     const { onNodeSelect, selectable } = this.props
     let treeDepth = depth || 0
     let isGroup = false
+    let groupProps = {}
 
     if (entitiesTypeId == null) {
       entitiesTypeId = entitiesType
@@ -210,6 +211,10 @@ export default class EntityTree extends Component {
     if (!Array.isArray(entities) && entities.__hasChildEntitiesSet__) {
       isGroup = true
       entitiesTypeId += '--group'
+
+      if (entities.data != null) {
+        groupProps = entities.data
+      }
     }
 
     return (
@@ -225,6 +230,7 @@ export default class EntityTree extends Component {
         >
           {entitiesType}
         </span>
+        {isGroup && this.renderEntityTreeItemComponents('groupRight', groupProps, undefined)}
         {
           isGroup ? <span /> : (
             !this.props.selectable ? <a key={entitiesTypeId + 'new'} onClick={() => this.props.onNewClick(entitiesType)} className={style.add}></a> : <span />
@@ -256,7 +262,7 @@ export default class EntityTree extends Component {
 
   renderClassicTree (sets, entitiesByType) {
     return Object.keys(sets).map((entitiesType) => {
-      return this.renderObjectSubTree(entitiesType, entitiesByType[entitiesType] || [], 0)
+      return this.renderObjectSubTree(entitiesType, entitiesByType[entitiesType] || [])
     })
   }
 

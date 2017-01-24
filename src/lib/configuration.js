@@ -11,7 +11,8 @@ export const entityTreeFilterItemResolvers = []
 export const entityTreeToolbarComponents = []
 export const entityTreeItemComponents = {
   container: [],
-  right: []
+  right: [],
+  groupRight: []
 }
 export const propertiesComponents = []
 export const editorComponents = []
