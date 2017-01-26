@@ -3,6 +3,32 @@ import Popover from '../../components/common/Popover'
 import EntityTreeButton from './EntityTreeButton'
 import style from './EntityTreeInputSeach.scss'
 
+class InputSearch extends Component {
+  componentDidMount () {
+    this.refs.inputFilter && this.refs.inputFilter.focus()
+  }
+
+  render () {
+    const {
+      value,
+      onChange,
+      onKeyDown
+    } = this.props
+
+    return (
+      <div className={style.search}>
+        <input
+          ref='inputFilter'
+          type='text'
+          value={value}
+          onChange={onChange}
+          onKeyDown={onKeyDown}
+        />
+      </div>
+    )
+  }
+}
+
 class EntityTreeInputSeach extends Component {
   constructor (props) {
     super(props)
@@ -66,14 +92,11 @@ class EntityTreeInputSeach extends Component {
           open={displayInput}
           onClose={this.closePopover}
         >
-          <div className={style.search}>
-            <input
-              type='text'
-              value={filterByName}
-              onChange={this.onNameFilterChange}
-              onKeyDown={this.onKeyDownInput}
-            />
-          </div>
+          <InputSearch
+            value={filterByName}
+            onChange={this.onNameFilterChange}
+            onKeyDown={this.onKeyDownInput}
+          />
         </Popover>
       </div>
     )
