@@ -27,7 +27,8 @@ export default () => {
     name: 'templates',
     visibleName: 'template',
     nameAttribute: 'name',
-    referenceAttributes: ['name', 'recipe', 'shortid']
+    referenceAttributes: ['name', 'recipe', 'shortid'],
+    entityTreePosition: 1000
   }
 
   configuration.sharedComponents.EntityTree = EntityTree
