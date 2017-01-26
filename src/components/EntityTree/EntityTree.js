@@ -3,6 +3,7 @@ import ReactList from 'react-list'
 import style from './EntityTree.scss'
 import {
   entitySets,
+  entityTreeOrder,
   entityTreeToolbarComponents,
   entityTreeItemComponents,
   entityTreeFilterItemResolvers,
@@ -107,6 +108,40 @@ export default class EntityTree extends Component {
         }
       }
     })
+  }
+
+  getSetsToRender (sets) {
+    const setsNames = Object.keys(sets)
+    let setsInOrderSpecification = []
+
+    const setsNotInOrderSpecification = setsNames.filter((setName) => {
+      const indexInOrder = entityTreeOrder.indexOf(setName)
+      const found = indexInOrder !== -1
+
+      if (found) {
+        // make sure to only add set names present in sets
+        setsInOrderSpecification.push({
+          idx: indexInOrder,
+          name: setName
+        })
+      }
+
+      return !found
+    })
+
+    setsInOrderSpecification = setsInOrderSpecification.sort((a, b) => {
+      if (a.idx > b.idx) {
+        return 1
+      }
+
+      if (a.idx < b.idx) {
+        return -1
+      }
+
+      return 0
+    }).map((setInfo) => setInfo.name)
+
+    return [...setsInOrderSpecification, ...setsNotInOrderSpecification]
   }
 
   resolveEntityTreeIconStyle (entity) {
@@ -241,7 +276,7 @@ export default class EntityTree extends Component {
             isGroup ? (
               <div>
                 {
-                  Object.keys(entities.entitiesSet || {}).map((entityType) => {
+                  this.getSetsToRender(entities.entitiesSet || {}).map((entityType) => {
                     return this.renderObjectSubTree(
                       entityType,
                       entities.entitiesSet[entityType],
@@ -261,7 +296,9 @@ export default class EntityTree extends Component {
   }
 
   renderClassicTree (sets, entitiesByType) {
-    return Object.keys(sets).map((entitiesType) => {
+    const setsToRender = this.getSetsToRender(sets)
+
+    return setsToRender.map((entitiesType) => {
       return this.renderObjectSubTree(entitiesType, entitiesByType[entitiesType] || [])
     })
   }

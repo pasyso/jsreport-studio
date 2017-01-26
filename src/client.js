@@ -13,6 +13,7 @@ import Promise from 'bluebird'
 import * as configuration from './lib/configuration.js'
 import { createStudio as createStudio } from './Studio'
 import defaults from './configurationDefaults.js'
+import getEntityTreeOrder from './helpers/getEntityTreeOrder'
 import zipObject from 'lodash/zipObject'
 import { syncHistoryWithStore } from 'react-router-redux'
 
@@ -36,6 +37,12 @@ const start = async () => {
   for (const key in Studio.initializeListeners) {
     await Studio.initializeListeners[key]()
   }
+
+  // calculate EntityTree order after initializeListeners
+  configuration.entityTreeOrder = getEntityTreeOrder(
+    configuration.extensions['studio'].options.entityTreeOrder,
+    Studio.entitySets
+  )
 
   await Promise.all(
     [
