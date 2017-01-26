@@ -31,6 +31,8 @@ export const getReferences = (state) => {
     result[k] = result[k].sort((a, b) => getEntityName(a).toLowerCase().localeCompare(getEntityName(b).toLowerCase()))
   })
 
+  Object.keys(entitySets).forEach((e) => (result[e] = result[e] || []))
+
   return result
 }
 
