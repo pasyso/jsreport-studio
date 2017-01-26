@@ -48,6 +48,11 @@ export default () => {
   // default filter by name strategy
   configuration.entityTreeFilterItemResolvers.push((entity, entitySets, filterInfo) => {
     const { name } = filterInfo
+
+    if (name == null || name === '') {
+      return true
+    }
+
     const entityName = entitySets[entity.__entitySet].nameAttribute ? entity[entitySets[entity.__entitySet].nameAttribute] : entity.name
 
     return entityName.indexOf(name) !== -1
