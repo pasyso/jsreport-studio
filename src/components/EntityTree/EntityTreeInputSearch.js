@@ -14,6 +14,14 @@ class EntityTreeInputSeach extends Component {
     }
 
     this.onNameFilterChange = this.onNameFilterChange.bind(this)
+    this.onKeyDownInput = this.onKeyDownInput.bind(this)
+    this.closePopover = this.closePopover.bind(this)
+  }
+
+  closePopover () {
+    this.setState({
+      displayInput: false
+    })
   }
 
   onNameFilterChange (ev) {
@@ -25,6 +33,21 @@ class EntityTreeInputSeach extends Component {
     })
 
     this.props.setFilter({ name })
+  }
+
+  onKeyDownInput (ev) {
+    if (ev.defaultPrevented) {
+      return
+    }
+
+    let keyCode = ev.keyCode
+    let enterKey = 13
+
+    if (keyCode === enterKey) {
+      ev.preventDefault()
+
+      return this.closePopover()
+    }
   }
 
   render () {
@@ -41,10 +64,15 @@ class EntityTreeInputSeach extends Component {
         </EntityTreeButton>
         <Popover
           open={displayInput}
-          onClose={() => this.setState({ displayInput: false })}
+          onClose={this.closePopover}
         >
           <div className={style.search}>
-            <input type='text' value={filterByName} onChange={this.onNameFilterChange} />
+            <input
+              type='text'
+              value={filterByName}
+              onChange={this.onNameFilterChange}
+              onKeyDown={this.onKeyDownInput}
+            />
           </div>
         </Popover>
       </div>
