@@ -74,7 +74,7 @@ class Studio {
    * Add React component which will be displayed in toolbar
    *
    * @param {ReactComponent|Function} toolbarComponent
-   * @param {String} position left or settings
+   * @param {String} position left, right, settings or settingsBottom
    */
   addToolbarComponent (toolbarComponent, position = 'left') {
     configuration.toolbarComponents[position].push(toolbarComponent)
@@ -102,6 +102,7 @@ class Studio {
    * Add React component which will be displayed when rendering an item of entity tree
    *
    * @param {ReactComponent|Function} entityTreeItemComponent
+   * @param {String} position right, groupRight or container
    */
   addEntityTreeItemComponent (entityTreeItemComponent, position = 'right') {
     configuration.entityTreeItemComponents[position].push(entityTreeItemComponent)
