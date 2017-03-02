@@ -40,6 +40,13 @@ export function remove (id) {
   return async function (dispatch, getState) {
     const entity = selectors.getById(getState(), id)
 
+    if (entity.__isNew) {
+      return dispatch({
+        type: ActionTypes.REMOVE,
+        _id: id
+      })
+    }
+
     dispatch(apiStart())
     try {
       await api.del(`/odata/${entity.__entitySet}(${id})`)
