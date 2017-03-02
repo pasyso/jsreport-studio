@@ -4,7 +4,7 @@ import {actions, selectors} from '../../redux/entities'
 import { entitySets } from '../../lib/configuration.js'
 
 @connect((state, props) => ({ entity: selectors.getById(state, props.options._id) }), { ...actions })
-export default class DeleteConfirmationModal extends Component {
+export default class RenameModal extends Component {
   static propTypes = {
     close: PropTypes.func.isRequired,
     options: PropTypes.object.isRequired
