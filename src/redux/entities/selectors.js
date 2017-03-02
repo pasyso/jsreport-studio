@@ -14,7 +14,7 @@ export const getByShortid = (state, shortid, shouldThrow = true) => {
   const entities = getAll(state).filter((e) => e.shortid === shortid)
 
   if (!entities.length && shouldThrow) {
-    throw new Error(`Unable to find entity with shprtod ${shortid}`)
+    throw new Error(`Unable to find entity with shortid ${shortid}`)
   }
 
   return entities.length ? entities[0] : null
