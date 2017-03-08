@@ -31,7 +31,7 @@ export default class EditorTabs extends Component {
           }) : (<span>{t.tab.title || (t.entity[entitySets[t.entity.__entitySet].nameAttribute] + (t.entity.__isDirty ? '*' : ''))}</span>)}</span>
 
       <div
-        className={style.tabClose} key={'x' + t.key}
+        className={style.tabClose}
         onClick={(e) => { e.stopPropagation(); closeTab(t.tab.key) }}></div>
     </div>
   }

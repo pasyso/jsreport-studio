@@ -50,17 +50,38 @@ reducer.handleAction(ActionTypes.ACTIVATE_TAB, (state, action) => {
 })
 
 reducer.handleAction(EntityActionTypes.SAVE_NEW, (state, action) => {
-  let index = state.tabs.indexOf(state.tabs.filter((t) => t.key === action.oldId)[0])
-  const tab = Object.assign({}, state.tabs[index])
-  tab.key = action.entity._id
-  tab._id = tab.key
+  let indexMap = {}
+  let indexes = []
+  let tabs = []
+
+  // this code is necessary to support updating header/footer templates
+  let modTabs = state.tabs.filter((t, idx) => {
+    const keepItem = (t._id === action.oldId)
+
+    if (keepItem) {
+      indexes.push(idx)
+      indexMap[idx] = indexes.length - 1
+    }
+
+    return keepItem
+  }).map((tab) => {
+    return Object.assign({}, tab, {
+      _id: action.entity._id,
+      key: tab.key.replace(action.oldId, action.entity._id)
+    })
+  })
+
+  state.tabs.forEach(function (tab, idx) {
+    if (indexes.indexOf(idx) !== -1) {
+      return tabs.push(modTabs[indexMap[idx]])
+    }
+
+    tabs.push(tab)
+  })
 
   return {
     ...state,
-    tabs: [
-      ...state.tabs.slice(0, index),
-      tab,
-      ...state.tabs.slice(index + 1)],
+    tabs: tabs,
     activeTabKey: action.entity._id,
     lastActiveTemplateKey: state.lastActiveTemplateKey === action.oldId ? action.entity._id : state.lastActiveTemplateKey
   }
