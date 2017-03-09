@@ -33,7 +33,7 @@ export default class Modal extends Component {
       {(this.componentOrText && typeof this.componentOrText !== 'string') ? React.createElement(this.componentOrText, {
         close: () => this.close(),
         options: this.options || this.props.options
-      }) : <div dangerouslySetInnerHTML={{ __html: this.componentKeyOrText || this.props.text }} /> }</div>)
+      }) : <div dangerouslySetInnerHTML={{ __html: this.componentOrText || this.props.text }} /> }</div>)
   }
 
   open (componentOrText, options) {
