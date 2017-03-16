@@ -1,6 +1,6 @@
 import React from 'react'
 
-export default React.createClass({
+const Pane = React.createClass({
   getInitialState () {
     return {}
   },
@@ -27,8 +27,9 @@ export default React.createClass({
 
     style.minHeight = 0
     style.minWidth = 0
-    //console.log('style', style.width, style.flex)
 
     return (<div className={classes.join(' ')} style={style}>{this.props.children}</div>)
   }
 })
+
+export default Pane

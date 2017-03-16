@@ -1,6 +1,6 @@
 import React from 'react'
 
-export default React.createClass({
+const Resizer = React.createClass({
 
   onMouseDown (event) {
     if (!this.props.collapsed) {
@@ -15,11 +15,20 @@ export default React.createClass({
     return (
       <div className={classes.join(' ') + (collapsed ? ' collapsed' : '')} onMouseDown={this.onMouseDown}>
         <div className='resizer-line'></div>
-        {collapsed
-          ? <div className='pane-holder' onClick={(e) => collapse(false)}>{collapsedText}</div>
-          : <div className={'docker ' + (collapsable === 'first' ? 'left' : '')}
-                 onClick={(e) => collapse(true)}><i className={'fa ' + (collapsable === 'first' ? 'fa-long-arrow-left' : 'fa-long-arrow-right')}></i></div>
-        }
+        {collapsed ? (
+          <div className='pane-holder' onClick={(e) => collapse(false)}>
+            {collapsedText}
+          </div>
+        ) : (
+          <div
+            className={'docker ' + (collapsable === 'first' ? 'left' : '')}
+            onClick={(e) => collapse(true)}
+          >
+            <i className={'fa ' + (collapsable === 'first' ? 'fa-long-arrow-left' : 'fa-long-arrow-right')}></i>
+          </div>
+        )}
       </div>)
   }
 })
+
+export default Resizer
