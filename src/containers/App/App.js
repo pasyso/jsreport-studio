@@ -60,7 +60,7 @@ export default class App extends Component {
     loaded: PropTypes.bool
   };
 
-  constructor(props) {
+  constructor (props) {
     super(props)
 
     this.openModal = this.openModal.bind(this)
@@ -123,7 +123,10 @@ export default class App extends Component {
 
   handleSplitChanged () {
     triggerSplitResize()
-    this.refs.preview.resizeStarted()
+
+    if (this.refs.preview) {
+      this.refs.preview.resizeStarted()
+    }
   }
 
   openStartup () {
@@ -141,7 +144,9 @@ export default class App extends Component {
   }
 
   handleSplitDragFinished () {
-    this.refs.preview.resizeEnded()
+    if (this.refs.preview) {
+      this.refs.preview.resizeEnded()
+    }
   }
 
   renderEntityTree () {
@@ -250,8 +255,11 @@ export default class App extends Component {
                     activeTabKey={activeTabKey} activateTab={activateTab} tabs={tabsWithEntities}
                     closeTab={(k) => this.closeTab(k)} />
                   <SplitPane
-                    collapsedText='preview' collapsable='second'
-                    onChange={() => this.handleSplitChanged()} onDragFinished={() => this.handleSplitDragFinished()}
+                    collapsedText='preview'
+                    collapsable='second'
+                    undockeable
+                    onChange={() => this.handleSplitChanged()}
+                    onDragFinished={() => this.handleSplitDragFinished()}
                     resizerClassName='resizer'>
                     <EditorTabs
                       activeTabKey={activeTabKey} onUpdate={(v) => groupedUpdate(v)} tabs={tabsWithEntities} />

@@ -3,6 +3,7 @@
 .resizer {
   width: 11px;
   display: flex;
+  position: relative;
   margin: 0 -5px;
 }
 
@@ -89,5 +90,3 @@
   padding-top: 1rem;
   writing-mode: vertical-lr;
 }
-
-

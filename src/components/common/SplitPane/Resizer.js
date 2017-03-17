@@ -9,22 +9,46 @@ const Resizer = React.createClass({
   },
 
   render () {
-    const {split, className, collapsed, collapse, collapsedText, collapsable} = this.props
+    const {
+      split,
+      className,
+      collapsed,
+      collapse,
+      collapsedText,
+      collapsable,
+      undocked,
+      undockeable
+    } = this.props
     const classes = ['Resizer', split, className]
 
     return (
       <div className={classes.join(' ') + (collapsed ? ' collapsed' : '')} onMouseDown={this.onMouseDown}>
         <div className='resizer-line'></div>
         {collapsed ? (
-          <div className='pane-holder' onClick={(e) => collapse(false)}>
+          <div className='pane-holder' onClick={(e) => collapse(false, undocked ? false : null)}>
+            {undockeable && undocked && (
+              <span>
+                <i className={'fa fa-window-maximize'}></i>
+                {' '}
+              </span>
+            )}
             {collapsedText}
           </div>
         ) : (
           <div
             className={'docker ' + (collapsable === 'first' ? 'left' : '')}
-            onClick={(e) => collapse(true)}
+            onClick={(e) => collapse(true, null)}
           >
             <i className={'fa ' + (collapsable === 'first' ? 'fa-long-arrow-left' : 'fa-long-arrow-right')}></i>
+          </div>
+        )}
+        {!collapsed && undockeable && (
+          <div
+            className={'docker ' + (collapsable === 'first' ? 'left' : '')}
+            style={{ top: '35px' }}
+            onClick={(e) => collapse(true, true)}
+          >
+            <i className={'fa fa-window-restore'}></i>
           </div>
         )}
       </div>)

@@ -10,6 +10,10 @@ export default class SplitPane extends Component {
       active: false,
       resized: false
     }
+
+    this.childWindow = null
+
+    this.collapse = this.collapse.bind(this)
     this.onMouseDown = this.onMouseDown.bind(this)
     this.onMouseMove = this.onMouseMove.bind(this)
     this.onMouseUp = this.onMouseUp.bind(this)
@@ -32,6 +36,8 @@ export default class SplitPane extends Component {
     minSize: 50,
     allowResize: true,
     rimary: 'first',
+    collapsable: 'second',
+    undockeable: false,
     defaultSize: '50%'
   }
 
@@ -43,7 +49,6 @@ export default class SplitPane extends Component {
 
   componentWillReceiveProps (props) {
   }
-
 
   setSize (props, state) {
     const ref = this.props.primary === 'first' ? this.refs.pane1 : this.refs.pane2
@@ -144,41 +149,124 @@ export default class SplitPane extends Component {
     }
   }
 
-  collapse (v) {
+  openWindow (title, opts) {
+    let dualScreenLeft = window.screenLeft != null ? window.screenLeft : window.screen.left
+    let dualScreenTop = window.screenTop != null ? window.screenTop : window.screen.top
+
+    let width = window.innerWidth ? window.innerWidth : document.documentElement.clientWidth ? document.documentElement.clientWidth : window.screen.width
+    let height = window.innerHeight ? window.innerHeight : document.documentElement.clientHeight ? document.documentElement.clientHeight : window.screen.height
+    let windowWidth = width / 2
+    let windowHeight = height / 1.3
+
+    let left = ((width / 2) - (windowWidth / 2)) + dualScreenLeft
+    let top = ((height / 2) - (windowHeight / 2)) + dualScreenTop
+
+    opts.top = top
+    opts.left = left
+    opts.width = windowWidth
+    opts.height = windowHeight
+
+    let windowOpts = (
+      Object.keys(opts)
+      .map((opt) => `${opt}=${typeof opts[opt] === 'boolean' ? (opts[opt] ? 'yes' : 'no') : opts[opt]}`)
+      .join(',')
+    )
+
+    let nWindow = window.open(
+      '',
+      'previewFrame',
+      windowOpts
+    )
+
+    nWindow.document.title = title
+
+    if (window.focus) {
+      nWindow.focus()
+    }
+
+    return nWindow
+  }
+
+  collapse (v, undocked) {
+    const { undockeable } = this.props
     let ref1 = this.props.collapsable === 'first' ? this.refs.pane2 : this.refs.pane1
     const ref2 = this.props.collapsable === 'first' ? this.refs.pane1 : this.refs.pane2
+    let stateToUpdate
 
     if (!v) {
-      ref1.setState({
-        size: this.lastSize
-      })
+      if (ref1) {
+        ref1.setState({
+          size: this.lastSize
+        })
+      }
 
-      ref2.setState({
-        size: undefined
-      })
+      if (ref2) {
+        ref2.setState({
+          size: undefined
+        })
+      }
 
-      this.setState({
+      stateToUpdate = {
         resized: true,
         collapsed: v,
         draggedSize: this.lastSize,
-        position: this.lastSize
-      })
+        position: this.lastSize,
+        undocked: undocked
+      }
+
+      if (undockeable && undocked === false) {
+        if (this.childWindow) {
+          this.childWindow.close()
+        }
+
+        this.childWindow = null
+      }
+
+      this.setState(stateToUpdate)
     } else {
       this.lastSize = ref1.state.size
-      ref1.setState({
-        size: undefined
-      })
 
-      ref2.setState({
-        size: 0
-      })
+      if (ref1) {
+        ref1.setState({
+          size: undefined
+        })
+      }
 
-      this.setState({
+      if (ref2) {
+        ref2.setState({
+          size: 0
+        })
+      }
+
+      stateToUpdate = {
         collapsed: v,
         resized: true,
         draggedSize: undefined,
-        position: undefined
-      })
+        position: undefined,
+        undocked: undocked
+      }
+
+      if (undockeable && undocked === true) {
+        let windowOpts = {
+          directories: false,
+          toolbar: false,
+          titlebar: false,
+          location: false,
+          copyhistory: false,
+          status: false,
+          menubar: false,
+          scrollbars: true,
+          resizable: true
+        }
+
+        this.setState(stateToUpdate, function () {
+          // opening the window when setState is done..
+          // giving it the chance to clear the previous iframe
+          this.childWindow = this.openWindow('jsreport preview', windowOpts)
+        })
+      } else {
+        this.setState(stateToUpdate)
+      }
     }
 
     if (typeof this.props.onDragFinished === 'function') {
@@ -186,9 +274,35 @@ export default class SplitPane extends Component {
     }
   }
 
+  renderPane (type, pane) {
+    const { collapsable, undockeable } = this.props
+    const { undocked } = this.state
+
+    if (collapsable === type) {
+      if (!undockeable) {
+        return pane
+      }
+
+      if (undocked) {
+        return null
+      }
+
+      return pane
+    } else {
+      return pane
+    }
+  }
+
   render () {
-    const {split, allowResize, resizerClassName, collapsedText, collapsable} = this.props
-    const { collapsed } = this.state
+    const {
+      split,
+      allowResize,
+      resizerClassName,
+      collapsedText,
+      collapsable,
+      undockeable
+    } = this.props
+    const { collapsed, undocked } = this.state
     let disabledClass = allowResize ? '' : 'disabled'
 
     let style = {
@@ -218,12 +332,27 @@ export default class SplitPane extends Component {
 
     return (
       <div className={classes.join(' ')} style={style} ref='splitPane'>
-        <Pane ref='pane1' key='pane1' className='Pane1' split={split}>{children[0]}</Pane>
+        {this.renderPane(
+          'first',
+          <Pane ref='pane1' key='pane1' className='Pane1' split={split}>{children[0]}</Pane>
+        )}
         <Resizer
-          ref='resizer' key='resizer' collapsable={collapsable} collapsedText={collapsedText}
+          ref='resizer'
+          key='resizer'
+          collapsable={collapsable}
+          collapsedText={collapsedText}
           className={disabledClass + ' ' + resizerClassName}
-          onMouseDown={this.onMouseDown} collapsed={collapsed} split={split} collapse={(v) => this.collapse(v)} />
-        <Pane ref='pane2' key='pane2' className='Pane2' split={split}>{children[1]}</Pane>
+          onMouseDown={this.onMouseDown}
+          collapsed={collapsed}
+          split={split}
+          collapse={this.collapse}
+          undockeable={undockeable}
+          undocked={undocked}
+        />
+        {this.renderPane(
+          'second',
+          <Pane ref='pane2' key='pane2' className='Pane2' split={split}>{children[1]}</Pane>
+        )}
       </div>
     )
   }
