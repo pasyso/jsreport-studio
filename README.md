@@ -4,7 +4,7 @@
 
 ![studio](http://jsreport.net/img/jsreport-studio.gif)
 
-##Studio development
+## Studio development
 
 ```sh
 git clone
@@ -12,7 +12,7 @@ npm install jsreport
 npm start
 ```
 
-##Studio extension development
-The documentation can be found [here](http://jsreport.net/learn/extending-studio).
+## Studio extension development
+The documentation can be found [here](https://jsreport.net/learn/extending-studio).
 
 
