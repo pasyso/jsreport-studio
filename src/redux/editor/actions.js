@@ -189,7 +189,7 @@ export function remove () {
   }
 }
 
-export function run (target, undockMode) {
+export function run (target) {
   return async function (dispatch, getState) {
     let template = Object.assign({}, selectors.getLastActiveTemplate(getState()))
     let request = { template: template, options: {} }
@@ -197,11 +197,7 @@ export function run (target, undockMode) {
     await Promise.all([...previewListeners.map((l) => l(request, entities, target))])
     dispatch({ type: ActionTypes.RUN })
 
-    if (undockMode) {
-      preview(request, 'previewFrame-' + template._id)
-    } else {
-      preview(request, target || 'previewFrame')
-    }
+    preview(request, target || 'previewFrame')
   }
 }
 

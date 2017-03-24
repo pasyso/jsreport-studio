@@ -102,8 +102,9 @@ export default class App extends Component {
       // using the native close functionality of the browser tab,
       // if we don't try to open the window again we will have inconsistent references and
       // we can not close all preview tabs when un-collapsing the main pane preview again
-      if (undockMode && this.refs.previewPane && !target) {
-        this.previews[request.template._id] = this.refs.previewPane.openWindow(this.getPreviewWindowOptions())
+      if (undockMode && this.refs.previewPane && target && target.indexOf(request.template.shortid) !== -1) {
+        let previewWinOpts = this.getPreviewWindowOptions()
+        this.previews[previewWinOpts.id] = this.refs.previewPane.openWindow(previewWinOpts)
       }
     })
 
@@ -130,7 +131,14 @@ export default class App extends Component {
       }
     }, 1000)
 
-    this.props.run(target, undockMode)
+    if (undockMode) {
+      let previewWindowOpts = this.getPreviewWindowOptions()
+
+      this.props.run(previewWindowOpts.name)
+      return
+    }
+
+    this.props.run(target)
   }
 
   openModal (componentOrText, options) {
@@ -141,8 +149,8 @@ export default class App extends Component {
     const { activeTabWithEntity } = this.props
 
     return {
-      id: activeTabWithEntity.entity._id,
-      name: 'previewFrame-' + activeTabWithEntity.entity._id,
+      id: activeTabWithEntity.entity.shortid,
+      name: 'previewFrame-' + activeTabWithEntity.entity.shortid,
       title: activeTabWithEntity.entity.name || 'report',
       tab: true
     }
