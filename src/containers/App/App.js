@@ -1,3 +1,4 @@
+import Promise from 'bluebird'
 import React, {Component, PropTypes} from 'react'
 import {connect} from 'react-redux'
 import { actions, selectors } from 'redux/editor'
@@ -17,6 +18,7 @@ import NewEntityModal from '../../components/Modals/NewEntityModal.js'
 import DeleteConfirmationModal from '../../components/Modals/DeleteConfirmationModal.js'
 import CloseConfirmationModal from '../../components/Modals/CloseConfirmationModal.js'
 import RenameModal from '../../components/Modals/RenameModal.js'
+import RestoreDockConfirmationModal from '../../components/Modals/RestoreDockConfirmationModal.js'
 import * as progress from '../../redux/progress'
 import cookies from 'js-cookie'
 import {
@@ -43,7 +45,8 @@ const progressActions = progress.actions
   canReformat: selectors.canReformat(state),
   tabsWithEntities: selectors.getTabWithEntities(state),
   activeEntity: selectors.getActiveEntity(state),
-  lastActiveTemplate: selectors.getLastActiveTemplate(state)
+  lastActiveTemplate: selectors.getLastActiveTemplate(state),
+  undockMode: state.editor.undockMode
 }), { ...actions, ...progressActions })
 export default class App extends Component {
   static contextTypes = {
@@ -63,7 +66,14 @@ export default class App extends Component {
   constructor (props) {
     super(props)
 
+    this.previews = {}
+
     this.openModal = this.openModal.bind(this)
+    this.handlePreviewCollapsing = this.handlePreviewCollapsing.bind(this)
+    this.handlePreviewDocking = this.handlePreviewDocking.bind(this)
+    this.handlePreviewUndocking = this.handlePreviewUndocking.bind(this)
+    this.handlePreviewUndocked = this.handlePreviewUndocked.bind(this)
+    this.isPreviewUndockeable = this.isPreviewUndockeable.bind(this)
   }
 
   componentDidMount () {
@@ -75,7 +85,7 @@ export default class App extends Component {
 
     registerPreviewHandler((src) => {
       if (!src) {
-        this.handleRun()
+        this.handleRun(undefined, this.props.undockMode)
       }
     })
 
@@ -95,7 +105,7 @@ export default class App extends Component {
     this.props.updateHistory()
   }
 
-  async handleRun (target) {
+  async handleRun (target, undockMode) {
     this.props.start()
     cookies.set('render-complete', false)
 
@@ -106,7 +116,8 @@ export default class App extends Component {
       }
     }, 1000)
 
-    this.props.run(target)
+
+    this.props.run(target, undockMode)
   }
 
   openModal (componentOrText, options) {
@@ -147,6 +158,66 @@ export default class App extends Component {
     if (this.refs.preview) {
       this.refs.preview.resizeEnded()
     }
+  }
+
+  isPreviewUndockeable () {
+    const { activeTabWithEntity } = this.props
+
+    return (
+      activeTabWithEntity &&
+      activeTabWithEntity.entity &&
+      activeTabWithEntity.entity.__entitySet === 'templates'
+    )
+  }
+
+  handlePreviewCollapsing (collapsed) {
+    if (!this.props.undockMode) {
+      return true
+    }
+
+    if (!collapsed) {
+      return new Promise((resolve) => {
+        this.openModal(RestoreDockConfirmationModal, {
+          onResponse: (response) => resolve(response)
+        })
+      })
+    }
+
+    return true
+  }
+
+  handlePreviewDocking () {
+    if (Object.keys(this.previews).length) {
+      Object.keys(this.previews)
+      .forEach((id) => this.previews[id] && this.previews[id].close())
+    }
+
+    this.previews = {}
+  }
+
+  handlePreviewUndocking () {
+    const { activeTabWithEntity } = this.props
+
+    if (
+      activeTabWithEntity &&
+      activeTabWithEntity.entity &&
+      activeTabWithEntity.entity.__entitySet === 'templates'
+    ) {
+      this.props.activateUndockMode()
+
+      return {
+        id: activeTabWithEntity.entity._id,
+        name: 'previewFrame-' + activeTabWithEntity.entity._id,
+        title: 'preview ' + activeTabWithEntity.entity.name,
+        tab: true
+      }
+    }
+
+    return false
+  }
+
+  handlePreviewUndocked (id, previewWindow) {
+    this.previews[id] = previewWindow
   }
 
   renderEntityTree () {
@@ -219,7 +290,8 @@ export default class App extends Component {
       activeEntity,
       update,
       groupedUpdate,
-      reformat
+      reformat,
+      undockMode
     } = this.props
 
     return (
@@ -233,7 +305,7 @@ export default class App extends Component {
               canRun={canRun} canSave={canSave} canSaveAll={canSaveAll} onSave={() => this.save()}
               onSaveAll={() => this.saveAll()} isPending={isPending} activeTab={activeTabWithEntity} onUpdate={update}
               canReformat={canReformat} onReformat={reformat}
-              onRun={(target) => this.handleRun(target)} openStartup={() => this.openStartup()} />
+              onRun={(target) => this.handleRun(target, undockMode)} openStartup={() => this.openStartup()} />
 
             <div className='block'>
               <SplitPane
@@ -257,8 +329,12 @@ export default class App extends Component {
                   <SplitPane
                     collapsedText='preview'
                     collapsable='second'
-                    undockeable
+                    undockeable={this.isPreviewUndockeable}
                     onChange={() => this.handleSplitChanged()}
+                    onCollapsing={this.handlePreviewCollapsing}
+                    onDocking={this.handlePreviewDocking}
+                    onUndocking={this.handlePreviewUndocking}
+                    onUndocked={this.handlePreviewUndocked}
                     onDragFinished={() => this.handleSplitDragFinished()}
                     resizerClassName='resizer'>
                     <EditorTabs

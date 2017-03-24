@@ -189,14 +189,30 @@ export function remove () {
   }
 }
 
-export function run (target) {
+export function run (target, undockMode) {
   return async function (dispatch, getState) {
     let template = Object.assign({}, selectors.getLastActiveTemplate(getState()))
     let request = { template: template, options: {} }
     const entities = Object.assign({}, getState().entities)
     await Promise.all([...previewListeners.map((l) => l(request, entities))])
     dispatch({ type: ActionTypes.RUN })
-    preview(request, target || 'previewFrame')
+
+    if (undockMode) {
+      preview(request, 'previewFrame-' + template._id)
+    } else {
+      preview(request, target || 'previewFrame')
+    }
   }
 }
 
+export function activateUndockMode () {
+  return {
+    type: ActionTypes.ACTIVATE_UNDOCK_MODE
+  }
+}
+
+export function desactivateUndockMode () {
+  return {
+    type: ActionTypes.DESACTIVATE_UNDOCK_MODE
+  }
+}

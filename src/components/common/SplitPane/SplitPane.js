@@ -1,5 +1,7 @@
+import Promise from 'bluebird'
 import React, {Component} from 'react'
 import ReactDOM from 'react-dom'
+import assign from 'lodash/assign'
 import Pane from './Pane'
 import Resizer from './Resizer'
 
@@ -10,8 +12,6 @@ export default class SplitPane extends Component {
       active: false,
       resized: false
     }
-
-    this.childWindow = null
 
     this.collapse = this.collapse.bind(this)
     this.onMouseDown = this.onMouseDown.bind(this)
@@ -28,7 +28,11 @@ export default class SplitPane extends Component {
     resizerClassName: React.PropTypes.string,
     split: React.PropTypes.oneOf(['vertical', 'horizontal']),
     onDragStarted: React.PropTypes.func,
-    onDragFinished: React.PropTypes.func
+    onDragFinished: React.PropTypes.func,
+    onCollapsing: React.PropTypes.func,
+    onDocking: React.PropTypes.func,
+    onUndocking: React.PropTypes.func,
+    onUndocked: React.PropTypes.func
   }
 
   static defaultProps = {
@@ -149,36 +153,56 @@ export default class SplitPane extends Component {
     }
   }
 
-  openWindow (title, opts) {
-    let dualScreenLeft = window.screenLeft != null ? window.screenLeft : window.screen.left
-    let dualScreenTop = window.screenTop != null ? window.screenTop : window.screen.top
+  openWindow (opts) {
+    let defaultWindowOpts = {
+      directories: false,
+      toolbar: false,
+      titlebar: false,
+      location: false,
+      copyhistory: false,
+      status: false,
+      menubar: false,
+      scrollbars: true,
+      resizable: true
+    }
 
-    let width = window.innerWidth ? window.innerWidth : document.documentElement.clientWidth ? document.documentElement.clientWidth : window.screen.width
-    let height = window.innerHeight ? window.innerHeight : document.documentElement.clientHeight ? document.documentElement.clientHeight : window.screen.height
-    let windowWidth = width / 2
-    let windowHeight = height / 1.3
+    let windowOptsStr
 
-    let left = ((width / 2) - (windowWidth / 2)) + dualScreenLeft
-    let top = ((height / 2) - (windowHeight / 2)) + dualScreenTop
+    if (!opts.tab) {
+      let windowOpts = assign({}, defaultWindowOpts, opts.windowOpts)
 
-    opts.top = top
-    opts.left = left
-    opts.width = windowWidth
-    opts.height = windowHeight
+      let dualScreenLeft = window.screenLeft != null ? window.screenLeft : window.screen.left
+      let dualScreenTop = window.screenTop != null ? window.screenTop : window.screen.top
 
-    let windowOpts = (
-      Object.keys(opts)
-      .map((opt) => `${opt}=${typeof opts[opt] === 'boolean' ? (opts[opt] ? 'yes' : 'no') : opts[opt]}`)
-      .join(',')
-    )
+      let width = window.innerWidth ? window.innerWidth : document.documentElement.clientWidth ? document.documentElement.clientWidth : window.screen.width
+      let height = window.innerHeight ? window.innerHeight : document.documentElement.clientHeight ? document.documentElement.clientHeight : window.screen.height
+      let windowWidth = width / 2
+      let windowHeight = height / 1.3
+
+      let left = ((width / 2) - (windowWidth / 2)) + dualScreenLeft
+      let top = ((height / 2) - (windowHeight / 2)) + dualScreenTop
+
+      windowOpts.top = top
+      windowOpts.left = left
+      windowOpts.width = windowWidth
+      windowOpts.height = windowHeight
+
+      windowOptsStr = (
+        Object.keys(windowOpts)
+        .map((opt) => `${opt}=${typeof windowOpts[opt] === 'boolean' ? (windowOpts[opt] ? 'yes' : 'no') : windowOpts[opt]}`)
+        .join(',')
+      )
+    }
 
     let nWindow = window.open(
-      '',
-      'previewFrame',
-      windowOpts
+      opts.url || '',
+      opts.name || '_blank',
+      opts.tab ? undefined : windowOptsStr
     )
 
-    nWindow.document.title = title
+    if (opts.title) {
+      nWindow.document.title = opts.title
+    }
 
     if (window.focus) {
       nWindow.focus()
@@ -187,95 +211,110 @@ export default class SplitPane extends Component {
     return nWindow
   }
 
-  collapse (v, undocked) {
-    const { undockeable } = this.props
-    let ref1 = this.props.collapsable === 'first' ? this.refs.pane2 : this.refs.pane1
-    const ref2 = this.props.collapsable === 'first' ? this.refs.pane1 : this.refs.pane2
-    let stateToUpdate
+  collapse (v, undockeable, undocked) {
+    let shouldCollapseAsync
 
-    if (!v) {
-      if (ref1) {
-        ref1.setState({
-          size: this.lastSize
-        })
+    shouldCollapseAsync = (this.props.onCollapsing != null) ? this.props.onCollapsing(v) : true
+
+    Promise.resolve(shouldCollapseAsync)
+    .then((shouldCollapse) => {
+      let ref1 = this.props.collapsable === 'first' ? this.refs.pane2 : this.refs.pane1
+      const ref2 = this.props.collapsable === 'first' ? this.refs.pane1 : this.refs.pane2
+
+      let stateToUpdate
+
+      if (!shouldCollapse) {
+        return
       }
 
-      if (ref2) {
-        ref2.setState({
-          size: undefined
-        })
-      }
-
-      stateToUpdate = {
-        resized: true,
-        collapsed: v,
-        draggedSize: this.lastSize,
-        position: this.lastSize,
-        undocked: undocked
-      }
-
-      if (undockeable && undocked === false) {
-        if (this.childWindow) {
-          this.childWindow.close()
+      if (!v) {
+        if (ref1) {
+          ref1.setState({
+            size: this.lastSize
+          })
         }
 
-        this.childWindow = null
-      }
-
-      this.setState(stateToUpdate)
-    } else {
-      this.lastSize = ref1.state.size
-
-      if (ref1) {
-        ref1.setState({
-          size: undefined
-        })
-      }
-
-      if (ref2) {
-        ref2.setState({
-          size: 0
-        })
-      }
-
-      stateToUpdate = {
-        collapsed: v,
-        resized: true,
-        draggedSize: undefined,
-        position: undefined,
-        undocked: undocked
-      }
-
-      if (undockeable && undocked === true) {
-        let windowOpts = {
-          directories: false,
-          toolbar: false,
-          titlebar: false,
-          location: false,
-          copyhistory: false,
-          status: false,
-          menubar: false,
-          scrollbars: true,
-          resizable: true
+        if (ref2) {
+          ref2.setState({
+            size: undefined
+          })
         }
 
-        this.setState(stateToUpdate, function () {
-          // opening the window when setState is done..
-          // giving it the chance to clear the previous iframe
-          this.childWindow = this.openWindow('jsreport preview', windowOpts)
-        })
-      } else {
+        stateToUpdate = {
+          resized: true,
+          collapsed: v,
+          draggedSize: this.lastSize,
+          position: this.lastSize,
+          undocked: undocked
+        }
+
+        if (undockeable && undocked === false) {
+          this.props.onDocking && this.props.onDocking()
+        }
+
         this.setState(stateToUpdate)
-      }
-    }
+      } else {
+        this.lastSize = ref1.state.size
 
-    if (typeof this.props.onDragFinished === 'function') {
-      this.props.onDragFinished()
-    }
+        stateToUpdate = {
+          collapsed: v,
+          resized: true,
+          draggedSize: undefined,
+          position: undefined,
+          undocked: undocked
+        }
+
+        if (undockeable && undocked === true) {
+          let windowOpts = (this.props.onUndocking != null) ? this.props.onUndocking() : null
+
+          if (!windowOpts) {
+            return
+          }
+
+          if (ref1) {
+            ref1.setState({
+              size: undefined
+            })
+          }
+
+          if (ref2) {
+            ref2.setState({
+              size: 0
+            })
+          }
+
+          this.setState(stateToUpdate, () => {
+            // opening the window when setState is done..
+            // giving it the chance to clear the previous iframe
+            const nWindow = this.openWindow(windowOpts)
+
+            this.props.onUndocked && this.props.onUndocked(windowOpts.id, nWindow)
+          })
+        } else {
+          if (ref1) {
+            ref1.setState({
+              size: undefined
+            })
+          }
+
+          if (ref2) {
+            ref2.setState({
+              size: 0
+            })
+          }
+
+          this.setState(stateToUpdate)
+        }
+      }
+
+      if (typeof this.props.onDragFinished === 'function') {
+        this.props.onDragFinished()
+      }
+    })
   }
 
-  renderPane (type, pane) {
-    const { collapsable, undockeable } = this.props
+  renderPane (type, undockeable, pane) {
+    const { collapsable } = this.props
     const { undocked } = this.state
 
     if (collapsable === type) {
@@ -329,11 +368,13 @@ export default class SplitPane extends Component {
 
     const children = this.props.children
     const classes = ['SplitPane', this.props.className, split, disabledClass]
+    const undockSupported = (typeof undockeable === 'function' ? undockeable() : undockeable)
 
     return (
       <div className={classes.join(' ')} style={style} ref='splitPane'>
         {this.renderPane(
           'first',
+          undockSupported,
           <Pane ref='pane1' key='pane1' className='Pane1' split={split}>{children[0]}</Pane>
         )}
         <Resizer
@@ -346,11 +387,12 @@ export default class SplitPane extends Component {
           collapsed={collapsed}
           split={split}
           collapse={this.collapse}
-          undockeable={undockeable}
+          undockeable={undockSupported}
           undocked={undocked}
         />
         {this.renderPane(
           'second',
+          undockSupported,
           <Pane ref='pane2' key='pane2' className='Pane2' split={split}>{children[1]}</Pane>
         )}
       </div>

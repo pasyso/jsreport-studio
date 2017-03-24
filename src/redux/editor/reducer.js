@@ -5,7 +5,8 @@ import createReducer from '../createReducer.js'
 const reducer = createReducer({
   tabs: [],
   activeTabKey: null,
-  lastActiveTemplateKey: null
+  lastActiveTemplateKey: null,
+  undockMode: false
 })
 export default reducer.export()
 
@@ -108,5 +109,19 @@ reducer.handleAction(EntityActionTypes.REPLACE, (state, action) => {
     tabs: tabs,
     activeTabKey: (state.activeTabKey && state.activeTabKey.indexOf(action.oldId) === 0) ? state.activeTabKey.replace(action.oldId, action.entity._id) : state.activeTabKey,
     lastActiveTemplateKey: state.lastActiveTemplateKey === action.oldId ? action.entity._id : state.lastActiveTemplateKey
+  }
+})
+
+reducer.handleAction(ActionTypes.ACTIVATE_UNDOCK_MODE, (state, action) => {
+  return {
+    ...state,
+    undockMode: true
+  }
+})
+
+reducer.handleAction(ActionTypes.DESACTIVATE_UNDOCK_MODE, (state, action) => {
+  return {
+    ...state,
+    undockMode: false
   }
 })

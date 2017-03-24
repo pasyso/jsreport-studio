@@ -25,7 +25,7 @@ const Resizer = React.createClass({
       <div className={classes.join(' ') + (collapsed ? ' collapsed' : '')} onMouseDown={this.onMouseDown}>
         <div className='resizer-line'></div>
         {collapsed ? (
-          <div className='pane-holder' onClick={(e) => collapse(false, undocked ? false : null)}>
+          <div className='pane-holder' onClick={(e) => collapse(false, undockeable, undocked ? false : null)}>
             {undockeable && undocked && (
               <span>
                 <i className={'fa fa-window-maximize'}></i>
@@ -37,7 +37,7 @@ const Resizer = React.createClass({
         ) : (
           <div
             className={'docker ' + (collapsable === 'first' ? 'left' : '')}
-            onClick={(e) => collapse(true, null)}
+            onClick={(e) => collapse(true, undockeable, null)}
           >
             <i className={'fa ' + (collapsable === 'first' ? 'fa-long-arrow-left' : 'fa-long-arrow-right')}></i>
           </div>
@@ -46,7 +46,7 @@ const Resizer = React.createClass({
           <div
             className={'docker ' + (collapsable === 'first' ? 'left' : '')}
             style={{ top: '35px' }}
-            onClick={(e) => collapse(true, true)}
+            onClick={(e) => collapse(true, undockeable, true)}
           >
             <i className={'fa fa-window-restore'}></i>
           </div>
