@@ -102,7 +102,7 @@ export default class App extends Component {
       // using the native close functionality of the browser tab,
       // if we don't try to open the window again we will have inconsistent references and
       // we can not close all preview tabs when un-collapsing the main pane preview again
-      if (undockMode) {
+      if (undockMode && this.refs.previewPane) {
         this.previews[request.template._id] = this.refs.previewPane.openWindow(this.getPreviewWindowOptions())
       }
     })
@@ -185,7 +185,12 @@ export default class App extends Component {
   }
 
   isPreviewUndockeable () {
-    const { activeTabWithEntity } = this.props
+    const { activeTabWithEntity, undockMode } = this.props
+
+    // if there is no tab open an we are in undock mode the pane is undockeable
+    if (!activeTabWithEntity && undockMode) {
+      return true
+    }
 
     return (
       activeTabWithEntity &&
