@@ -24,6 +24,7 @@ import cookies from 'js-cookie'
 import {
   triggerSplitResize,
   removeHandler,
+  previewListeners,
   registerPreviewHandler,
   entitySets,
   shouldOpenStartupPage,
@@ -93,6 +94,19 @@ export default class App extends Component {
       this.refs.leftPane.collapse(true)
     })
 
+    previewListeners.push((request) => {
+      const { undockMode } = this.props
+
+      // we need to try to open the window again to get a reference to any existing window
+      // created with the id, this is necessary because the window can be closed by the user
+      // using the native close functionality of the browser tab,
+      // if we don't try to open the window again we will have inconsistent references and
+      // we can not close all preview tabs when un-collapsing the main pane preview again
+      if (undockMode) {
+        this.previews[request.template._id] = this.refs.previewPane.openWindow(this.getPreviewWindowOptions())
+      }
+    })
+
     if (this.props.params.shortid) {
       this.props.openTab({ shortid: this.props.params.shortid, entitySet: this.props.params.entitySet })
       return
@@ -116,12 +130,22 @@ export default class App extends Component {
       }
     }, 1000)
 
-
     this.props.run(target, undockMode)
   }
 
   openModal (componentOrText, options) {
     this.refOpenModal(componentOrText, options)
+  }
+
+  getPreviewWindowOptions () {
+    const { activeTabWithEntity } = this.props
+
+    return {
+      id: activeTabWithEntity.entity._id,
+      name: 'previewFrame-' + activeTabWithEntity.entity._id,
+      title: 'preview ' + activeTabWithEntity.entity.name,
+      tab: true
+    }
   }
 
   save () {
@@ -205,12 +229,7 @@ export default class App extends Component {
     ) {
       this.props.activateUndockMode()
 
-      return {
-        id: activeTabWithEntity.entity._id,
-        name: 'previewFrame-' + activeTabWithEntity.entity._id,
-        title: 'preview ' + activeTabWithEntity.entity.name,
-        tab: true
-      }
+      return this.getPreviewWindowOptions()
     }
 
     return false
@@ -327,6 +346,7 @@ export default class App extends Component {
                     activeTabKey={activeTabKey} activateTab={activateTab} tabs={tabsWithEntities}
                     closeTab={(k) => this.closeTab(k)} />
                   <SplitPane
+                    ref='previewPane'
                     collapsedText='preview'
                     collapsable='second'
                     undockeable={this.isPreviewUndockeable}
