@@ -94,7 +94,7 @@ export default class App extends Component {
       this.refs.leftPane.collapse(true)
     })
 
-    previewListeners.push((request) => {
+    previewListeners.push((request, entities, target) => {
       const { undockMode } = this.props
 
       // we need to try to open the window again to get a reference to any existing window
@@ -102,7 +102,7 @@ export default class App extends Component {
       // using the native close functionality of the browser tab,
       // if we don't try to open the window again we will have inconsistent references and
       // we can not close all preview tabs when un-collapsing the main pane preview again
-      if (undockMode && this.refs.previewPane) {
+      if (undockMode && this.refs.previewPane && !target) {
         this.previews[request.template._id] = this.refs.previewPane.openWindow(this.getPreviewWindowOptions())
       }
     })
@@ -143,7 +143,7 @@ export default class App extends Component {
     return {
       id: activeTabWithEntity.entity._id,
       name: 'previewFrame-' + activeTabWithEntity.entity._id,
-      title: 'preview ' + activeTabWithEntity.entity.name,
+      title: activeTabWithEntity.entity.name || 'report',
       tab: true
     }
   }
@@ -216,6 +216,7 @@ export default class App extends Component {
   }
 
   handlePreviewDocking () {
+    // close all preview windows when docking
     if (Object.keys(this.previews).length) {
       Object.keys(this.previews)
       .forEach((id) => this.previews[id] && this.previews[id].close())
@@ -329,7 +330,7 @@ export default class App extends Component {
               canRun={canRun} canSave={canSave} canSaveAll={canSaveAll} onSave={() => this.save()}
               onSaveAll={() => this.saveAll()} isPending={isPending} activeTab={activeTabWithEntity} onUpdate={update}
               canReformat={canReformat} onReformat={reformat}
-              onRun={(target) => this.handleRun(target, undockMode)} openStartup={() => this.openStartup()} />
+              onRun={(target, ignoreUndockMode) => this.handleRun(target, ignoreUndockMode ? false : undockMode)} openStartup={() => this.openStartup()} />
 
             <div className='block'>
               <SplitPane

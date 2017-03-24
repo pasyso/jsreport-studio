@@ -194,7 +194,7 @@ export function run (target, undockMode) {
     let template = Object.assign({}, selectors.getLastActiveTemplate(getState()))
     let request = { template: template, options: {} }
     const entities = Object.assign({}, getState().entities)
-    await Promise.all([...previewListeners.map((l) => l(request, entities))])
+    await Promise.all([...previewListeners.map((l) => l(request, entities, target))])
     dispatch({ type: ActionTypes.RUN })
 
     if (undockMode) {
