@@ -251,6 +251,8 @@ export default class App extends Component {
 
   handlePreviewUndocked (id, previewWindow) {
     this.previews[id] = previewWindow
+
+    this.handleRun(undefined, this.props.undockMode)
   }
 
   renderEntityTree () {
