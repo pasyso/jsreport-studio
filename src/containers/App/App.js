@@ -195,8 +195,8 @@ export default class App extends Component {
   isPreviewUndockeable () {
     const { activeTabWithEntity, undockMode } = this.props
 
-    // if there is no tab open an we are in undock mode the pane is undockeable
-    if (!activeTabWithEntity && undockMode) {
+    // if we are in undock mode the pane return true
+    if (undockMode) {
       return true
     }
 
