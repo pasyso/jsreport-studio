@@ -1,9 +1,11 @@
+import { connect } from 'react-redux'
 import * as configuration from './lib/configuration.js'
 import TemplateProperties from './components/Properties/TemplateProperties.js'
 import EntityTree from './components/EntityTree/EntityTree.js'
 import EntityTreeInputSearch from './components/EntityTree/EntityTreeInputSearch.js'
 import Startup from './containers/Startup/Startup.js'
 import ApiModal from './components/Modals/ApiModal.js'
+import { openTab } from './redux/editor/actions'
 
 export default () => {
   configuration.propertiesComponents.push({
@@ -63,9 +65,22 @@ export default () => {
     <EntityTreeInputSearch {...props} />
   ))
 
-  configuration.toolbarComponents.settings.push(() => <div
-    onClick={() => configuration.modalHandler.open(ApiModal, { apiSpecs: configuration.apiSpecs })}>
-    <i className='fa fa-plug'></i> API</div>)
+  configuration.toolbarComponents.settings.push(connect(
+    undefined,
+    { openTab }
+  )((props) => (
+    <div
+      onClick={() => props.openTab({ key: 'StartupPage', editorComponentKey: 'startup', title: 'Startup' })}>
+      <i className='fa fa-home'></i> Startup page
+    </div>
+  )))
+
+  configuration.toolbarComponents.settings.push(() => (
+    <div
+      onClick={() => configuration.modalHandler.open(ApiModal, { apiSpecs: configuration.apiSpecs })}>
+      <i className='fa fa-plug'></i> API
+    </div>
+  ))
 
   configuration.initializeListeners.push(() => {
     configuration.entityTreeIconResolvers.push((entity) => {
