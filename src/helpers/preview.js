@@ -21,10 +21,15 @@ export default function (request, target) {
     request.options.download = true
   }
 
+  const templateName = request.template.name
   const mapForm = document.createElement('form')
+
   mapForm.target = target
   mapForm.method = 'POST'
-  mapForm.action = resolveUrl('/api/report')
+
+  // we set the template name in url just to show a title in the preview iframe, the name
+  // won't be using at all on server side logic
+  mapForm.action = templateName ? resolveUrl(`/api/report/${encodeURIComponent(templateName)}`) : resolveUrl('/api/report')
 
   function addBody (path, body) {
     if (body === undefined) {
@@ -57,4 +62,3 @@ export default function (request, target) {
 
   mapForm.submit()
 }
-
