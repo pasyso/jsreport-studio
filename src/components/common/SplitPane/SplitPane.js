@@ -200,10 +200,6 @@ export default class SplitPane extends Component {
       opts.tab ? undefined : windowOptsStr
     )
 
-    if (opts.title) {
-      nWindow.document.title = opts.title
-    }
-
     if (window.focus) {
       nWindow.focus()
     }

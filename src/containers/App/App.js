@@ -151,7 +151,6 @@ export default class App extends Component {
     return {
       id: activeTabWithEntity.entity.shortid,
       name: 'previewFrame-' + activeTabWithEntity.entity.shortid,
-      title: activeTabWithEntity.entity.name || 'report',
       tab: true
     }
   }
