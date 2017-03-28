@@ -83,7 +83,7 @@ reducer.handleAction(EntityActionTypes.SAVE_NEW, (state, action) => {
   return {
     ...state,
     tabs: tabs,
-    activeTabKey: action.entity._id,
+    activeTabKey: state.lastActiveTemplateKey === action.oldId ? action.entity._id : state.lastActiveTemplateKey,
     lastActiveTemplateKey: state.lastActiveTemplateKey === action.oldId ? action.entity._id : state.lastActiveTemplateKey
   }
 })
