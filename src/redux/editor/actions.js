@@ -145,7 +145,7 @@ export function saveAll () {
         type: ActionTypes.SAVE_STARTED
       })
 
-      await Promise.all(getState().editor.tabs.filter((t) => t.type === 'entity').map((t) => entities.actions.save(t._id)(dispatch, getState)))
+      await Promise.all(getState().editor.tabs.filter((t) => t.type === 'entity' && t.headerOrFooter == null).map((t) => entities.actions.save(t._id)(dispatch, getState)))
 
       dispatch({
         type: ActionTypes.SAVE_SUCCESS
