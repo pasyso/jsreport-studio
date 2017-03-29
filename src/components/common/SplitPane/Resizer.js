@@ -36,6 +36,7 @@ const Resizer = React.createClass({
           </div>
         ) : (
           <div
+            title='Minimize pane'
             className={'docker ' + (collapsable === 'first' ? 'left' : '')}
             onClick={(e) => collapse(true, undockeable, null)}
           >
@@ -44,6 +45,7 @@ const Resizer = React.createClass({
         )}
         {!collapsed && undockeable && (
           <div
+            title='Undock preview pane into extra browser tab'
             className={'docker ' + (collapsable === 'first' ? 'left' : '')}
             style={{ top: '35px' }}
             onClick={(e) => collapse(true, undockeable, true)}
