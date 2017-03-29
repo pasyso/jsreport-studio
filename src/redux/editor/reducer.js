@@ -83,10 +83,10 @@ reducer.handleAction(EntityActionTypes.SAVE_NEW, (state, action) => {
   return {
     ...state,
     tabs: tabs,
-    activeTabKey: state.lastActiveTemplateKey === action.oldId ? ((
+    activeTabKey: (state.lastActiveTemplateKey === action.oldId || state.activeTabKey === action.oldId) ? ((
       // looking if the last activeTabKey was a header/footer tab
       state.activeTabKey.indexOf(state.lastActiveTemplateKey) === 0 && state.activeTabKey !== state.lastActiveTemplateKey
-    ) ? state.activeTabKey.replace(action.oldId, action.entity._id) : action.entity._id) : state.lastActiveTemplateKey,
+    ) ? state.activeTabKey.replace(action.oldId, action.entity._id) : action.entity._id) : state.activeTabKey,
     lastActiveTemplateKey: state.lastActiveTemplateKey === action.oldId ? action.entity._id : state.lastActiveTemplateKey
   }
 })
