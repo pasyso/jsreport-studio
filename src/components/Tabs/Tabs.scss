@@ -20,6 +20,15 @@
 
 .tabTitle {
   flex: 0;
+  /*
+    flexbox workaround
+    some browsers (mostly Safari) needs to have
+    some properties defined explicitly to handle
+    auto sizing correctly
+  */
+  flex-basis: auto;
+  flex-shrink: 0;
+  /* end flexbox workaround */
   min-height: 1.7rem;
   white-space: nowrap;
   display:flex;
