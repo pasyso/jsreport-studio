@@ -2,10 +2,12 @@ require('babel-polyfill')
 
 // Webpack config for creating the production bundle.
 var path = require('path')
-var webpack = require('webpack')
+var jsreportStudioDev = require('jsreport-studio-dev')
 var CleanPlugin = require('clean-webpack-plugin')
 var strip = require('strip-loader')
 var HtmlWebpackPlugin = require('html-webpack-plugin')
+
+var webpack = jsreportStudioDev.deps.webpack
 
 var projectRootPath = path.resolve(__dirname, '../')
 var assetsPath = path.resolve(projectRootPath, './static/dist')

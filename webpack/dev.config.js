@@ -3,11 +3,13 @@ require('babel-polyfill')
 // Webpack config for development
 var fs = require('fs')
 var path = require('path')
-var webpack = require('webpack')
+var jsreportStudioDev = require('jsreport-studio-dev')
 var HtmlWebpackPlugin = require('html-webpack-plugin')
 var assetsPath = path.resolve(__dirname, '../static/dist')
 var babelrc = fs.readFileSync(path.join(__dirname, '../.babelrc'))
 var babelrcObject = {}
+
+var webpack = jsreportStudioDev.deps.webpack
 
 try {
   babelrcObject = JSON.parse(babelrc)
