@@ -72,7 +72,7 @@ reactTransform[1].transforms.push({
 
 module.exports = function (extensions) {
   return {
-    devtool: 'cheap-eval-source-map',
+    devtool: 'eval-source-map',
     context: path.resolve(__dirname, '..'),
     entry: {
       'main': [
