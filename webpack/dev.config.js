@@ -113,15 +113,15 @@ module.exports = function (extensions) {
         { test: /\.json$/, loader: 'json-loader' },
         {
           test: /\.less$/,
-          loader: 'style!css?modules&importLoaders=2&sourceMap&localIdentName=[local]___[hash:base64:5]!autoprefixer?browsers=last 2 version!less?outputStyle=expanded&sourceMap'
+          loader: 'style!css?modules&importLoaders=2&sourceMap&localIdentName=[local]___[hash:base64:5]!postcss-loader!less?outputStyle=expanded&sourceMap'
         },
         {
           test: /\.scss$/,
-          loader: 'style!css?modules&importLoaders=2&sourceMap&localIdentName=[local]___[hash:base64:5]!sass?outputStyle=expanded&sourceMap',
+          loader: 'style!css?modules&importLoaders=2&sourceMap&localIdentName=[local]___[hash:base64:5]!postcss-loader!sass?outputStyle=expanded&sourceMap',
           exclude: [/.*theme.*/]
         },
         {
-          loader: 'style!css?importLoaders=2!sass?outputStyle=expanded',
+          loader: 'style!css?importLoaders=2!postcss-loader!sass?outputStyle=expanded',
           include: [/.*theme.*\.scss/]
         },
         { test: /\.woff(\?v=\d+\.\d+\.\d+)?$/, loader: 'url?limit=10000&mimetype=application/font-woff' },
@@ -130,6 +130,12 @@ module.exports = function (extensions) {
         { test: /\.eot(\?v=\d+\.\d+\.\d+)?$/, loader: 'file' },
         { test: /\.svg(\?v=\d+\.\d+\.\d+)?$/, loader: 'url?limit=10000&mimetype=image/svg+xml' },
         { test: /\.(png|jpg)$/, loader: 'url-loader?limit=8192' }
+      ]
+    },
+    postcss: function () {
+      return [
+        jsreportStudioDev.deps['postcss-flexbugs-fixes'],
+        jsreportStudioDev.deps.autoprefixer
       ]
     },
     progress: true,
