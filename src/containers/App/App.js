@@ -258,7 +258,10 @@ export default class App extends Component {
     const containerStyles = {
       display: 'flex',
       flex: 1,
-      flexDirection: 'column'
+      flexDirection: 'column',
+      // firefox needs min-height and min-width explicitly declared to allow descendants flex items to be scrollable (overflow)
+      minWidth: 0,
+      minHeight: 0
     }
 
     const { activeEntity, references, openTab } = this.props
