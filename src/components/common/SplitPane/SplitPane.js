@@ -232,7 +232,7 @@ export default class SplitPane extends Component {
 
         if (ref2) {
           ref2.setState({
-            size: undefined
+            size: this.lastSize2
           })
         }
 
@@ -251,6 +251,7 @@ export default class SplitPane extends Component {
         this.setState(stateToUpdate)
       } else {
         this.lastSize = ref1.state.size
+        this.lastSize2 = ref2.state.size
 
         stateToUpdate = {
           collapsed: v,
