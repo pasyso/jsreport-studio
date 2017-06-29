@@ -291,6 +291,10 @@ class Studio {
     configuration.modalHandler.open(NewEntityModal, { entitySet: entitySet })
   }
 
+  isModalOpen () {
+    return configuration.modalHandler.isModalOpen()
+  }
+
   /**
    * Invoke preview process for last active template
    */

@@ -49,8 +49,13 @@ export default class Modal extends Component {
     this.setState({ isOpen: false })
   }
 
+  isModalOpen () {
+    const open = this.state.isOpen || this.props.isOpen
+    return open === true
+  }
+
   render () {
-    const isOpen = this.state.isOpen || this.props.isOpen
+    const isOpen = this.isModalOpen()
 
     return <ReactModal key='ReactModal'
                        isOpen={isOpen} overlayClassName={style.overlay} className={style.content}
