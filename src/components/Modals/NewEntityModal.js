@@ -19,6 +19,7 @@ export default class Modal extends Component {
   submit (val) {
     this.props.close()
     this.props.openNewTab({
+      entity: this.props.options.entity,
       entitySet: this.props.options.entitySet,
       name: val || this.refs.nameInput.value
     })
@@ -30,12 +31,18 @@ export default class Modal extends Component {
   }
 
   render () {
-    const { entitySet } = this.props.options
+    const { entitySet, initialName } = this.props.options
 
     return <div>
       <div className='form-group'>
         <label>New {entitySets[entitySet].visibleName}</label>
-        <input type='text' placeholder='name...' ref='nameInput' onKeyPress={(e) => this.handleKeyPress(e)} />
+        <input
+          type='text'
+          placeholder='name...'
+          ref='nameInput'
+          defaultValue={initialName}
+          onKeyPress={(e) => this.handleKeyPress(e)}
+        />
       </div>
       <div className='button-bar'>
         <button className='button confirmation' onClick={() => this.submit()}>ok</button>

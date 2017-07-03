@@ -269,6 +269,13 @@ export default class App extends Component {
     const entityTreeProps = {
       toolbar: true,
       onRename: (id) => this.openModal(RenameModal, { _id: id }),
+      onClone: (entity) => {
+        this.openModal(NewEntityModal, {
+          entity: entity,
+          entitySet: entity.__entitySet,
+          initialName: entity.name + '(clone)'
+        })
+      },
       onRemove: (id) => removeHandler ? removeHandler(id) : this.openModal(DeleteConfirmationModal, {_id: id}),
       activeEntity,
       entities: references,

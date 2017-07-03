@@ -52,22 +52,41 @@ export function openTab (tab) {
   }
 }
 
-export function openNewTab ({ entitySet, name }) {
-  return (dispatch) => {
+export function openNewTab ({ entitySet, entity, name }) {
+  const shouldClone = entity != null
+
+  return async function (dispatch, getState) {
     let id = uid()
-    let entity = {
-      _id: id,
-      __entitySet: entitySet,
-      shortid: shortid.generate(),
-      [entitySets[entitySet].nameAttribute]: name
+    let newEntity
+    let clonedEntity
+
+    if (shouldClone) {
+      await entities.actions.load(entity._id)(dispatch, getState)
+      clonedEntity = entities.selectors.getById(getState(), entity._id)
+
+      newEntity = {
+        ...clonedEntity,
+        _id: id,
+        __entitySet: entitySet,
+        shortid: shortid.generate(),
+        [entitySets[entitySet].nameAttribute]: name
+      }
+    } else {
+      newEntity = {
+        _id: id,
+        __entitySet: entitySet,
+        shortid: shortid.generate(),
+        [entitySets[entitySet].nameAttribute]: name
+      }
+
+      if (entitySet === 'templates') {
+        newEntity.recipe = recipes.includes('phantom-pdf') ? 'phantom-pdf' : recipes[0]
+        newEntity.engine = engines.includes('handlebars') ? 'handlebars' : engines[0]
+      }
     }
 
-    if (entitySet === 'templates') {
-      entity.recipe = recipes.includes('phantom-pdf') ? 'phantom-pdf' : recipes[0]
-      entity.engine = engines.includes('handlebars') ? 'handlebars' : engines[0]
-    }
+    dispatch(entities.actions.add(newEntity))
 
-    dispatch(entities.actions.add(entity))
     dispatch({
       type: ActionTypes.OPEN_NEW_TAB,
       tab: {

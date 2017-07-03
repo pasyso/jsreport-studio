@@ -156,7 +156,7 @@ export default class EntityTree extends Component {
   }
 
   renderContextMenu (entity) {
-    const { onRemove, onRename } = this.props
+    const { onRemove, onClone, onRename } = this.props
 
     return <div key='entity-contextmenu' className={style.contextMenuContainer}>
       <div className={style.contextMenu}>
@@ -164,6 +164,11 @@ export default class EntityTree extends Component {
           className={style.contextButton}
           onClick={(e) => { e.stopPropagation(); onRename(entity._id); this.tryHide() }}>
           <i className='fa fa-pencil' /> Rename
+        </div>
+        <div
+          className={style.contextButton}
+          onClick={(e) => { e.stopPropagation(); onClone(entity); this.tryHide() }}>
+          <i className='fa fa-clone' /> Clone
         </div>
         <div
           className={style.contextButton}
