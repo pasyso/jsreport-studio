@@ -6,7 +6,7 @@ import { push } from 'react-router-redux'
 import shortid from 'shortid'
 import preview from '../../helpers/preview'
 import resolveUrl from '../../helpers/resolveUrl.js'
-import beautify from 'js-beautify'
+import beautify from 'js-beautify-jsreport'
 import { engines, recipes, entitySets, previewListeners, locationResolver, editorComponents } from '../../lib/configuration.js'
 
 export function closeTab (id) {
