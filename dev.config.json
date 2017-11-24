@@ -22,7 +22,6 @@
     "electron": {
         "strategy": "electron-server"
     },
-    "license-key": "foo",
     "express": {
         "inputRequestLimit": "128mb"
     },
