@@ -111,7 +111,7 @@ export default class Startup extends Component {
           <tbody>
           {(failedLogsWithTemplates).map((l, k) => <tr key={k} onClick={() => this.openLogs(l)}>
             <td className='selection'><a style={{textDecoration: 'underline'}} onClick={() => l.template._id ? openTab({_id: l.template._id}) : null}>{l.template.name}</a></td>
-            <td>{l.error.message.length < 90 ? l.error.message : (l.error.message.substring(0, 80) + '...')}</td>
+            <td>{!l.error.message || l.error.message.length < 90 ? l.error.message : (l.error.message.substring(0, 80) + '...')}</td>
             <td>{l.timestamp.toLocaleString()}</td>
           </tr>)}
           </tbody>
