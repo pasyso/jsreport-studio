@@ -20,10 +20,19 @@ class MultiSelect extends Component {
     return options.filter((opt) => value.indexOf(opt.value) === -1).length === 0
   }
 
-  handleSelectUnselectAllClick () {
+  handleSelectUnselectAllClick (ev) {
     const { options, value, onChange } = this.props
     const allSelected = this.areAllSelected(options, value)
+    const target = ev.target
+    const isCheckBox = target.tagName.toLowerCase() === 'input' && target.type === 'checkbox'
     let newValue
+
+    // if it is not checkbox prevent default to avoid getting two click events
+    if (!isCheckBox) {
+      ev.preventDefault()
+    }
+
+    ev.stopPropagation()
 
     if (allSelected) {
       newValue = []
