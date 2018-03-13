@@ -7,6 +7,7 @@ import _merge from 'lodash/merge'
 import api, { methods } from './helpers/api.js'
 import SplitPane from './components/common/SplitPane/SplitPane.js'
 import Popover from './components/common/Popover/index.js'
+import MultiSelect from './components/common/MultiSelect/index.js'
 import TextEditor from './components/Editor/TextEditor.js'
 import EntityTree from './components/EntityTree/EntityTree.js'
 import EntityTreeButton from './components/EntityTree/EntityTreeButton.js'
@@ -556,6 +557,14 @@ class Studio {
    */
   get EntityTreeButton () {
     return EntityTreeButton
+  }
+
+  /**
+   * Component used for multi-select options
+   * @returns {MultiSelect}
+   */
+  get MultiSelect () {
+    return MultiSelect
   }
 
   constructor (store) {
