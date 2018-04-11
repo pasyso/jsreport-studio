@@ -579,7 +579,12 @@ class Studio {
     this.API = {}
     methods.forEach((m) => {
       this.API[m] = (...args) => {
-        return api[m](...args).catch((e) => {
+        this.startProgress()
+        return api[m](...args).then((v) => {
+          this.stopProgress()
+          return v
+        }).catch((e) => {
+          this.stopProgress()
           this.store.dispatch(this.entities.actions.apiFailed(e))
           throw e
         })
