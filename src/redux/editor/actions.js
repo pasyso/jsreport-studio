@@ -80,7 +80,7 @@ export function openNewTab ({ entitySet, entity, name }) {
       }
 
       if (entitySet === 'templates') {
-        newEntity.recipe = recipes.includes('phantom-pdf') ? 'phantom-pdf' : recipes[0]
+        newEntity.recipe = recipes.includes('chrome-pdf') ? 'chrome-pdf' : 'html'
         newEntity.engine = engines.includes('handlebars') ? 'handlebars' : engines[0]
       }
     }

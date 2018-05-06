@@ -23,7 +23,7 @@ export default class TextEditor extends Component {
     this.unsubscribe()
   }
 
-  get ace() {
+  get ace () {
     return this.refs.ace
   }
 

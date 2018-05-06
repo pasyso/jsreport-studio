@@ -7,6 +7,7 @@ import _merge from 'lodash/merge'
 import api, { methods } from './helpers/api.js'
 import SplitPane from './components/common/SplitPane/SplitPane.js'
 import Popover from './components/common/Popover/index.js'
+import MultiSelect from './components/common/MultiSelect/index.js'
 import TextEditor from './components/Editor/TextEditor.js'
 import EntityTree from './components/EntityTree/EntityTree.js'
 import EntityTreeButton from './components/EntityTree/EntityTreeButton.js'
@@ -558,6 +559,14 @@ class Studio {
     return EntityTreeButton
   }
 
+  /**
+   * Component used for multi-select options
+   * @returns {MultiSelect}
+   */
+  get MultiSelect () {
+    return MultiSelect
+  }
+
   constructor (store) {
     this.editor = editor
     this.store = store
@@ -570,7 +579,12 @@ class Studio {
     this.API = {}
     methods.forEach((m) => {
       this.API[m] = (...args) => {
-        return api[m](...args).catch((e) => {
+        this.startProgress()
+        return api[m](...args).then((v) => {
+          this.stopProgress()
+          return v
+        }).catch((e) => {
+          this.stopProgress()
           this.store.dispatch(this.entities.actions.apiFailed(e))
           throw e
         })

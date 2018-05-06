@@ -38,10 +38,13 @@ export default function (request, target) {
 
     for (const key in body) {
       if (isObject(body[ key ])) {
-        // somehow it skips empty array for template.scripts, this condition fixes that
-        if (body[ key ] instanceof Array && body[ key ].length === 0) {
-          addInput(mapForm, path + '[' + key + ']', [])
+        // if it is an empty object or array then it should not be added to form,
+        // this fix problem with url encoded data which can not represent empty arrays or objects
+        // so instead of sending empty `template[scripts]:` we don't add the value at all
+        if (Object.keys(body[ key ]).length === 0) {
+          continue
         }
+
         addBody(path + '[' + key + ']', body[ key ])
       } else {
         if (body[ key ] !== undefined && !(body[ key ] instanceof Array)) {
