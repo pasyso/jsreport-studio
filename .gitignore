@@ -34,7 +34,7 @@ node_modules
 
 .idea/
 node_modules/
-# dist/
+dist/
 *.iml
 webpack-assets.json
 webpack-stats.json
