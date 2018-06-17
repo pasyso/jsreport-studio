@@ -29,6 +29,7 @@ import {
   entitySets,
   shouldOpenStartupPage,
   registerCollapseLeftHandler,
+  registerCollapsePreviewHandler,
   entityTreeWrapperComponents
 } from '../../lib/configuration.js'
 
@@ -90,8 +91,12 @@ export default class App extends Component {
       }
     })
 
-    registerCollapseLeftHandler(() => {
-      this.refs.leftPane.collapse(true)
+    registerCollapseLeftHandler((type = true) => {
+      this.refs.leftPane.collapse(type)
+    })
+
+    registerCollapsePreviewHandler((type = true) => {
+      this.refs.previewPane.collapse(type)
     })
 
     previewListeners.push((request, entities, target) => {

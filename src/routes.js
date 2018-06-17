@@ -7,7 +7,7 @@ export default (aroutes) => {
   const routes = aroutes || []
 
   return (
-    <Route path={rootPath} component={App}>
+    <Route path={rootPath()} component={App}>
       <IndexRoute component={App} />
       <Route path='studio' component={App}>
         <Route path=':entitySet' component={App}>

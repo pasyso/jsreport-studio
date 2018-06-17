@@ -120,6 +120,14 @@ export function unload (id) {
   }
 }
 
+export function unloadAll () {
+  return async function (dispatch, getState) {
+    return dispatch({
+      type: ActionTypes.UNLOAD_ALL
+    })
+  }
+}
+
 export function loadReferences (entitySet) {
   return async function (dispatch) {
     let entities

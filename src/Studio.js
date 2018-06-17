@@ -306,8 +306,15 @@ class Studio {
   /**
    * Collapse left pane
    */
-  collapseLeftPane () {
-    configuration.collapseLeftHandler()
+  collapseLeftPane (type = true) {
+    configuration.collapseLeftHandler(type)
+  }
+
+  /**
+   * Collapse preview pane
+   */
+  collapsePreviewPane (type = true) {
+    configuration.collapsePreviewHandler(type)
   }
 
   /**
@@ -416,6 +423,16 @@ class Studio {
    */
   updateHistory () {
     this.store.dispatch(editor.actions.updateHistory())
+  }
+
+  /**
+   * Clear the current state and reload internally studio
+   */
+  async reset () {
+    await this.store.dispatch({ type: 'RESET' })
+    await this.store.dispatch(editor.actions.updateHistory())
+    await this.store.dispatch(settings.actions.load())
+    await bluebird.all(Object.keys(this.entitySets).map((t) => this.store.dispatch(entities.actions.loadReferences(t))))
   }
 
   /**

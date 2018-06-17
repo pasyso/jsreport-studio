@@ -19,7 +19,7 @@ import { syncHistoryWithStore } from 'react-router-redux'
 
 window.React = React
 
-__webpack_public_path__ = configuration.rootPath + '/studio/assets/'
+__webpack_public_path__ = configuration.rootPath() + '/studio/assets/'
 
 defaults()
 

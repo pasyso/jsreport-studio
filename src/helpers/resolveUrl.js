@@ -6,5 +6,5 @@ const join = (a, b) => {
 }
 
 export default (url) => {
-  return join(rootPath, url)
+  return join(rootPath(), url)
 }

@@ -107,3 +107,7 @@ reducer.handleAction(ActionTypes.UNLOAD, (state, action) => {
     }, getReferenceAttributes(state[action._id]))
   }
 })
+
+reducer.handleAction(ActionTypes.UNLOAD_ALL, (state, action) => {
+  return {}
+})

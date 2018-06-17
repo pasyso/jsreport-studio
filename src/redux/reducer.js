@@ -7,7 +7,7 @@ import progress from './progress/reducer'
 import settings from './settings/reducer'
 import modal from './modal/reducer'
 
-export default combineReducers({
+const reducer = combineReducers({
   routing: routerReducer,
   entities,
   editor,
@@ -15,3 +15,12 @@ export default combineReducers({
   settings,
   modal
 })
+
+export default (state, action) => {
+  if (action.type === 'RESET') {
+    const { routing } = state
+    state = { routing }
+  }
+
+  return reducer(state, action)
+}
