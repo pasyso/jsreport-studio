@@ -93,7 +93,7 @@ class MultiSelect extends Component {
         className={`${styles.listOption} ${isSelected ? styles.listOptionSelected : ''}`}
       >
         <label className={styles.listOptionLabel}>
-          <input checked={isSelected} type='checkbox' />
+          <input type='checkbox' checked={isSelected} readOnly />
           {name}
         </label>
       </li>
@@ -109,7 +109,7 @@ class MultiSelect extends Component {
       <div>
         <div className={styles.allCheckContainer}>
           <label className={styles.allCheck} onClick={this.handleSelectUnselectAllClick}>
-            <input type='checkbox' checked={allSelected} />
+            <input type='checkbox' checked={allSelected} readOnly />
             Select/Unselect all
           </label>
         </div>
