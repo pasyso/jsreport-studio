@@ -36,6 +36,8 @@ input:hover, input:focus, input:active {
 
 input[type=checkbox] {
   width: auto;
+  // fix for slow checks (blinks) in Safari
+  transform: translateZ(0);
 }
 
 .ace {
@@ -76,5 +78,3 @@ input[type=checkbox] {
 :focus {
   outline: 0;
 }
-
-
