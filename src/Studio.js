@@ -2,6 +2,7 @@ import React from 'react'
 import ReactDom from 'react-dom'
 import ReactList from 'react-list'
 import superagent from 'superagent'
+import shortid from 'shortid'
 import fileSaver from 'filesaver.js-npm'
 import _merge from 'lodash/merge'
 import api, { methods } from './helpers/api.js'
@@ -619,6 +620,7 @@ class Studio {
       'react-dom': ReactDom,
       'react-list': ReactList,
       superagent: superagent,
+      shortid: shortid,
       bluebird: bluebird,
       'filesaver.js-npm': fileSaver,
       'socket.io-client': io
