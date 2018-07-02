@@ -34,7 +34,7 @@ node_modules
 
 .idea/
 node_modules/
-dist/
+# dist/
 *.iml
 webpack-assets.json
 webpack-stats.json
@@ -42,6 +42,6 @@ npm-debug.log
 
 data
 
-main.js
-main.js.map
+# main.js
+# main.js.map
 extensions_dev.js
