@@ -1,8 +1,7 @@
-
 module.exports = {
-  'name': 'studio',
-  'main': 'lib/studio.js',
-  'optionsSchema': {
+  name: 'studio',
+  main: 'lib/studio.js',
+  optionsSchema: {
     extensions: {
       studio: {
         type: 'object',
@@ -10,10 +9,21 @@ module.exports = {
           entityTreeOrder: {
             type: 'array',
             items: { type: 'string' }
+          },
+          extensionsInDevMode: {
+            anyOf: [
+              {
+                type: 'string'
+              },
+              {
+                type: 'array',
+                items: { type: 'string' }
+              }
+            ]
           }
         }
       }
     }
   },
-  'dependencies': ['express']
+  dependencies: ['express']
 }
