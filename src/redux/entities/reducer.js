@@ -41,7 +41,11 @@ reducer.handleAction(ActionTypes.LOAD, (state, action) => ({
 
 reducer.handleActions([ActionTypes.UPDATE, ActionTypes.DEBOUNCED_UPDATE], (state, action) => ({
   ...state,
-  [action.entity._id]: Object.assign({}, state[action.entity._id], action.entity, { __isDirty: true })
+  [action.entity._id]: Object.assign({},
+    _omit(state[action.entity._id], Object.keys(action.entity.$unset || {})),
+    _omit(action.entity, '$unset'),
+    { __isDirty: true }
+  )
 }))
 
 reducer.handleAction(ActionTypes.ADD, (state, action) => ({
@@ -106,8 +110,4 @@ reducer.handleAction(ActionTypes.UNLOAD, (state, action) => {
       _id: action._id
     }, getReferenceAttributes(state[action._id]))
   }
-})
-
-reducer.handleAction(ActionTypes.UNLOAD_ALL, (state, action) => {
-  return {}
 })
