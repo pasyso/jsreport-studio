@@ -70,7 +70,7 @@ reactTransform[1].transforms.push({
   locals: ['module']
 })
 
-module.exports = function (extensions) {
+module.exports = function (extensions, extensionsInNormalMode) {
   return {
     devtool: 'eval-source-map',
     context: path.resolve(__dirname, '..'),
@@ -102,6 +102,18 @@ module.exports = function (extensions) {
           loaders: ['babel?' + JSON.stringify(babelLoaderQuery)],
           exclude: function (modulePath) {
             for (var key in extensions) {
+              const shouldExcludeExplicitly = (
+                modulePath.indexOf(extensions[key].directory) !== -1
+              ) && (
+                extensionsInNormalMode.find((e) => {
+                  return e.directory === extensions[key].directory
+                }) != null
+              )
+
+              if (shouldExcludeExplicitly) {
+                return true
+              }
+
               if (modulePath.indexOf(extensions[key].directory) !== -1 && modulePath.replace(extensions[key].directory, '').indexOf('node_modules') === -1) {
                 return false
               }
