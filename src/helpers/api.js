@@ -65,11 +65,11 @@ methods.forEach((m) => {
       }
 
       if (parseJSON === false) {
-        resolve(res.text)
+        return resolve(res.text)
       }
 
       if (responseType) {
-        resolve(res.xhr.response)
+        return resolve(res.xhr.response)
       }
 
       resolve(parse(res.text))
