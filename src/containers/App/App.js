@@ -278,7 +278,7 @@ export default class App extends Component {
         this.openModal(NewEntityModal, {
           entity: entity,
           entitySet: entity.__entitySet,
-          initialName: entity.name + '(clone)'
+          initialName: entity.name.indexOf('.') !== -1 ? entity.name.slice(0, entity.name.indexOf('.')) + '(clone)' + entity.name.slice(entity.name.indexOf('.')) : entity.name + '(clone)'
         })
       },
       onRemove: (id) => removeHandler ? removeHandler(id) : this.openModal(DeleteConfirmationModal, {_id: id}),
