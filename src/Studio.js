@@ -20,6 +20,7 @@ import * as settings from './redux/settings'
 import * as configuration from './lib/configuration.js'
 import resolveUrl from './helpers/resolveUrl.js'
 import babelRuntime from './lib/babelRuntime.js'
+import customPreview from './helpers/customPreview.js'
 import bluebird from 'bluebird'
 import io from 'socket.io-client'
 
@@ -249,6 +250,16 @@ class Studio {
    */
   setPreviewFrameSrc (frameSrc) {
     configuration.previewFrameChangeHandler(frameSrc)
+  }
+
+  /**
+   * Display custom contnet in the preview pane using http post to the url
+   * This is usefull when Studio.setPreviewFrameSrc isn't working because the content to set is too big
+   * and hits the iframe src chars limit.
+   * @param {String} frameSrc
+   */
+  customPreview (url, request) {
+    return customPreview(url, request)
   }
 
   /**
