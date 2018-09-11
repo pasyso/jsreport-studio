@@ -1,5 +1,5 @@
 import React, {Component} from 'react'
-import {connect} from 'react-redux'
+import { connect } from 'react-redux'
 import { actions } from '../../redux/editor'
 import { actions as settingsActions, selectors } from '../../redux/settings'
 import api from '../../helpers/api.js'
@@ -9,29 +9,27 @@ import { previewFrameChangeHandler } from '../../lib/configuration.js'
   activeTabKey: state.editor.activeTabKey,
   logsWithTemplates: selectors.getLogsWithTemplates(state),
   failedLogsWithTemplates: selectors.getFailedLogsWithTemplates(state)
-}), { ...actions, ...settingsActions })
+}), { ...actions, ...settingsActions }, undefined, { withRef: true })
 export default class Startup extends Component {
   constructor () {
     super()
     this.state = { templates: [] }
   }
 
-  componentDidMount () {
+  onTabActive () {
     this.loadLastModifiedTemplates()
   }
 
   async loadLastModifiedTemplates () {
+    if (this.fetchRequested) {
+      return
+    }
+
     this.fetchRequested = true
     const response = await api.get('/odata/templates?$top=5&$select=name,recipe,modificationDate&$orderby=modificationDate desc')
     await this.props.load()
     this.setState({ templates: response.value })
     this.fetchRequested = false
-  }
-
-  componentDidUpdate (props) {
-    if (!this.fetchRequested) {
-      this.loadLastModifiedTemplates()
-    }
   }
 
   shouldComponentUpdate (props) {
