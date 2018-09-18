@@ -1,49 +1,34 @@
 ﻿{
+  "httpPort": 3000,
+  "allowLocalFilesAccess": true,
+  "store": {
+    "provider": "fs"
+  },
+  "templatingEngines": {
+    "strategy": "dedicated-process"
+  },
+  "extensions": {
     "authentication" : {
-        "cookieSession": {
-            "secret": "<your strong secret>"
-        },
-        "admin": {
-            "username" : "admin",
-            "password": "password"
-        },
-        "enabled": true
-    },
-    "certificate": {
-        "key": "certificates/jsreport.net.key",    
-        "cert": "certificates/jsreport.net.cert"
-    },
-    "connectionString": {
-        "name": "fs",
-        "address": "127.0.0.1",
-        "databaseName" : "playground2"
-    },
-    "httpPort": 3000,
-    "electron": {
-        "strategy": "electron-server"
+      "cookieSession": {
+        "secret": "<your strong secret>"
+      },
+      "admin": {
+        "username" : "admin",
+        "password": "password"
+      },
+      "enabled": false
     },
     "express": {
-        "inputRequestLimit": "128mb"
+      "inputRequestLimit": "128mb"
     },
     "electron": {
-        "strategy":"dedicated-process",
-        "timeout": 30000
+      "strategy":"dedicated-process",
+      "timeout": 30000
     },
     "phantom": {
-        "numberOfWorkers" : 2,
-        "timeout": 8000,
-        "strategy": "dedicated-process"
-    },
-    "electron": {
-        "timeout": 8000,
-        "strategy": "electron-ipc"
-    },
-    "tasks": {
-        "numberOfWorkers" : 2,
-        "strategy": "dedicated-process",
-        "allowedModules": "*"
-    },
-    "scripts": {
-        "allowedModules": "*"
+      "numberOfWorkers" : 2,
+      "timeout": 8000,
+      "strategy": "dedicated-process"
     }
+  }
 }
