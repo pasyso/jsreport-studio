@@ -5,7 +5,6 @@
 }
 
 .tabTitles {
-  flex: 0;
   display: flex;
   flex-wrap: wrap;
   background-color: #FEFEFE;
@@ -19,6 +18,7 @@
 }
 
 .tabTitle {
+  position: relative;
   flex: 0;
   /*
     flexbox workaround
@@ -65,4 +65,32 @@
 
 .tabClose:hover {
   background-color: $secondaryHoverBackgroundColor;
+}
+
+.contextMenu {
+  background-color: $secondaryColor;
+  position: absolute;
+  padding: 0.5rem;
+  min-width: 9rem;
+  z-index: 200;
+}
+
+.contextMenuContainer {
+  position: absolute;
+  bottom: 2px;
+  left: 2px;
+  z-index: 200;
+}
+
+.contextButton {
+  color: $primaryColor;
+  padding: 0.5rem;
+  font-size: 0.8rem;
+  cursor: pointer;
+  @include no-select();
+}
+
+.contextButton:hover {
+  background-color: $primaryHoverBackgroundColor;
+  color: $primaryHoverColor
 }
