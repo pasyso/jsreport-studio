@@ -1,6 +1,7 @@
 import React, {Component} from 'react'
 import ReactList from 'react-list'
 import style from './EntityTree.scss'
+import groupEntitiesByHierarchyHelper from '../../helpers/groupEntitiesByHierarchy'
 import {
   entitySets,
   entityTreeOrder,
@@ -33,8 +34,12 @@ export default class EntityTree extends Component {
     super()
     this.state = { filter: {} }
     this.setFilter = this.setFilter.bind(this)
-    this.renderClassicTree = this.renderClassicTree.bind(this)
-    this.renderObjectSubTree = this.renderObjectSubTree.bind(this)
+    this.getSetsToRender = this.getSetsToRender.bind(this)
+    this.getEntityTypeNameAttr = this.getEntityTypeNameAttr.bind(this)
+    this.getAllChildrenIds = this.getAllChildrenIds.bind(this)
+    this.groupEntitiesByType = this.groupEntitiesByType.bind(this)
+    this.renderGroupNode = this.renderGroupNode.bind(this)
+    this.renderEntityNode = this.renderEntityNode.bind(this)
   }
 
   componentDidMount () {
@@ -45,8 +50,8 @@ export default class EntityTree extends Component {
     window.removeEventListener('click', () => this.tryHide())
   }
 
-  createRenderer (entities) {
-    return (index, key) => this.renderNode(entities[index])
+  createListItemRenderer (items, depth, parentId) {
+    return (index, key) => this.renderItemNode(items[index], depth, parentId)
   }
 
   tryHide () {
@@ -111,7 +116,14 @@ export default class EntityTree extends Component {
   }
 
   getSetsToRender (sets) {
-    const setsNames = Object.keys(sets)
+    const setsNames = Object.keys(sets).filter((setName) => {
+      if (entitySets[setName].visibleInTree === false) {
+        return false
+      }
+
+      return true
+    })
+
     let setsInOrderSpecification = []
 
     const setsNotInOrderSpecification = setsNames.filter((setName) => {
@@ -144,9 +156,54 @@ export default class EntityTree extends Component {
     return [...setsInOrderSpecification, ...setsNotInOrderSpecification]
   }
 
-  resolveEntityTreeIconStyle (entity) {
+  getEntityTypeNameAttr (setName, entity) {
+    return entity[entitySets[setName].nameAttribute]
+  }
+
+  getAllChildrenIds (items) {
+    const children = []
+
+    if (!items) {
+      return children
+    }
+
+    items.forEach((node) => {
+      const isGroupNode = node.isEntitySet === true || node.isGroup === true
+
+      if (isGroupNode && node.isEntity === true) {
+        children.push(node.data._id)
+
+        if (node.items) {
+          this.getAllChildrenIds(node.items).forEach((i) => children.push(i))
+        }
+      } else {
+        children.push(node.data._id)
+      }
+    })
+
+    return children
+  }
+
+  groupEntitiesByType (sets, entitiesByType) {
+    const setsToRender = this.getSetsToRender(sets)
+
+    return setsToRender.map((entitiesType) => ({
+      name: entitiesType,
+      isEntitySet: true,
+      items: entitiesByType[entitiesType].map((entity) => ({
+        name: this.getEntityTypeNameAttr(entity.__entitySet, entity),
+        data: entity
+      }))
+    }))
+  }
+
+  groupEntitiesByHierarchy (sets, entitiesByType) {
+    return groupEntitiesByHierarchyHelper(Object.keys(sets), entitiesByType, this.getEntityTypeNameAttr)
+  }
+
+  resolveEntityTreeIconStyle (entity, info) {
     for (const k in entityTreeIconResolvers) {
-      const mode = entityTreeIconResolvers[k](entity)
+      const mode = entityTreeIconResolvers[k](entity, info)
       if (mode) {
         return mode
       }
@@ -155,24 +212,49 @@ export default class EntityTree extends Component {
     return null
   }
 
-  renderContextMenu (entity) {
-    const { onRemove, onClone, onRename } = this.props
+  renderContextMenu (entity, isGroupEntity, items) {
+    const { onNewClick, onRemove, onClone, onRename } = this.props
 
     return <div key='entity-contextmenu' className={style.contextMenuContainer}>
       <div className={style.contextMenu}>
+        {isGroupEntity && (
+          <div
+            className={style.contextButton}
+            onClick={(e) => { e.stopPropagation(); this.tryHide() }}>
+            <i className='fa fa-file' /> New Entity
+          </div>
+        )}
+        {isGroupEntity && (
+          <div
+            className={style.contextButton}
+            onClick={(e) => { e.stopPropagation(); onNewClick('folders', { parentShortId: entity.shortid }); this.tryHide() }}>
+            <i className='fa fa-folder' /> New Folder
+          </div>
+        )}
+        {isGroupEntity && <hr />}
         <div
           className={style.contextButton}
           onClick={(e) => { e.stopPropagation(); onRename(entity._id); this.tryHide() }}>
           <i className='fa fa-pencil' /> Rename
         </div>
+        {!isGroupEntity && (
+          <div
+            className={style.contextButton}
+            onClick={(e) => { e.stopPropagation(); onClone(entity); this.tryHide() }}>
+            <i className='fa fa-clone' /> Clone
+          </div>
+        )}
         <div
           className={style.contextButton}
-          onClick={(e) => { e.stopPropagation(); onClone(entity); this.tryHide() }}>
-          <i className='fa fa-clone' /> Clone
-        </div>
-        <div
-          className={style.contextButton}
-          onClick={(e) => { e.stopPropagation(); onRemove(entity._id); this.tryHide() }}>
+          onClick={(e) => {
+            e.stopPropagation()
+
+            const children = this.getAllChildrenIds(items)
+
+            onRemove(entity._id, children.length > 0 ? children : undefined)
+
+            this.tryHide()
+          }}>
           <i className='fa fa-trash' /> Delete
         </div>
       </div>
@@ -210,104 +292,6 @@ export default class EntityTree extends Component {
     )
   }
 
-  renderNode (entity) {
-    const { activeEntity, onSelect, onClick, selectable, entities: originalEntities } = this.props
-    const { contextMenuId } = this.state
-
-    const entityStyle = this.resolveEntityTreeIconStyle(entity)
-
-    return (
-      <div
-        onContextMenu={(e) => this.contextMenu(e, entity)}
-        onClick={() => selectable ? onSelect(entity) : onClick(entity._id)}
-        key={entity._id}
-        className={style.link + ' ' + ((activeEntity && entity._id === activeEntity._id) ? style.active : '')}
-      >
-        {this.renderEntityTreeItemComponents('container', { entity, entities: originalEntities }, [
-          selectable ? <input key='search-name' type='checkbox' readOnly checked={entity.__selected !== false} /> : <span key='empty-search-name' />,
-          <i key='entity-icon' className={style.entityIcon + ' fa ' + (entityStyle || (entitySets[entity.__entitySet].faIcon || style.entityDefaultIcon))}></i>,
-          <a key='entity-name'>{entity[entitySets[entity.__entitySet].nameAttribute] + (entity.__isDirty ? '*' : '')}</a>,
-          this.renderEntityTreeItemComponents('right', { entity, entities: originalEntities }),
-          !selectable && contextMenuId === entity._id ? this.renderContextMenu(entity) : <div key='empty-contextmenu' />
-        ])}
-      </div>
-    )
-  }
-
-  renderObjectSubTree (entitiesType, entities, depth, entitiesTypeId) {
-    const { onNodeSelect, selectable } = this.props
-    let treeDepth = depth || 0
-    let isGroup = false
-    let groupProps = {}
-
-    if (entitiesTypeId == null) {
-      entitiesTypeId = entitiesType
-    }
-
-    if (treeDepth <= 0) {
-      treeDepth = 0
-    }
-
-    if (!Array.isArray(entities) && entities.__hasChildEntitiesSet__) {
-      isGroup = true
-      entitiesTypeId += '--group'
-
-      if (entities.data != null) {
-        groupProps = entities.data
-      }
-    }
-
-    return (
-      <div
-        key={entitiesType}
-        className={style.nodeBox}
-        style={{ marginLeft: `${treeDepth * 0.8}rem` }}
-      >
-        {selectable ? <input type='checkbox' defaultChecked onChange={(v) => onNodeSelect(entitiesType, !!v.target.checked)} /> : <span />}
-        <span
-          className={style.nodeTitle + ' ' + (this.state[entitiesTypeId] ? style.collapsed : '')}
-          onClick={() => this.collapse(entitiesTypeId)}
-        >
-          {entitiesType}
-        </span>
-        {isGroup && this.renderEntityTreeItemComponents('groupRight', groupProps, undefined)}
-        {
-          isGroup ? <span /> : (
-            !this.props.selectable ? <a key={entitiesTypeId + 'new'} onClick={() => this.props.onNewClick(entitiesType)} className={style.add}></a> : <span />
-          )
-        }
-        <div className={style.nodeContainer + ' ' + (this.state[entitiesTypeId] ? style.collapsed : '')}>
-          {
-            isGroup ? (
-              <div>
-                {
-                  this.getSetsToRender(entities.entitiesSet || {}).map((entityType) => {
-                    return this.renderObjectSubTree(
-                      entityType,
-                      entities.entitiesSet[entityType],
-                      treeDepth + 1,
-                      `${entitiesTypeId}--${entityType}`
-                    )
-                  })
-                }
-              </div>
-            ) : (
-              <ReactList itemRenderer={this.createRenderer(entities)} length={entities.length} />
-            )
-          }
-        </div>
-      </div>
-    )
-  }
-
-  renderClassicTree (sets, entitiesByType) {
-    const setsToRender = this.getSetsToRender(sets)
-
-    return setsToRender.map((entitiesType) => {
-      return this.renderObjectSubTree(entitiesType, entitiesByType[entitiesType] || [])
-    })
-  }
-
   renderEntityTreeToolbarComponents () {
     return entityTreeToolbarComponents.map((p, i) => (
       React.createElement(p, {
@@ -315,6 +299,119 @@ export default class EntityTree extends Component {
         setFilter: this.setFilter
       })
     ))
+  }
+
+  renderGroupNode (node, depth, objectId) {
+    const name = node.name
+    const items = node.items
+    const { onNodeSelect, selectable } = this.props
+    let groupIsEntity = false
+    let groupStyle = node.data != null ? this.resolveEntityTreeIconStyle(node.data, { isCollapsed: this.state[objectId] === true }) : null
+    const { contextMenuId } = this.state
+
+    if (node.isEntity === true) {
+      groupIsEntity = true
+    }
+
+    return (
+      <div>
+        <div
+          onContextMenu={groupIsEntity ? (e) => this.contextMenu(e, node.data) : undefined}
+          style={{ paddingLeft: `${(depth + 1) * 0.8}rem` }}
+        >
+          {selectable ? <input type='checkbox' defaultChecked onChange={(v) => onNodeSelect(name, !!v.target.checked)} /> : <span />}
+          <span
+            className={style.nodeTitle + ' ' + (this.state[objectId] ? style.collapsed : '')}
+            onClick={() => this.collapse(objectId)}
+          >
+            {groupStyle && (
+              <i key='entity-icon' className={style.entityIcon + ' fa ' + (groupStyle || '')}></i>
+            )}
+            {name}
+          </span>
+          {this.renderEntityTreeItemComponents('groupRight', node.data, undefined)}
+          {node.isEntitySet ? (
+            !selectable ? <a key={objectId + 'new'} onClick={() => this.props.onNewClick(name)} className={style.add}></a> : <span />
+          ) : <span />}
+          {!selectable && groupIsEntity && contextMenuId === node.data._id ? this.renderContextMenu(
+            node.data,
+            groupIsEntity,
+            groupIsEntity ? node.items : undefined
+          ) : <div key='empty-contextmenu' />}
+        </div>
+        <div className={style.nodeContainer + ' ' + (this.state[objectId] ? style.collapsed : '')}>
+          {this.renderTree(items, depth + 1, objectId)}
+        </div>
+      </div>
+    )
+  }
+
+  renderEntityNode (node, depth) {
+    const { activeEntity, onSelect, onClick, selectable, entities: originalEntities } = this.props
+    const { contextMenuId } = this.state
+    const entity = node.data
+    const entityStyle = this.resolveEntityTreeIconStyle(entity, {})
+
+    return (
+      <div
+        onContextMenu={(e) => this.contextMenu(e, entity)}
+        onClick={() => selectable ? onSelect(entity) : onClick(entity._id)}
+        key={entity._id}
+        className={style.link + ' ' + ((activeEntity && entity._id === activeEntity._id) ? style.active : '')}
+        style={{ paddingLeft: `${(depth + 1) * 0.8}rem` }}
+      >
+        {this.renderEntityTreeItemComponents('container', { entity, entities: originalEntities }, [
+          selectable ? <input key='search-name' type='checkbox' readOnly checked={entity.__selected !== false} /> : <span key='empty-search-name' />,
+          <i key='entity-icon' className={style.entityIcon + ' fa ' + (entityStyle || (entitySets[entity.__entitySet].faIcon || style.entityDefaultIcon))}></i>,
+          <a key='entity-name'>{this.getEntityTypeNameAttr(entity.__entitySet, entity) + (entity.__isDirty ? '*' : '')}</a>,
+          this.renderEntityTreeItemComponents('right', { entity, entities: originalEntities }),
+          !selectable && contextMenuId === entity._id ? this.renderContextMenu(entity) : <div key='empty-contextmenu' />
+        ])}
+      </div>
+    )
+  }
+
+  renderItemNode (node = {}, depth, parentId) {
+    const name = node.name
+    const isGroupNode = node.isEntitySet === true || node.isGroup === true
+    let objectId = name
+
+    let treeDepth = depth || 0
+
+    if (parentId != null) {
+      objectId = `${parentId}--${name}`
+    }
+
+    if (treeDepth <= 0) {
+      treeDepth = 0
+    }
+
+    if (isGroupNode) {
+      objectId += '--group'
+    } else {
+      objectId += `--${node.data.__entitySet}`
+    }
+
+    objectId += `--${treeDepth}`
+
+    return (
+      <div
+        key={objectId}
+        className={`${style.nodeBox} ${!isGroupNode ? style.nodeBoxItem : ''}`}
+      >
+        {isGroupNode ? (
+          this.renderGroupNode(node, treeDepth, objectId)
+        ) : (
+          this.renderEntityNode(node, treeDepth)
+        )}
+      </div>
+    )
+  }
+
+  renderTree (items, depth, parentId) {
+    return (
+      <ReactList itemRenderer={this.createListItemRenderer(items, depth, parentId)} length={items.length} />
+    )
   }
 
   render () {
@@ -338,12 +435,18 @@ export default class EntityTree extends Component {
           */}
           {
             typeof children === 'function' ? children({
-              renderClassicTree: this.renderClassicTree,
-              renderObjectSubTree: this.renderObjectSubTree,
+              // TODO: remove this function after finished implementation, we need to refactor
+              // how tags entity tree render works
+              renderClassicTree: () => this.renderTree(this.groupEntitiesByHierarchy(entitySets, entities)), // this.renderTree(this.groupEntitiesByType(entitySets, entities)),
+              // renderObjectSubTree: this.renderObjectSubTree,
+              getSetsToRender: this.getSetsToRender,
+              getEntityTypeNameAttr: this.getEntityTypeNameAttr,
+              groupEntitiesByType: this.groupEntitiesByType,
+              groupEntitiesByHierarchy: this.groupEntitiesByHierarchy,
               entitySets,
               entities
             }) : (
-              this.renderClassicTree(entitySets, entities)
+              this.renderTree(this.groupEntitiesByType(entitySets, entities))
             )
           }
         </div>

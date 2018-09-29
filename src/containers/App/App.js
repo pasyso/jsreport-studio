@@ -281,11 +281,11 @@ export default class App extends Component {
           initialName: entity.name.indexOf('.') !== -1 ? entity.name.slice(0, entity.name.indexOf('.')) + '(clone)' + entity.name.slice(entity.name.indexOf('.')) : entity.name + '(clone)'
         })
       },
-      onRemove: (id) => removeHandler ? removeHandler(id) : this.openModal(DeleteConfirmationModal, {_id: id}),
+      onRemove: (id, children) => removeHandler ? removeHandler(id, children) : this.openModal(DeleteConfirmationModal, {_id: id, childrenIds: children}),
       activeEntity,
       entities: references,
       onClick: (_id) => openTab({_id: _id}),
-      onNewClick: (es) => entitySets[es].onNew ? entitySets[es].onNew() : this.openModal(NewEntityModal, {entitySet: es})
+      onNewClick: (es, options) => entitySets[es].onNew ? entitySets[es].onNew(options || {}) : this.openModal(NewEntityModal, {...options, entitySet: es})
     }
 
     // if there are no components registered, defaults to rendering the EntityTree alone
