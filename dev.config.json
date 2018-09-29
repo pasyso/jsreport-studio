@@ -29,6 +29,9 @@
       "numberOfWorkers" : 2,
       "timeout": 8000,
       "strategy": "dedicated-process"
+    },
+    "sample-template": {
+      "createSamples": true
     }
   }
 }

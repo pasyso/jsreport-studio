@@ -2,7 +2,10 @@ import React, {Component, PropTypes} from 'react'
 import {connect} from 'react-redux'
 import {actions, selectors} from '../../redux/entities'
 
-@connect((state, props) => ({ entity: selectors.getById(state, props.options._id, false) }), { ...actions })
+@connect((state, props) => ({
+  entity: selectors.getById(state, props.options._id, false),
+  childrenIds: props.options.childrenIds
+}), { ...actions })
 export default class DeleteConfirmationModal extends Component {
   static propTypes = {
     close: PropTypes.func.isRequired,
@@ -11,7 +14,7 @@ export default class DeleteConfirmationModal extends Component {
 
   remove () {
     this.props.close()
-    this.props.remove(this.props.entity._id)
+    this.props.remove(this.props.entity._id, this.props.childrenIds)
   }
 
   cancel () {

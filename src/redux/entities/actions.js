@@ -36,14 +36,15 @@ export function groupedUpdate (entity) {
   })
 }
 
-export function remove (id) {
+export function remove (id, children) {
   return async function (dispatch, getState) {
     const entity = selectors.getById(getState(), id)
 
     if (entity.__isNew) {
       return dispatch({
         type: ActionTypes.REMOVE,
-        _id: id
+        _id: id,
+        children
       })
     }
 
@@ -53,7 +54,8 @@ export function remove (id) {
 
       dispatch({
         type: ActionTypes.REMOVE,
-        _id: id
+        _id: id,
+        children
       })
 
       dispatch(apiDone())
