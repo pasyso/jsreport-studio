@@ -33,7 +33,6 @@
     "bluebird": "3.5.1",
     "compression": "1.6.2",
     "lodash": "4.17.5",
-    "nanoid": "1.0.2",
     "serve-favicon": "2.4.5",
     "serve-static": "1.13.2"
   },
