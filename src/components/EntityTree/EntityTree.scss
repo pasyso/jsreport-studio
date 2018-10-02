@@ -147,11 +147,23 @@
 }
 
 .contextMenuContainer {
-  position: relative;
-  z-index: 200;
+  position: absolute;
+  z-index: 300;
+}
+
+.contextMenuContainer.nestedLevel {
+  position: absolute;
+  top: 0;
+  right: 0;
+  transition: opacity;
+  transition-delay: 0.2s;
+  opacity: 0;
+  height: 0;
+  overflow: hidden;
 }
 
 .contextButton {
+  position: relative;
   color: $primaryColor;
   padding: 0.5rem;
   font-size: 0.8rem;
@@ -159,7 +171,25 @@
   @include no-select();
 }
 
-.contextButton:hover {
+.contextButton.disabled {
+  color: #7d8a98;
+}
+
+.contextButton.hasNestedLevels:after {
+  font-family: FontAwesome;
+  font-size: 0.9rem;
+  content: "\f0da";
+  position: absolute;
+  right: 0;
+}
+
+.contextButton:hover:not(.disabled) {
   background-color: $primaryHoverBackgroundColor;
-  color: $primaryHoverColor
+  color: $primaryHoverColor;
+}
+
+.contextButton.hasNestedLevels:hover > .contextMenuContainer.nestedLevel {
+  opacity: 1;
+  height: auto;
+  overflow: visible;
 }

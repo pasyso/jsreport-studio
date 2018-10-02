@@ -25,18 +25,18 @@ export default class Modal extends Component {
   }
 
   async submit (val) {
-    const entity = {}
+    let entity = {}
     const name = val || this.refs.nameInput.value
     let response
 
     entity.name = name
 
-    if (this.props.options.parentShortId != null) {
-      entity.folder = this.props.options.parentShortId
+    if (this.props.options.defaults != null) {
+      entity = Object.assign(this.props.options.defaults, entity)
     }
 
     try {
-      await api.post('/studio/validate-entity-name', { data: { name } })
+      await api.post('/studio/validate-entity-name', { data: entity })
 
       response = await api.post('/odata/folders', {
         data: entity

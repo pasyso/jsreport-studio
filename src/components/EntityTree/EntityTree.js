@@ -1,7 +1,9 @@
 import React, {Component} from 'react'
 import ReactList from 'react-list'
+import {connect} from 'react-redux'
 import style from './EntityTree.scss'
 import groupEntitiesByHierarchyHelper from '../../helpers/groupEntitiesByHierarchy'
+import {actions as editorActions} from '../../redux/editor'
 import {
   entitySets,
   entityTreeOrder,
@@ -11,6 +13,7 @@ import {
   entityTreeIconResolvers
 } from '../../lib/configuration.js'
 
+@connect((state) => ({}), { ...editorActions })
 export default class EntityTree extends Component {
   static propTypes = {
     entities: React.PropTypes.object.isRequired,
@@ -32,8 +35,10 @@ export default class EntityTree extends Component {
 
   constructor () {
     super()
-    this.state = { filter: {} }
+    this.state = { filter: {}, contextMenuId: null, clipboard: null }
     this.setFilter = this.setFilter.bind(this)
+    this.setClipboard = this.setClipboard.bind(this)
+    this.releaseClipboardTo = this.releaseClipboardTo.bind(this)
     this.getSetsToRender = this.getSetsToRender.bind(this)
     this.getEntityTypeNameAttr = this.getEntityTypeNameAttr.bind(this)
     this.getAllChildrenIds = this.getAllChildrenIds.bind(this)
@@ -112,6 +117,32 @@ export default class EntityTree extends Component {
           ...newFilterState
         }
       }
+    })
+  }
+
+  setClipboard ({ action, entityId }) {
+    this.setState({
+      clipboard: {
+        action,
+        entityId
+      }
+    })
+  }
+
+  async releaseClipboardTo (destination) {
+    const clipboard = this.state.clipboard
+
+    if (clipboard == null) {
+      return
+    }
+
+    this.props.hierarchyCopy(clipboard.entityId, {
+      shortid: destination.shortid,
+      referenceProperty: 'folder'
+    }, clipboard.action === 'cut')
+
+    this.setState({
+      clipboard: null
     })
   }
 
@@ -212,22 +243,43 @@ export default class EntityTree extends Component {
     return null
   }
 
-  renderContextMenu (entity, isGroupEntity, items) {
+  renderContextMenu (entity, { isGroupEntity, items } = {}) {
+    const { clipboard } = this.state
     const { onNewClick, onRemove, onClone, onRename } = this.props
+    const menuItems = []
+
+    Object.keys(entitySets).forEach((setName) => {
+      const entitySet = entitySets[setName]
+
+      if (entitySet.visibleInTree === false) {
+        return
+      }
+
+      menuItems.push(
+        <div className={style.contextButton} onClick={() => onNewClick(entitySet.name, { defaults: { folder: entity.shortid } })}>
+          <i className={`fa ${entitySet.faIcon != null ? entitySet.faIcon : 'fa-file'}`} /> {entitySet.visibleName}
+        </div>
+      )
+    })
 
     return <div key='entity-contextmenu' className={style.contextMenuContainer}>
       <div className={style.contextMenu}>
         {isGroupEntity && (
           <div
-            className={style.contextButton}
+            className={`${style.contextButton} ${style.hasNestedLevels}`}
             onClick={(e) => { e.stopPropagation(); this.tryHide() }}>
             <i className='fa fa-file' /> New Entity
+            <div key='entity-contextmenu' className={`${style.contextMenuContainer} ${style.nestedLevel}`}>
+              <div className={style.contextMenu}>
+                {menuItems}
+              </div>
+            </div>
           </div>
         )}
         {isGroupEntity && (
           <div
             className={style.contextButton}
-            onClick={(e) => { e.stopPropagation(); onNewClick('folders', { parentShortId: entity.shortid }); this.tryHide() }}>
+            onClick={(e) => { e.stopPropagation(); onNewClick('folders', { defaults: { folder: entity.shortid } }); this.tryHide() }}>
             <i className='fa fa-folder' /> New Folder
           </div>
         )}
@@ -237,11 +289,62 @@ export default class EntityTree extends Component {
           onClick={(e) => { e.stopPropagation(); onRename(entity._id); this.tryHide() }}>
           <i className='fa fa-pencil' /> Rename
         </div>
-        {!isGroupEntity && (
+        {isGroupEntity == null && (
           <div
             className={style.contextButton}
             onClick={(e) => { e.stopPropagation(); onClone(entity); this.tryHide() }}>
             <i className='fa fa-clone' /> Clone
+          </div>
+        )}
+        {(isGroupEntity == null) && (
+          <div
+            className={`${style.contextButton} ${entity.__isNew === true ? style.disabled : ''}`}
+            onClick={(e) => {
+              e.stopPropagation()
+
+              if (entity.__isNew === true) {
+                return
+              }
+
+              this.setClipboard({ action: 'cut', entityId: entity._id })
+              this.tryHide()
+            }}>
+            <i className='fa fa-cut' /> Cut
+          </div>
+        )}
+        {(isGroupEntity == null) && (
+          <div
+            className={`${style.contextButton} ${entity.__isNew === true ? style.disabled : ''}`}
+            onClick={(e) => {
+              e.stopPropagation()
+
+              if (entity.__isNew === true) {
+                return
+              }
+
+              this.setClipboard({ action: 'copy', entityId: entity._id })
+              this.tryHide()
+            }}>
+            <i className='fa fa-copy' /> Copy
+          </div>
+        )}
+        {(isGroupEntity || isGroupEntity == null) && (
+          <div
+            className={`${style.contextButton} ${clipboard == null ? style.disabled : ''}`}
+            onClick={(e) => {
+              e.stopPropagation()
+
+              if (clipboard == null) {
+                return
+              }
+
+              this.releaseClipboardTo({
+                shortid: isGroupEntity ? entity.shortid : entity.folder
+              })
+
+              this.tryHide()
+            }}>
+            <i className='fa fa-paste' /> Paste
           </div>
         )}
         <div
@@ -335,8 +438,7 @@ export default class EntityTree extends Component {
           ) : <span />}
           {!selectable && groupIsEntity && contextMenuId === node.data._id ? this.renderContextMenu(
             node.data,
-            groupIsEntity,
-            groupIsEntity ? node.items : undefined
+            { isGroupEntity: groupIsEntity, items: groupIsEntity ? node.items : undefined }
           ) : <div key='empty-contextmenu' />}
         </div>
         <div className={style.nodeContainer + ' ' + (this.state[objectId] ? style.collapsed : '')}>
@@ -435,10 +537,7 @@ export default class EntityTree extends Component {
           */}
           {
             typeof children === 'function' ? children({
-              // TODO: remove this function after finished implementation, we need to refactor
-              // how tags entity tree render works
-              renderClassicTree: () => this.renderTree(this.groupEntitiesByHierarchy(entitySets, entities)), // this.renderTree(this.groupEntitiesByType(entitySets, entities)),
-              // renderObjectSubTree: this.renderObjectSubTree,
+              renderDefaultTree: () => this.renderTree(this.groupEntitiesByHierarchy(entitySets, entities)),
               getSetsToRender: this.getSetsToRender,
               getEntityTypeNameAttr: this.getEntityTypeNameAttr,
               groupEntitiesByType: this.groupEntitiesByType,
@@ -446,7 +545,7 @@ export default class EntityTree extends Component {
               entitySets,
               entities
             }) : (
-              this.renderTree(this.groupEntitiesByType(entitySets, entities))
+              this.renderTree(this.groupEntitiesByHierarchy(entitySets, entities))
             )
           }
         </div>
