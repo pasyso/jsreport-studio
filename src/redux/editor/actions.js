@@ -6,6 +6,7 @@ import { push } from 'react-router-redux'
 import shortid from 'shortid'
 import preview from '../../helpers/preview'
 import resolveUrl from '../../helpers/resolveUrl.js'
+import getCloneName from '../../helpers/getCloneName'
 import beautify from 'js-beautify-jsreport'
 import { engines, recipes, entitySets, previewListeners, locationResolver, editorComponents } from '../../lib/configuration.js'
 
@@ -53,7 +54,7 @@ export function openTab (tab) {
 }
 
 export function openNewTab ({ entitySet, entity, name }) {
-  const shouldClone = entity != null
+  const shouldClone = entity != null && entity._id != null
 
   return async function (dispatch, getState) {
     let id = uid()
@@ -72,12 +73,16 @@ export function openNewTab ({ entitySet, entity, name }) {
         [entitySets[entitySet].nameAttribute]: name
       }
     } else {
-      newEntity = {
+      if (entity != null) {
+        newEntity = Object.assign({}, entity)
+      }
+
+      newEntity = Object.assign(newEntity, {
         _id: id,
         __entitySet: entitySet,
         shortid: shortid.generate(),
         [entitySets[entitySet].nameAttribute]: name
-      }
+      })
 
       if (entitySet === 'templates') {
         newEntity.recipe = recipes.includes('chrome-pdf') ? 'chrome-pdf' : 'html'
@@ -138,6 +143,64 @@ export function update (entity) {
 export function groupedUpdate (entity) {
   return async function (dispatch, getState) {
     await entities.actions.groupedUpdate(entity)(dispatch, getState)
+  }
+}
+
+export function hierarchyCopy (fromId, destination, shouldCut) {
+  return async function (dispatch, getState) {
+    const id = uid()
+
+    const found = entities.selectors.getById(getState(), fromId, false)
+
+    if (!found) {
+      return
+    }
+
+    await entities.actions.load(fromId)(dispatch, getState)
+
+    let fromEntity = entities.selectors.getById(getState(), fromId)
+    let targetEntity
+
+    if (shouldCut) {
+      if (fromEntity[destination.referenceProperty] === destination.shortid) {
+        return
+      }
+
+      fromEntity = Object.assign({}, fromEntity, {
+        [destination.referenceProperty]: destination.shortid
+      })
+
+      targetEntity = fromEntity
+
+      dispatch(entities.actions.update(fromEntity))
+    } else {
+      const newEntity = {
+        ...fromEntity,
+        _id: id,
+        __entitySet: fromEntity.__entitySet,
+        shortid: shortid.generate(),
+        [entitySets[fromEntity.__entitySet].nameAttribute]: getCloneName(fromEntity[entitySets[fromEntity.__entitySet].nameAttribute]),
+        [destination.referenceProperty]: destination.shortid
+      }
+
+      targetEntity = newEntity
+
+      dispatch(entities.actions.add(newEntity))
+    }
+
+    try {
+      dispatch({
+        type: ActionTypes.SAVE_STARTED
+      })
+
+      await entities.actions.save(targetEntity._id)(dispatch, getState)
+
+      dispatch({
+        type: ActionTypes.SAVE_SUCCESS
+      })
+    } catch (e) {
+      console.error(e)
+    }
   }
 }
 

@@ -20,6 +20,7 @@ import CloseConfirmationModal from '../../components/Modals/CloseConfirmationMod
 import RenameModal from '../../components/Modals/RenameModal.js'
 import RestoreDockConfirmationModal from '../../components/Modals/RestoreDockConfirmationModal.js'
 import * as progress from '../../redux/progress'
+import getCloneName from '../../helpers/getCloneName'
 import cookies from 'js-cookie'
 import {
   triggerSplitResize,
@@ -278,7 +279,7 @@ export default class App extends Component {
         this.openModal(NewEntityModal, {
           entity: entity,
           entitySet: entity.__entitySet,
-          initialName: entity.name.indexOf('.') !== -1 ? entity.name.slice(0, entity.name.indexOf('.')) + '(clone)' + entity.name.slice(entity.name.indexOf('.')) : entity.name + '(clone)'
+          initialName: getCloneName(entity[entitySets[entity.__entitySet].nameAttribute])
         })
       },
       onRemove: (id, children) => removeHandler ? removeHandler(id, children) : this.openModal(DeleteConfirmationModal, {_id: id, childrenIds: children}),

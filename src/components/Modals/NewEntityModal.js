@@ -44,8 +44,14 @@ export default class Modal extends Component {
 
     this.props.close()
 
+    let entity = this.props.options.entity
+
+    if (this.props.options.defaults != null) {
+      entity = Object.assign(this.props.options.defaults, entity)
+    }
+
     this.props.openNewTab({
-      entity: this.props.options.entity,
+      entity,
       entitySet: this.props.options.entitySet,
       name
     })
