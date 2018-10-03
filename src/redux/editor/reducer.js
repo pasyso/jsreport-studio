@@ -23,19 +23,34 @@ reducer.handleAction(ActionTypes.OPEN_NEW_TAB, (state, { tab }) => ({
 }))
 
 reducer.handleActions([EntityActionTypes.REMOVE, ActionTypes.CLOSE_TAB], (state, action) => {
-  let newTabs = state.tabs.filter((t) => t.key !== action.key && (!action._id || t._id !== action._id))
-  let newActivatTabKey = state.activeTabKey
-  if (state.activeTabKey === action.key || state.activeTabKey === action._id) {
-    newActivatTabKey = newTabs.length ? newTabs[newTabs.length - 1].key : null
+  let newTabs = state.tabs.filter((t) => {
+    let shouldStay = t.key !== action.key && (!action._id || t._id !== action._id)
+
+    if (shouldStay && action.children) {
+      shouldStay = action.children.every((childId) => {
+        return t._id !== childId
+      })
+    }
+
+    return shouldStay
+  })
+
+  let newActiveTabKey = state.activeTabKey
+
+  if (state.activeTabKey === action.key || state.activeTabKey === action._id || (
+    action.children &&
+    action.children.some((childId) => state.activeTabKey === childId)
+  )) {
+    newActiveTabKey = newTabs.length ? newTabs[newTabs.length - 1].key : null
   }
 
-  const newActivatTab = newActivatTabKey ? newTabs.filter((t) => t.key === newActivatTabKey)[0] : null
+  const newActiveTab = newActiveTabKey ? newTabs.filter((t) => t.key === newActiveTabKey)[0] : null
 
   return {
     ...state,
-    activeTabKey: newActivatTabKey,
+    activeTabKey: newActiveTabKey,
     tabs: newTabs,
-    lastActiveTemplateKey: (newActivatTab && newActivatTab.entitySet === 'templates') ? newActivatTab._id
+    lastActiveTemplateKey: (newActiveTab && newActiveTab.entitySet === 'templates') ? newActiveTab._id
       : (newTabs.filter((t) => t._id === state.lastActiveTemplateKey).length ? state.lastActiveTemplateKey : null)
   }
 })
