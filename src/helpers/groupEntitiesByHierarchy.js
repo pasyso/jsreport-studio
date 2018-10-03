@@ -43,7 +43,7 @@ function addItemsByHierarchy (newItems, entitiesByFolderLevel, getEntityTypeName
   }
 
   entitiesInLevel.forEach((entity) => {
-    if (parentFolderShortId && parentFolderShortId !== entity.folder) {
+    if (parentFolderShortId && entity.folder && parentFolderShortId !== entity.folder.shortid) {
       return
     }
 
@@ -96,19 +96,19 @@ function groupEntityByFolderLevel (collection, allFolders, entity) {
     currentFolder = findFolderInSet(allFolders, entity.shortid)
 
     if (currentFolder && currentFolder.folder != null) {
-      currentFolder = findFolderInSet(allFolders, currentFolder.folder)
+      currentFolder = findFolderInSet(allFolders, currentFolder.folder.shortid)
     } else {
       currentFolder = null
     }
   } else if (entity.folder != null) {
-    currentFolder = findFolderInSet(allFolders, entity.folder)
+    currentFolder = findFolderInSet(allFolders, entity.folder.shortid)
   }
 
   while (currentFolder) {
     level++
 
     if (currentFolder.folder != null) {
-      currentFolder = findFolderInSet(allFolders, currentFolder.folder)
+      currentFolder = findFolderInSet(allFolders, currentFolder.folder.shortid)
     } else {
       currentFolder = null
     }
