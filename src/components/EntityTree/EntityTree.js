@@ -43,6 +43,7 @@ export default class EntityTree extends Component {
     this.getEntityTypeNameAttr = this.getEntityTypeNameAttr.bind(this)
     this.getAllChildrenIds = this.getAllChildrenIds.bind(this)
     this.groupEntitiesByType = this.groupEntitiesByType.bind(this)
+    this.renderTree = this.renderTree.bind(this)
     this.renderGroupNode = this.renderGroupNode.bind(this)
     this.renderEntityNode = this.renderEntityNode.bind(this)
   }
@@ -540,6 +541,7 @@ export default class EntityTree extends Component {
           {
             typeof children === 'function' ? children({
               renderDefaultTree: () => this.renderTree(this.groupEntitiesByHierarchy(entitySets, entities)),
+              renderTree: this.renderTree,
               getSetsToRender: this.getSetsToRender,
               getEntityTypeNameAttr: this.getEntityTypeNameAttr,
               groupEntitiesByType: this.groupEntitiesByType,
