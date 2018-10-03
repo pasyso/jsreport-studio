@@ -256,7 +256,9 @@ export default class EntityTree extends Component {
       }
 
       menuItems.push(
-        <div className={style.contextButton} onClick={() => onNewClick(entitySet.name, { defaults: { folder: entity.shortid } })}>
+        <div
+          className={style.contextButton}
+          onClick={() => { onNewClick(entitySet.name, { defaults: { folder: { shortid: entity.shortid } } }); this.tryHide() }}>
           <i className={`fa ${entitySet.faIcon != null ? entitySet.faIcon : 'fa-file'}`} /> {entitySet.visibleName}
         </div>
       )
@@ -267,7 +269,7 @@ export default class EntityTree extends Component {
         {isGroupEntity && (
           <div
             className={`${style.contextButton} ${style.hasNestedLevels}`}
-            onClick={(e) => { e.stopPropagation(); this.tryHide() }}>
+            onClick={(e) => { e.stopPropagation() }}>
             <i className='fa fa-file' /> New Entity
             <div key='entity-contextmenu' className={`${style.contextMenuContainer} ${style.nestedLevel}`}>
               <div className={style.contextMenu}>
@@ -279,7 +281,7 @@ export default class EntityTree extends Component {
         {isGroupEntity && (
           <div
             className={style.contextButton}
-            onClick={(e) => { e.stopPropagation(); onNewClick('folders', { defaults: { folder: entity.shortid } }); this.tryHide() }}>
+            onClick={(e) => { e.stopPropagation(); onNewClick('folders', { defaults: { folder: { shortid: entity.shortid } } }); this.tryHide() }}>
             <i className='fa fa-folder' /> New Folder
           </div>
         )}
@@ -339,7 +341,7 @@ export default class EntityTree extends Component {
               }
 
               this.releaseClipboardTo({
-                shortid: isGroupEntity ? entity.shortid : entity.folder
+                shortid: isGroupEntity ? entity.shortid : (entity.folder != null ? entity.folder.shortid : null)
               })
 
               this.tryHide()

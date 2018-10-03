@@ -162,12 +162,18 @@ export function hierarchyCopy (fromId, destination, shouldCut) {
     let targetEntity
 
     if (shouldCut) {
-      if (fromEntity[destination.referenceProperty] === destination.shortid) {
+      if (
+        fromEntity[destination.referenceProperty] != null &&
+        destination.shortid != null &&
+        fromEntity[destination.referenceProperty] === destination.shortid
+      ) {
         return
       }
 
       fromEntity = Object.assign({}, fromEntity, {
-        [destination.referenceProperty]: destination.shortid
+        [destination.referenceProperty]: {
+          shortid: destination.shortid
+        }
       })
 
       targetEntity = fromEntity
@@ -180,7 +186,9 @@ export function hierarchyCopy (fromId, destination, shouldCut) {
         __entitySet: fromEntity.__entitySet,
         shortid: shortid.generate(),
         [entitySets[fromEntity.__entitySet].nameAttribute]: getCloneName(fromEntity[entitySets[fromEntity.__entitySet].nameAttribute]),
-        [destination.referenceProperty]: destination.shortid
+        [destination.referenceProperty]: {
+          shortid: destination.shortid
+        }
       }
 
       targetEntity = newEntity
