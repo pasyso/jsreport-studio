@@ -188,7 +188,11 @@ export default class EntityTree extends Component {
     return [...setsInOrderSpecification, ...setsNotInOrderSpecification]
   }
 
-  getEntityTypeNameAttr (setName, entity) {
+  getEntityTypeNameAttr (setName, entity, returnNameAttr = false) {
+    if (returnNameAttr) {
+      return entitySets[setName].nameAttribute
+    }
+
     return entity[entitySets[setName].nameAttribute]
   }
 
