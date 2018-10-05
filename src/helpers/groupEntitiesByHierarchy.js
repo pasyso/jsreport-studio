@@ -5,7 +5,7 @@ module.exports = (entitySetsNames, entities, getEntityTypeNameAttr) => {
   const entitiesByFolderLevel = {}
 
   // group folders first
-  allFoldersEntities.forEach((entityFolder) => {
+  entities.folders.forEach((entityFolder) => {
     groupEntityByFolderLevel(entitiesByFolderLevel, allFoldersEntities, entityFolder)
   })
 
@@ -105,6 +105,14 @@ function groupEntityByFolderLevel (collection, allFolders, entity) {
   }
 
   while (currentFolder) {
+    if (collection[level] == null) {
+      collection[level] = []
+    }
+
+    if (!collection[level].some((i) => i._id === currentFolder._id)) {
+      collection[level].push(currentFolder)
+    }
+
     level++
 
     if (currentFolder.folder != null) {
