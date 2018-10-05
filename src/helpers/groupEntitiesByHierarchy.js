@@ -32,6 +32,18 @@ module.exports = (entitySetsNames, entities, getEntityTypeNameAttr) => {
   return newItems
 }
 
+function getLevel (allFolders, entity) {
+  let level = 0
+  let currentEntity = entity
+
+  while (currentEntity && currentEntity.folder != null) {
+    level++
+
+    currentEntity = findFolderInSet(allFolders, currentEntity.folder.shortid)
+  }
+
+  return level
+}
 
 function addItemsByHierarchy (newItems, entitiesByFolderLevel, getEntityTypeNameAttr, level = 0, parentFolderShortId) {
   const entitiesInLevel = entitiesByFolderLevel[level]
@@ -42,7 +54,24 @@ function addItemsByHierarchy (newItems, entitiesByFolderLevel, getEntityTypeName
     return
   }
 
-  entitiesInLevel.forEach((entity) => {
+  entitiesInLevel.sort((a, b) => {
+    if (!a.__entitySet || !b.__entitySet) {
+      return 0
+    }
+
+    const nameA = getEntityTypeNameAttr(a.__entitySet, a)
+    const nameB = getEntityTypeNameAttr(b.__entitySet, b)
+
+    if (nameA < nameB) {
+      return -1
+    }
+
+    if (nameA > nameB) {
+      return 1
+    }
+
+    return 0
+  }).forEach((entity) => {
     if (parentFolderShortId && entity.folder && parentFolderShortId !== entity.folder.shortid) {
       return
     }
@@ -105,12 +134,14 @@ function groupEntityByFolderLevel (collection, allFolders, entity) {
   }
 
   while (currentFolder) {
-    if (collection[level] == null) {
-      collection[level] = []
+    const currentFolderLevel = getLevel(allFolders, currentFolder)
+
+    if (collection[currentFolderLevel] == null) {
+      collection[currentFolderLevel] = []
     }
 
-    if (!collection[level].some((i) => i._id === currentFolder._id)) {
-      collection[level].push(currentFolder)
+    if (!collection[currentFolderLevel].some((i) => i._id === currentFolder._id)) {
+      collection[currentFolderLevel].push(currentFolder)
     }
 
     level++
@@ -126,5 +157,7 @@ function groupEntityByFolderLevel (collection, allFolders, entity) {
     collection[level] = []
   }
 
-  collection[level].push(entity)
+  if (!collection[level].some((i) => i._id === entity._id)) {
+    collection[level].push(entity)
+  }
 }
