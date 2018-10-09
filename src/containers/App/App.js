@@ -20,7 +20,7 @@ import CloseConfirmationModal from '../../components/Modals/CloseConfirmationMod
 import RenameModal from '../../components/Modals/RenameModal.js'
 import RestoreDockConfirmationModal from '../../components/Modals/RestoreDockConfirmationModal.js'
 import * as progress from '../../redux/progress'
-import getCloneName from '../../helpers/getCloneName'
+import getCloneName from '../../../shared/getCloneName'
 import cookies from 'js-cookie'
 import {
   triggerSplitResize,

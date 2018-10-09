@@ -121,11 +121,12 @@ export default class EntityTree extends Component {
     })
   }
 
-  setClipboard ({ action, entityId }) {
+  setClipboard ({ action, entityId, entitySet }) {
     this.setState({
       clipboard: {
         action,
-        entityId
+        entityId,
+        entitySet
       }
     })
   }
@@ -137,7 +138,10 @@ export default class EntityTree extends Component {
       return
     }
 
-    this.props.hierarchyCopy(clipboard.entityId, {
+    this.props.hierarchyCopy({
+      id: clipboard.entityId,
+      entitySet: clipboard.entitySet
+    }, {
       shortid: destination.shortid,
       referenceProperty: 'folder'
     }, clipboard.action === 'cut')
@@ -263,6 +267,7 @@ export default class EntityTree extends Component {
       menuItems.push(
         <div
           className={style.contextButton}
+          key={entitySet.name}
           onClick={() => { onNewClick(entitySet.name, { defaults: { folder: { shortid: entity.shortid } } }); this.tryHide() }}>
           <i className={`fa ${entitySet.faIcon != null ? entitySet.faIcon : 'fa-file'}`} /> {entitySet.visibleName}
         </div>
@@ -303,7 +308,7 @@ export default class EntityTree extends Component {
             <i className='fa fa-clone' /> Clone
           </div>
         )}
-        {(isGroupEntity == null) && (
+        {(isGroupEntity || isGroupEntity == null) && (
           <div
             className={`${style.contextButton} ${entity.__isNew === true ? style.disabled : ''}`}
             onClick={(e) => {
@@ -313,13 +318,13 @@ export default class EntityTree extends Component {
                 return
               }
 
-              this.setClipboard({ action: 'cut', entityId: entity._id })
+              this.setClipboard({ action: 'cut', entityId: entity._id, entitySet: entity.__entitySet })
               this.tryHide()
             }}>
             <i className='fa fa-cut' /> Cut
           </div>
         )}
-        {(isGroupEntity == null) && (
+        {(isGroupEntity || isGroupEntity == null) && (
           <div
             className={`${style.contextButton} ${entity.__isNew === true ? style.disabled : ''}`}
             onClick={(e) => {
@@ -329,7 +334,7 @@ export default class EntityTree extends Component {
                 return
               }
 
-              this.setClipboard({ action: 'copy', entityId: entity._id })
+              this.setClipboard({ action: 'copy', entityId: entity._id, entitySet: entity.__entitySet })
               this.tryHide()
             }}>
             <i className='fa fa-copy' /> Copy
