@@ -1,12 +1,12 @@
 import * as entities from '../entities'
 import * as ActionTypes from './constants.js'
 import uid from '../../helpers/uid.js'
+import api from '../../helpers/api.js'
 import * as selectors from './selectors.js'
 import { push } from 'react-router-redux'
 import shortid from 'shortid'
 import preview from '../../helpers/preview'
 import resolveUrl from '../../helpers/resolveUrl.js'
-import getCloneName from '../../helpers/getCloneName'
 import beautify from 'js-beautify-jsreport'
 import { engines, recipes, entitySets, previewListeners, locationResolver, editorComponents } from '../../lib/configuration.js'
 
@@ -146,68 +146,39 @@ export function groupedUpdate (entity) {
   }
 }
 
-export function hierarchyCopy (fromId, destination, shouldCut) {
+export function hierarchyCopy (source, target, shouldCut) {
   return async function (dispatch, getState) {
-    const id = uid()
+    let response
 
-    const found = entities.selectors.getById(getState(), fromId, false)
+    try {
+      dispatch(entities.actions.apiStart())
 
-    if (!found) {
+      response = await api.post('/studio/hierarchyCopy', {
+        data: {
+          source,
+          target,
+          entitySetNameAttrMap: Object.keys(entitySets).reduce((result, setName) => {
+            result[setName] = entitySets[setName].nameAttribute
+            return result
+          }, {}),
+          cut: shouldCut === true
+        }
+      })
+
+      dispatch(entities.actions.apiDone())
+    } catch (e) {
+      dispatch(entities.actions.apiFailed(e))
       return
     }
 
-    await entities.actions.load(fromId)(dispatch, getState)
-
-    let fromEntity = entities.selectors.getById(getState(), fromId)
-    let targetEntity
-
     if (shouldCut) {
-      if (
-        fromEntity[destination.referenceProperty] != null &&
-        destination.shortid != null &&
-        fromEntity[destination.referenceProperty] === destination.shortid
-      ) {
-        return
-      }
-
-      fromEntity = Object.assign({}, fromEntity, {
-        [destination.referenceProperty]: {
-          shortid: destination.shortid
-        }
-      })
-
-      targetEntity = fromEntity
-
-      dispatch(entities.actions.update(fromEntity))
+      await Promise.all(response.items.map((item) => {
+        return entities.actions.load(item._id, true)(dispatch, getState)
+      }))
     } else {
-      const newEntity = {
-        ...fromEntity,
-        _id: id,
-        __entitySet: fromEntity.__entitySet,
-        shortid: shortid.generate(),
-        [entitySets[fromEntity.__entitySet].nameAttribute]: getCloneName(fromEntity[entitySets[fromEntity.__entitySet].nameAttribute]),
-        [destination.referenceProperty]: {
-          shortid: destination.shortid
-        }
-      }
-
-      targetEntity = newEntity
-
-      dispatch(entities.actions.add(newEntity))
-    }
-
-    try {
-      dispatch({
-        type: ActionTypes.SAVE_STARTED
+      response.items.forEach((item) => {
+        dispatch(entities.actions.addExisting(item))
       })
-
-      await entities.actions.save(targetEntity._id)(dispatch, getState)
-
-      dispatch({
-        type: ActionTypes.SAVE_SUCCESS
-      })
-    } catch (e) {
-      console.error(e)
     }
   }
 }
