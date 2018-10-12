@@ -1,6 +1,8 @@
 import Promise from 'bluebird'
 import React, {Component, PropTypes} from 'react'
 import {connect} from 'react-redux'
+import { DragDropContext } from 'react-dnd'
+import HTML5Backend from 'react-dnd-html5-backend'
 import { actions, selectors } from 'redux/editor'
 import * as entities from 'redux/entities'
 import Preview from '../../components/Preview/Preview.js'
@@ -51,7 +53,7 @@ const progressActions = progress.actions
   lastActiveTemplate: selectors.getLastActiveTemplate(state),
   undockMode: state.editor.undockMode
 }), { ...actions, ...progressActions })
-export default class App extends Component {
+class App extends Component {
   static contextTypes = {
     store: PropTypes.object.isRequired
   }
@@ -401,3 +403,5 @@ export default class App extends Component {
     )
   }
 }
+
+export default DragDropContext(HTML5Backend)(App)
