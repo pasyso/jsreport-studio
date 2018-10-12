@@ -24,6 +24,22 @@
   margin-top: 0;
 }
 
+.nodeBoxItemContent {
+  display: inline-block;
+  outline: 1px dashed transparent;
+  outline-offset: 1px;
+  opacity: 1;
+}
+
+.nodeBoxItemContent.dragging,
+.nodeContainer.dragging .nodeBoxItemContent {
+  opacity: 0.5;
+}
+
+.nodeBoxItemContent.dragging {
+  outline-color: $tertiaryBackgroundColor;
+}
+
 .nodesBox {
   overflow: auto;
   width: auto;
@@ -87,6 +103,11 @@
 .link:hover {
   background: $primaryHoverBackgroundColor;
   color: $primaryHoverColor;
+}
+
+.link.dragging {
+  background-color: inherit;
+  color: inherit;
 }
 
 .entityIcon {
