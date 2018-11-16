@@ -1,6 +1,7 @@
 import React, {Component, PropTypes} from 'react'
 import {connect} from 'react-redux'
 import {actions, selectors} from '../../redux/entities'
+import intl from 'react-intl-universal'
 
 @connect((state, props) => ({ entity: selectors.getById(state, props.options._id, false) }), { ...actions })
 export default class DeleteConfirmationModal extends Component {
@@ -30,11 +31,11 @@ export default class DeleteConfirmationModal extends Component {
     }
 
     return <div>
-      <div>Are you sure you want to delete {entity.name} ?</div>
+      <div>{intl.get('deleteModal.title', {name : entity.name}).d('Are you sure you want to delete ' + entity.name + ' ?')}</div>
 
       <div className='button-bar'>
-        <button className='button danger' onClick={() => this.remove()}>Yes</button>
-        <button className='button confirmation' ref='cancel' onClick={() => this.cancel()}>Cancel</button>
+        <button className='button danger' onClick={() => this.remove()}>{intl.get('yes').d('Yes')}</button>
+        <button className='button confirmation' ref='cancel' onClick={() => this.cancel()}>{intl.get('cancel').d('Cancel')}</button>
       </div>
     </div>
   }

@@ -3,6 +3,8 @@ import style from './Toolbar.scss'
 import { toolbarComponents, toolbarVisibilityResolver } from '../../lib/configuration.js'
 import logo from './js-logo.png'
 
+import intl from 'react-intl-universal'
+
 export default class Toolbar extends Component {
   static propTypes = {
     openStartup: React.PropTypes.func.isRequired,
@@ -92,14 +94,13 @@ export default class Toolbar extends Component {
 
   renderRun () {
     const { onRun, canRun } = this.props
-
     return <div
-      title='Preview report in the right pane (F8)' className={'toolbar-button ' + (canRun ? '' : 'disabled')}
+      title={intl.get('toolbar.RunTooltip').d('Preview report in the right pane') + ' (F8)'} className={'toolbar-button ' + (canRun ? '' : 'disabled')}
       onClick={canRun ? () => onRun() : () => {}}>
-      <i className='fa fa-play' /> Run <span className={style.runCaret} onClick={(e) => { e.stopPropagation(); this.setState({ expandedRun: !this.state.expandedRun }) }} />
+      <i className='fa fa-play' /> {intl.get('toolbar.Run').d('Run')} <span className={style.runCaret} onClick={(e) => { e.stopPropagation(); this.setState({ expandedRun: !this.state.expandedRun }) }} />
       <div className={style.runPopup} style={{display: this.state.expandedRun ? 'block' : 'none'}}>
-        {this.renderButton((e) => { e.stopPropagation(); this.tryHide(); onRun('_blank', true) }, canRun, 'Run to new tab', 'fa fa-tablet', 'Preview in new tab')}
-        {this.renderButton((e) => { e.stopPropagation(); this.tryHide(); onRun('_self', true) }, canRun, 'Download', 'fa fa-download', 'Download output')}
+        {this.renderButton((e) => { e.stopPropagation(); this.tryHide(); onRun('_blank', true) }, canRun, intl.get('toolbar.RunNewTab').d('Run to new tab'), 'fa fa-tablet', intl.get('toolbar.RunNewTabTooltip').d('Preview in new tab'))}
+        {this.renderButton((e) => { e.stopPropagation(); this.tryHide(); onRun('_self', true) }, canRun, intl.get('toolbar.Download').d('Download'), 'fa fa-download', intl.get('toolbar.DownloadTooltip').d('Download output'))}
       </div>
     </div>
   }
@@ -138,9 +139,9 @@ export default class Toolbar extends Component {
     return <div className={style.toolbar}>
       <div className={style.logo} onClick={() => openStartup()}><img src={logo} /></div>
       {this.renderRun()}
-      {this.renderButton(onSave, canSave, 'Save', 'fa fa-floppy-o', 'Save current tab (CTRL+S)')}
-      {this.renderButton(onSaveAll, canSaveAll, 'SaveAll', 'fa fa-floppy-o', 'Save all tabs (CTRL+SHIFT+S')}
-      {this.renderButton(onReformat, canReformat, 'Reformat', 'fa fa-indent', 'Reformat code (CTRL+SHIFT+F)')}
+      {this.renderButton(onSave, canSave, intl.get('toolbar.Save').d('Save'), 'fa fa-floppy-o', intl.get('toolbar.SaveTooltip').d('Save current tab')+' (CTRL+S)')}
+      {this.renderButton(onSaveAll, canSaveAll, intl.get('toolbar.SaveAll').d('SaveAll'), 'fa fa-floppy-o', intl.get('toolbar.SaveAllTooltip').d('Save all tabs')+' (CTRL+SHIFT+S')}
+      {this.renderButton(onReformat, canReformat, intl.get('toolbar.Reformat').d('Reformat'), 'fa fa-indent', intl.get('toolbar.ReformatTooltip').d('Reformat code')+' (CTRL+SHIFT+F)')}
       {this.renderToolbarComponents('left')}
       <div className={style.spinner}>
         {isPending ? <i className='fa fa-spinner fa-spin fa-fw'></i> : ''}

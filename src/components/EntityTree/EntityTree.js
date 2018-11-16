@@ -9,6 +9,7 @@ import {
   entityTreeFilterItemResolvers,
   entityTreeIconResolvers
 } from '../../lib/configuration.js'
+import intl from 'react-intl-universal'
 
 export default class EntityTree extends Component {
   static propTypes = {
@@ -163,17 +164,17 @@ export default class EntityTree extends Component {
         <div
           className={style.contextButton}
           onClick={(e) => { e.stopPropagation(); onRename(entity._id); this.tryHide() }}>
-          <i className='fa fa-pencil' /> Rename
+          <i className='fa fa-pencil' /> {intl.get('entityTree.rename').d('Rename')}
         </div>
         <div
           className={style.contextButton}
           onClick={(e) => { e.stopPropagation(); onClone(entity); this.tryHide() }}>
-          <i className='fa fa-clone' /> Clone
+          <i className='fa fa-clone' /> {intl.get('entityTree.clone').d('Clone')}
         </div>
         <div
           className={style.contextButton}
           onClick={(e) => { e.stopPropagation(); onRemove(entity._id); this.tryHide() }}>
-          <i className='fa fa-trash' /> Delete
+          <i className='fa fa-trash' /> {intl.get('entityTree.delete').d('Delete')}
         </div>
       </div>
     </div>
@@ -268,7 +269,7 @@ export default class EntityTree extends Component {
           className={style.nodeTitle + ' ' + (this.state[entitiesTypeId] ? style.collapsed : '')}
           onClick={() => this.collapse(entitiesTypeId)}
         >
-          {entitiesType}
+          {intl.get('entitiesType.'+entitiesType).d(entitiesType)}
         </span>
         {isGroup && this.renderEntityTreeItemComponents('groupRight', groupProps, undefined)}
         {

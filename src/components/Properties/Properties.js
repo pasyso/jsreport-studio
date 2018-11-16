@@ -1,6 +1,7 @@
 import React, {Component} from 'react'
 import style from './Properties.scss'
 import { entitySets, propertiesComponents } from '../../lib/configuration.js'
+import intl from 'react-intl-universal'
 
 export default class Properties extends Component {
   static propTypes = {
@@ -20,7 +21,7 @@ export default class Properties extends Component {
 
   renderTitle (title, entity, entities) {
     if (typeof title === 'string') {
-      return <span>{title}</span>
+      return <span>{intl.get('property.'+title).d(title)}</span>
     }
 
     return title(entity, entities)
@@ -50,7 +51,7 @@ export default class Properties extends Component {
     return <div className={style.propertiesNodes}>
       <div>
         <div className='form-group'>
-          <label>{nameAttribute}</label>
+          <label>{intl.get('entityAttr.'+nameAttribute).d(nameAttribute)}</label>
           <input
             type='text' value={entity[nameAttribute] || ''}
             onChange={(v) => onChange({_id: entity._id, [nameAttribute]: v.target.value})} />
@@ -64,7 +65,7 @@ export default class Properties extends Component {
     const { entity } = this.props
 
     return <div className={style.propertiesPanel}>
-      <div className={style.title}>Properties</div>
+      <div className={style.title}>{intl.get('properties.title').d('Properties')}</div>
       <div className={style.propertiesContainer}>
         {entity ? this.renderProperties(entity) : ''}
       </div>

@@ -1,6 +1,7 @@
 import React, { Component, PropTypes } from 'react'
 import { connect } from 'react-redux'
 import { actions } from '../../redux/editor'
+import intl from 'react-intl-universal'
 
 @connect(undefined, { ...actions }, (stateProps, dispatchProps, ownProps) => ({
   ...ownProps,
@@ -42,14 +43,11 @@ export default class RestoreDockConfirmationModal extends Component {
 
   render () {
     return <div>
-      <div>
-        This action will close all preview tabs and will redirect rendering output back to pane.
-        Do you want to continue?
-      </div>
+      <div>{intl.get('restoreDockModal.title').d('This action will close all preview tabs and will redirect rendering output back to pane. Do you want to continue?')}</div>
 
       <div className='button-bar'>
-        <button className='button danger' onClick={() => this.onResponse(true)}>Yes</button>
-        <button className='button confirmation' ref='cancel' onClick={() => this.onResponse(false)}>Cancel</button>
+        <button className='button danger' onClick={() => this.onResponse(true)}>{intl.get('yes').d('yes')}</button>
+        <button className='button confirmation' ref='cancel' onClick={() => this.onResponse(false)}>{intl.get('cancel').d('Cancel')}</button>
       </div>
     </div>
   }

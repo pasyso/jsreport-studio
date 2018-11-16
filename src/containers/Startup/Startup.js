@@ -4,6 +4,7 @@ import { actions } from '../../redux/editor'
 import { actions as settingsActions, selectors } from '../../redux/settings'
 import api from '../../helpers/api.js'
 import { previewFrameChangeHandler } from '../../lib/configuration.js'
+import intl from 'react-intl-universal'
 
 @connect((state) => ({
   activeTabKey: state.editor.activeTabKey,
@@ -57,15 +58,15 @@ export default class Startup extends Component {
     const { openTab, logsWithTemplates, failedLogsWithTemplates } = this.props
 
     return <div className='block custom-editor' style={{overflow: 'auto', minHeight: 0, height: 'auto'}}>
-      <h2>Last edited templates</h2>
+      <h2>{intl.get('startup.lastEditedTemplates').d('Last edited templates')}</h2>
 
       <div>
         <table className='table'>
           <thead>
             <tr>
-              <th>name</th>
-              <th>recipe</th>
-              <th>last modified</th>
+              <th>{intl.get('startup.name').d('name')}</th>
+              <th>{intl.get('startup.recipe').d('recipe')}</th>
+              <th>{intl.get('startup.lastModified').d('last modified')}</th>
             </tr>
           </thead>
           <tbody>
@@ -77,14 +78,14 @@ export default class Startup extends Component {
           </tbody>
         </table>
       </div>
-      <h2>Last requests</h2>
+      <h2>{intl.get('startup.lastRequests').d('Last requests')}</h2>
 
       <div>
         <table className='table'>
           <thead>
             <tr>
-              <th>template</th>
-              <th>started</th>
+              <th>{intl.get('startup.template').d('template')}</th>
+              <th>{intl.get('startup.started').d('started')}</th>
             </tr>
           </thead>
           <tbody>
@@ -96,14 +97,14 @@ export default class Startup extends Component {
         </table>
       </div>
 
-      <h2>LAst failed requests</h2>
+      <h2>{intl.get('startup.lastFailedRequests').d('Last failed requests')}</h2>
       <div>
         <table className='table'>
           <thead>
             <tr>
-              <th>template</th>
-              <th>error</th>
-              <th>started</th>
+              <th>{intl.get('startup.template').d('template')}</th>
+              <th>{intl.get('startup.error').d('error')}</th>
+              <th>{intl.get('startup.started').d('started')}</th>
             </tr>
           </thead>
           <tbody>

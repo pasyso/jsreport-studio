@@ -3,6 +3,7 @@ import {connect} from 'react-redux'
 import {actions} from '../../redux/editor'
 import api from '../../helpers/api.js'
 import { entitySets } from '../../lib/configuration.js'
+import intl from 'react-intl-universal'
 
 @connect((state) => ({}), { ...actions })
 export default class Modal extends Component {
@@ -62,10 +63,10 @@ export default class Modal extends Component {
 
     return <div>
       <div className='form-group'>
-        <label>New {entitySets[entitySet].visibleName}</label>
+        <label>{intl.get('newEntityModal.title').d('New')} {intl.get('entity.' + entitySets[entitySet].name).d(entitySets[entitySet].visibleName)}</label>
         <input
           type='text'
-          placeholder='name...'
+          placeholder={intl.get('newEntityModal.name').d('name...')}
           ref='nameInput'
           defaultValue={initialName}
           onKeyPress={(e) => this.handleKeyPress(e)}
@@ -75,7 +76,7 @@ export default class Modal extends Component {
         <span style={{color: 'red', display: error ? 'block' : 'none'}}>{error}</span>
       </div>
       <div className='button-bar'>
-        <button className='button confirmation' onClick={() => this.submit()}>ok</button>
+        <button className='button confirmation' onClick={() => this.submit()}>{intl.get('ok').d('ok')}</button>
       </div>
     </div>
   }

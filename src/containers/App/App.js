@@ -32,6 +32,7 @@ import {
   registerCollapsePreviewHandler,
   entityTreeWrapperComponents
 } from '../../lib/configuration.js'
+import intl from 'react-intl-universal'
 
 const progressActions = progress.actions
 
@@ -178,7 +179,7 @@ export default class App extends Component {
 
   openStartup () {
     if (shouldOpenStartupPage) {
-      this.props.openTab({ key: 'StartupPage', editorComponentKey: 'startup', title: 'Startup' })
+      this.props.openTab({ key: 'StartupPage', editorComponentKey: 'startup', title: intl.get('tab.startup').d('Startup') })
     }
   }
 
@@ -359,7 +360,7 @@ export default class App extends Component {
             <div className='block'>
               <SplitPane
                 ref='leftPane'
-                collapsedText='Objects / Properties' collapsable='first'
+                collapsedText={intl.get('collapsedText').d('Objects / Properties')} collapsable='first'
                 resizerClassName='resizer' defaultSize='85%' onChange={() => this.handleSplitChanged()}
                 onDragFinished={() => this.handleSplitDragFinished()}>
                 <SplitPane

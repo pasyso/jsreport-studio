@@ -2,6 +2,7 @@ import React, { Component } from 'react'
 import Popover from '../../components/common/Popover'
 import EntityTreeButton from './EntityTreeButton'
 import style from './EntityTreeInputSeach.scss'
+import intl from 'react-intl-universal'
 
 class InputSearch extends Component {
   componentDidMount () {
@@ -80,7 +81,7 @@ class EntityTreeInputSeach extends Component {
     const { displayInput, filterActive, filterByName } = this.state
 
     return (
-      <div title='Filter entities tree by name' className={style.container}>
+      <div title={intl.get('entityTree.filter').d('Filter entities tree by name')} className={style.container}>
         <EntityTreeButton active={filterActive} onClick={() => this.setState({ displayInput: true })}>
           <span style={{ display: 'inline-block' }}>
             <i className='fa fa-filter' />

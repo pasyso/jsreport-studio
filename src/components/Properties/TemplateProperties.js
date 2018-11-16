@@ -1,5 +1,6 @@
 import React, {Component} from 'react'
 import { engines, recipes } from '../../lib/configuration'
+import intl from 'react-intl-universal'
 
 export default class TemplateProperties extends Component {
   static propTypes = {
@@ -35,8 +36,8 @@ export default class TemplateProperties extends Component {
 
     return (
       <div className='properties-section'>
-        <div className='form-group'><label>engine</label> {this.renderEngines()}</div>
-        <div className='form-group'><label>recipe</label> {this.renderRecipes()}</div>
+        <div className='form-group'><label>{intl.get('engine').d('engine')}</label> {this.renderEngines()}</div>
+        <div className='form-group'><label>{intl.get('recipe').d('recipe')}</label> {this.renderRecipes()}</div>
       </div>
     )
   }

@@ -16,6 +16,8 @@ import defaults from './configurationDefaults.js'
 import getEntityTreeOrder from './helpers/getEntityTreeOrder'
 import zipObject from 'lodash/zipObject'
 import { syncHistoryWithStore } from 'react-router-redux'
+import intl from 'react-intl-universal'
+import cookies from 'js-cookie'
 
 window.React = React
 
@@ -44,8 +46,21 @@ const start = async () => {
     Studio.entitySets
   )
 
+  const locales = {
+    "en": require('./i18n/en.json'),
+    "ru": require('./i18n/ru.json'),
+  }
+
+  const currentLocale = intl.determineLocale({urlLocaleKey: 'lang', cookieLocaleKey: 'lang'}).substr(0, 2)
+  cookies.set('lang', currentLocale)
+
   await Promise.all(
     [
+      // react-intl-universal is singleton, so you should init it only once in your app
+      intl.init({
+        currentLocale: currentLocale,
+        locales
+      }),
       ...Object.keys(Studio.entitySets).map((t) => entities.actions.loadReferences(t)(store.dispatch)),
       Studio.api.get('/api/engine').then((engs) => (configuration.engines = engs)),
       Studio.api.get('/api/recipe').then((recs) => (configuration.recipes = recs)),

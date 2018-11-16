@@ -3,6 +3,7 @@ import {connect} from 'react-redux'
 import {actions, selectors} from '../../redux/entities'
 import api from '../../helpers/api.js'
 import { entitySets } from '../../lib/configuration.js'
+import intl from 'react-intl-universal'
 
 @connect((state, props) => ({ entity: selectors.getById(state, props.options._id) }), { ...actions })
 export default class RenameModal extends Component {
@@ -61,15 +62,15 @@ export default class RenameModal extends Component {
 
     return <div>
       <div className='form-group'>
-        <label>rename entity</label>
+        <label>{intl.get('renameModal.title').d('rename entity')}</label>
         <input ref='name' type='text' defaultValue={entity[nameAttribute]} />
       </div>
       <div className='form-group'>
         <span style={{color: 'red', display: error ? 'block' : 'none'}}>{error}</span>
       </div>
       <div className='button-bar'>
-        <button className='button confirmation' onClick={() => this.rename()}>Ok</button>
-        <button className='button confirmation' ref='cancel' onClick={() => this.props.close()}>Cancel</button>
+        <button className='button confirmation' onClick={() => this.rename()}>{intl.get('ok').d('Ok')}</button>
+        <button className='button confirmation' ref='cancel' onClick={() => this.props.close()}>{intl.get('cancel').d('Cancel')}</button>
       </div>
     </div>
   }
