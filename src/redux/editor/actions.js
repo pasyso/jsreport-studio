@@ -146,22 +146,18 @@ export function groupedUpdate (entity) {
   }
 }
 
-export function hierarchyCopy (source, target, shouldCut) {
+export function hierarchyMove (source, target, shouldCopy = false) {
   return async function (dispatch, getState) {
     let response
 
     try {
       dispatch(entities.actions.apiStart())
 
-      response = await api.post('/studio/hierarchyCopy', {
+      response = await api.post('/studio/hierarchyMove', {
         data: {
           source,
           target,
-          entitySetNameAttrMap: Object.keys(entitySets).reduce((result, setName) => {
-            result[setName] = entitySets[setName].nameAttribute
-            return result
-          }, {}),
-          cut: shouldCut === true
+          copy: shouldCopy === true
         }
       })
 
@@ -171,7 +167,7 @@ export function hierarchyCopy (source, target, shouldCut) {
       return
     }
 
-    if (shouldCut) {
+    if (!shouldCopy) {
       await Promise.all(response.items.map((item) => {
         return entities.actions.load(item._id, true)(dispatch, getState)
       }))

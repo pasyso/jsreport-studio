@@ -1,25 +1,34 @@
 import React, {Component} from 'react'
 import { DragSource, DropTarget } from 'react-dnd'
 import style from './EntityTree.scss'
+import { checkIsGroupNode, checkIsGroupEntityNode, getNodeDOMId, getNodeTitleDOMId } from './utils'
+import ENTITY_NODE_DRAG_TYPE from './nodeDragType'
 import { entitySets, entityTreeItemComponents, entityTreeIconResolvers } from '../../lib/configuration.js'
 
 const nodeSource = {
   beginDrag (props, monitor, component) {
-    return {}
+    const node = props.node
+
+    return {
+      entitySet: node.data.__entitySet,
+      isGroupEntity: checkIsGroupEntityNode(node),
+      isCollapsed: props.isCollapsed,
+      node
+    }
   }
 }
 
 const nodeTarget = {
-  drop (props, monitor, component) {
-    console.log('dropping..')
-  },
   hover (props, monitor, component) {
     const { node } = props
 
-    if (monitor.isOver({ shallow: true })) {
-      console.log('hovering exactly..')
-    } else {
-      console.log('hovering around..')
+    if (monitor.isOver({ shallow: true }) && props.onDragOver) {
+      props.onDragOver({
+        entitySet: node.data.__entitySet,
+        isGroupEntity: checkIsGroupEntityNode(node),
+        isCollapsed: props.isCollapsed,
+        targetNode: node
+      })
     }
   }
 }
@@ -39,11 +48,14 @@ function collectForTarget (connect, monitor) {
   }
 }
 
-function checkIsGroupNode (node) {
-  return node.isEntitySet === true || node.isGroup === true
-}
-
 class EntityTreeNode extends Component {
+  constructor (props) {
+    super(props)
+
+    this.getDOMId = this.getDOMId.bind(this)
+    this.getTitleDOMId = this.getTitleDOMId.bind(this)
+  }
+
   connectDragging (el) {
     const { selectable, draggable, connectDragSource, connectDragPreview } = this.props
 
@@ -64,11 +76,26 @@ class EntityTreeNode extends Component {
     return connectDropTarget(el)
   }
 
+  getDOMId (node) {
+    if (checkIsGroupNode(node) && !checkIsGroupEntityNode(node)) {
+      return undefined
+    }
+
+    return getNodeDOMId(node.data)
+  }
+
+  getTitleDOMId (node) {
+    if (checkIsGroupNode(node) && !checkIsGroupEntityNode(node)) {
+      return undefined
+    }
+
+    return getNodeTitleDOMId(node.data)
+  }
+
   getAllEntitiesInHierarchy (node, allEntities) {
-    const isGroupNode = checkIsGroupNode(node)
     const entities = allEntities == null ? [] : allEntities
 
-    if (isGroupNode && node.isEntity === true) {
+    if (checkIsGroupEntityNode(node)) {
       entities.push(node.data._id)
     } else {
       entities.push(node.data._id)
@@ -134,6 +161,7 @@ class EntityTreeNode extends Component {
       draggable,
       showContextMenu,
       collapseNode,
+      paddingByLevel,
       renderTree,
       renderContextMenu,
       onNewClick,
@@ -144,11 +172,9 @@ class EntityTreeNode extends Component {
     const items = node.items
     const extraPropsSelectable = {}
     const groupStyle = node.data != null ? this.resolveEntityTreeIconStyle(node.data, { isCollapsed }) : null
-    let groupIsEntity = false
+    let groupIsEntity = checkIsGroupEntityNode(node)
 
-    if (node.isEntity === true) {
-      groupIsEntity = true
-
+    if (groupIsEntity) {
       if (selectable) {
         extraPropsSelectable.checked = node.data.__selected !== false
       } else {
@@ -157,15 +183,16 @@ class EntityTreeNode extends Component {
     }
 
     return (
-      <div>
+      <div id={this.getDOMId(node)}>
         <div
           onContextMenu={groupIsEntity ? (e) => showContextMenu(e, node.data) : undefined}
-          style={{ paddingLeft: `${(depth + 1) * 0.8}rem` }}
+          style={{ paddingLeft: `${(depth + 1) * paddingByLevel}rem` }}
         >
           {selectable ? <input type='checkbox' {...extraPropsSelectable} onChange={(v) => {
             onNodeSelect(this.getAllEntitiesInHierarchy(node), !!v.target.checked)
-          }} /> : <span />}
+          }} /> : null}
           <span
+            id={this.getTitleDOMId(node)}
             className={`${style.nodeTitle} ${isCollapsed ? style.collapsed : ''}`}
             onClick={() => collapseNode(id)}
           >
@@ -180,8 +207,8 @@ class EntityTreeNode extends Component {
           </span>
           {this.renderEntityTreeItemComponents('groupRight', node.data, undefined)}
           {node.isEntitySet ? (
-            !selectable ? <a key={id + 'new'} onClick={() => onNewClick(name)} className={style.add}></a> : <span />
-          ) : <span />}
+            !selectable ? <a key={id + 'new'} onClick={() => onNewClick(name)} className={style.add}></a> : null
+          ) : null}
           {groupIsEntity ? renderContextMenu(
             node.data,
             { isGroupEntity: groupIsEntity, items: groupIsEntity ? node.items : undefined }
@@ -202,6 +229,7 @@ class EntityTreeNode extends Component {
       isActive,
       isDragging,
       originalEntities,
+      paddingByLevel,
       renderContextMenu,
       getEntityTypeNameAttr,
       showContextMenu,
@@ -213,16 +241,21 @@ class EntityTreeNode extends Component {
 
     return (
       <div
+        id={this.getDOMId(node)}
         onContextMenu={(e) => showContextMenu(e, entity)}
         onClick={() => onClick(entity)}
         key={entity._id}
-        className={`${style.link} ${isActive ? style.active : ''} ${isDragging ? style.dragging : ''}`}
-        style={{ paddingLeft: `${(depth + 1) * 0.8}rem` }}
+        className={`${style.link} ${(isActive && !isDragging) ? style.active : ''} ${isDragging ? style.dragging : ''}`}
+        style={{ paddingLeft: `${(depth + 1) * paddingByLevel}rem` }}
       >
         {this.renderEntityTreeItemComponents('container', { entity, entities: originalEntities }, [
           this.connectDragging(
-            <div key='container-entity' className={`${style.nodeBoxItemContent} ${isDragging ? style.dragging : ''}`}>
-              {selectable ? <input key='search-name' type='checkbox' readOnly checked={entity.__selected !== false} /> : <span key='empty-search-name' />}
+            <div
+              id={this.getTitleDOMId(node)}
+              key='container-entity'
+              className={`${style.nodeBoxItemContent} ${isDragging ? style.dragging : ''}`}
+            >
+              {selectable ? <input key='search-name' type='checkbox' readOnly checked={entity.__selected !== false} /> : null}
               <i key='entity-icon' className={style.entityIcon + ' fa ' + (entityStyle || (entitySets[entity.__entitySet].faIcon || style.entityDefaultIcon))}></i>
               <a key='entity-name'>{getEntityTypeNameAttr(entity.__entitySet, entity) + (entity.__isDirty ? '*' : '')}</a>
               {this.renderEntityTreeItemComponents('right', { entity, entities: originalEntities })}
@@ -253,11 +286,11 @@ class EntityTreeNode extends Component {
 }
 
 export default DragSource(
-  'ENTITY_TREE_NODE',
+  ENTITY_NODE_DRAG_TYPE,
   nodeSource,
   collectForSource
 )(DropTarget(
-  'ENTITY_TREE_NODE',
+  ENTITY_NODE_DRAG_TYPE,
   nodeTarget,
   collectForTarget
 )(EntityTreeNode))

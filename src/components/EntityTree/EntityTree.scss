@@ -41,10 +41,11 @@
 }
 
 .nodesBox {
-  overflow: auto;
-  width: auto;
-  height: auto;
   flex: 1;
+  height: auto;
+  overflow: auto;
+  position: relative;
+  width: auto;
 }
 
 .nodeTitle {
@@ -168,7 +169,7 @@
 }
 
 .contextMenuContainer {
-  position: absolute;
+  position: fixed;
   z-index: 300;
 }
 
