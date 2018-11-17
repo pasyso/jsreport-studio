@@ -33,6 +33,7 @@ const entityTreeTarget = {
     }
 
     const clientOffset = monitor.getClientOffset()
+    const sourceNode = monitor.getItem().node
     const listNodeDimensions = component.listNode.getBoundingClientRect()
     const isInsideContainer = pointIsInsideContainer(listNodeDimensions, clientOffset)
 
@@ -44,7 +45,7 @@ const entityTreeTarget = {
         component.dragOverContext = null
         return component.clearHighlightedArea()
       } else {
-        return component.showHighlightedArea()
+        return component.showHighlightedArea(sourceNode)
       }
     }
 
@@ -54,30 +55,45 @@ const entityTreeTarget = {
       return
     }
 
-    component.showHighlightedArea(targetNode)
+    component.showHighlightedArea(sourceNode, targetNode)
   },
   drop (props, monitor, component) {
-    const entitySource = monitor.getItem().node
-    const entitySourceSet = monitor.getItem().entitySet
     const dragOverContext = component.dragOverContext
+    const sourceEntitySet = monitor.getItem().entitySet
+    const sourceNode = monitor.getItem().node
+    const targetNode = dragOverContext ? dragOverContext.targetNode : undefined
 
-    if (entitySource && dragOverContext && !dragOverContext.parentTargetEntity) {
+    if (sourceNode && dragOverContext && !dragOverContext.containerTargetEntity) {
+      if (!dragOverContext.overRoot) {
+        if (!component.isValidHierarchyTarget(sourceNode, targetNode)) {
+          return
+        }
+      }
+
       component.dragOverContext = null
       component.clearHighlightedArea()
 
       props.hierarchyMove({
-        id: entitySource.data._id,
-        entitySet: entitySourceSet
+        id: sourceNode.data._id,
+        entitySet: sourceEntitySet
       }, {
         shortid: null,
         referenceProperty: 'folder'
       })
-    } else if (entitySource && dragOverContext && dragOverContext.parentTargetEntity) {
+    } else if (
+      sourceNode &&
+      dragOverContext &&
+      dragOverContext.containerTargetEntity
+    ) {
+      if (!component.isValidHierarchyTarget(sourceNode, targetNode)) {
+        return
+      }
+
       // skip drop over same hierarchy
       if (
-        (entitySource.data.__entitySet === 'folders' &&
-        entitySource.data.shortid === dragOverContext.parentTargetEntity.shortid) ||
-        (entitySource.data.folder && entitySource.data.folder.shortid === dragOverContext.parentTargetEntity.shortid)
+        (sourceNode.data.__entitySet === 'folders' &&
+        sourceNode.data.shortid === dragOverContext.containerTargetEntity.shortid) ||
+        (sourceNode.data.folder && sourceNode.data.folder.shortid === dragOverContext.containerTargetEntity.shortid)
       ) {
         return
       }
@@ -86,10 +102,10 @@ const entityTreeTarget = {
       component.clearHighlightedArea()
 
       props.hierarchyMove({
-        id: entitySource.data._id,
-        entitySet: entitySourceSet
+        id: sourceNode.data._id,
+        entitySet: sourceEntitySet
       }, {
-        shortid: dragOverContext.parentTargetEntity.shortid,
+        shortid: dragOverContext.containerTargetEntity.shortid,
         referenceProperty: 'folder'
       })
     }
@@ -142,6 +158,7 @@ class EntityTree extends Component {
     this.setContextMenuNode = this.setContextMenuNode.bind(this)
     this.setFilter = this.setFilter.bind(this)
     this.setClipboard = this.setClipboard.bind(this)
+    this.isValidHierarchyTarget = this.isValidHierarchyTarget.bind(this)
     this.showHighlightedArea = this.showHighlightedArea.bind(this)
     this.clearHighlightedArea = this.clearHighlightedArea.bind(this)
     this.releaseClipboardTo = this.releaseClipboardTo.bind(this)
@@ -280,10 +297,62 @@ class EntityTree extends Component {
     })
   }
 
-  showHighlightedArea (targetEntityNode) {
+  isValidHierarchyTarget (sourceNode, targetNode) {
+    const { getEntityByShortid } = this.props
+    const containersInHierarchyForTarget = []
+    let containerSourceEntity
+    let containerTargetEntity
+
+    if (sourceNode.data.__entitySet === 'folders') {
+      containerSourceEntity = getEntityByShortid(sourceNode.data.shortid)
+    } else {
+      if (sourceNode.data.folder == null) {
+        return true
+      }
+
+      containerSourceEntity = getEntityByShortid(sourceNode.data.folder.shortid)
+    }
+
+    if (targetNode.data.__entitySet === 'folders') {
+      containerTargetEntity = getEntityByShortid(targetNode.data.shortid)
+    } else {
+      if (targetNode.data.folder == null) {
+        return true
+      }
+
+      containerTargetEntity = getEntityByShortid(targetNode.data.folder.shortid)
+    }
+
+    let currentContainer = containerTargetEntity
+
+    if (containerSourceEntity.shortid === containerTargetEntity.shortid) {
+      return false
+    }
+
+    containersInHierarchyForTarget.push(containerTargetEntity.shortid)
+
+    while (
+      currentContainer.shortid !== containerSourceEntity.shortid &&
+      currentContainer.folder != null
+    ) {
+      const parentContainer = getEntityByShortid(currentContainer.folder.shortid)
+      containersInHierarchyForTarget.push(parentContainer.shortid)
+      currentContainer = parentContainer
+    }
+
+    if (
+      containersInHierarchyForTarget.indexOf(containerSourceEntity.shortid) !== -1
+    ) {
+      return false
+    }
+
+    return true
+  }
+
+  showHighlightedArea (sourceEntityNode, targetEntityNode) {
     const { getEntityByShortid } = this.props
     const highlightedArea = {}
-    let parentTargetEntity
+    let containerTargetInContext
 
     if (!targetEntityNode) {
       const hierarchyEntityDimensions = this.listNode.getBoundingClientRect()
@@ -294,15 +363,29 @@ class EntityTree extends Component {
         width: `${paddingByLevelInTree}rem`,
         height: hierarchyEntityDimensions.height + 4
       }
+
+      if (this.dragOverContext) {
+        this.dragOverContext.overRoot = true
+      }
     } else if (targetEntityNode.data.folder != null || targetEntityNode.data.__entitySet === 'folders') {
       let hierarchyEntity
 
+      if (this.dragOverContext) {
+        this.dragOverContext.overRoot = false
+      }
+
       if (targetEntityNode.data.__entitySet === 'folders') {
         hierarchyEntity = getEntityByShortid(targetEntityNode.data.shortid)
-        parentTargetEntity = hierarchyEntity
+        containerTargetInContext = hierarchyEntity
       } else {
         hierarchyEntity = getEntityByShortid(targetEntityNode.data.folder.shortid)
-        parentTargetEntity = hierarchyEntity
+        containerTargetInContext = hierarchyEntity
+      }
+
+      if (sourceEntityNode.data.__entitySet === 'folders') {
+        if (!this.isValidHierarchyTarget(sourceEntityNode, targetEntityNode)) {
+          return this.clearHighlightedArea()
+        }
       }
 
       const hierarchyEntityNodeId = getNodeDOMId(hierarchyEntity)
@@ -339,7 +422,7 @@ class EntityTree extends Component {
 
     if (Object.keys(highlightedArea).length > 0) {
       if (this.dragOverContext) {
-        this.dragOverContext.parentTargetEntity = parentTargetEntity
+        this.dragOverContext.containerTargetEntity = containerTargetInContext
       }
 
       this.setState({

@@ -167,15 +167,9 @@ export function hierarchyMove (source, target, shouldCopy = false) {
       return
     }
 
-    if (!shouldCopy) {
-      await Promise.all(response.items.map((item) => {
-        return entities.actions.load(item._id, true)(dispatch, getState)
-      }))
-    } else {
-      response.items.forEach((item) => {
-        dispatch(entities.actions.addExisting(item))
-      })
-    }
+    response.items.forEach((item) => {
+      dispatch(entities.actions.addExisting(item))
+    })
   }
 }
 
