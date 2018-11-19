@@ -6,6 +6,10 @@ module.exports = {
       studio: {
         type: 'object',
         properties: {
+          requestLogEnabled: {
+            type: 'boolean',
+            default: true
+          },
           entityTreeOrder: {
             type: 'array',
             items: { type: 'string' }

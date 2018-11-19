@@ -3,7 +3,7 @@ import { connect } from 'react-redux'
 import { actions } from '../../redux/editor'
 import { actions as settingsActions, selectors } from '../../redux/settings'
 import api from '../../helpers/api.js'
-import { previewFrameChangeHandler } from '../../lib/configuration.js'
+import { previewFrameChangeHandler, extensions } from '../../lib/configuration.js'
 
 @connect((state) => ({
   activeTabKey: state.editor.activeTabKey,
@@ -52,6 +52,49 @@ export default class Startup extends Component {
     return previewFrameChangeHandler('data:text/html;charset=utf-8,' + encodeURI(errorMessage + logs))
   }
 
+  renderRequestLogs (logsWithTemplates, failedLogsWithTemplates) {
+    return <div>
+      <h2>Last requests</h2>
+
+      <div>
+        <table className='table'>
+          <thead>
+            <tr>
+              <th>template</th>
+              <th>started</th>
+            </tr>
+          </thead>
+          <tbody>
+          {(logsWithTemplates).map((l, k) => <tr key={k} onClick={() => this.openLogs(l)}>
+            <td className='selection'><a style={{textDecoration: 'underline'}} onClick={() => l.template._id ? openTab({_id: l.template._id}) : null}>{l.template.name}</a></td>
+            <td>{new Date(l.timestamp).toLocaleString()}</td>
+          </tr>)}
+          </tbody>
+        </table>
+      </div>
+
+      <h2>Last failed requests</h2>
+      <div>
+        <table className='table'>
+          <thead>
+            <tr>
+              <th>template</th>
+              <th>error</th>
+              <th>started</th>
+            </tr>
+          </thead>
+          <tbody>
+          {(failedLogsWithTemplates).map((l, k) => <tr key={k} onClick={() => this.openLogs(l)}>
+            <td className='selection'><a style={{textDecoration: 'underline'}} onClick={() => l.template._id ? openTab({_id: l.template._id}) : null}>{l.template.name}</a></td>
+            <td>{!l.error.message || l.error.message.length < 90 ? l.error.message : (l.error.message.substring(0, 80) + '...')}</td>
+            <td>{new Date(l.timestamp).toLocaleString()}</td>
+          </tr>)}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  }
+
   render () {
     const { templates } = this.state
     const { openTab, logsWithTemplates, failedLogsWithTemplates } = this.props
@@ -77,44 +120,7 @@ export default class Startup extends Component {
           </tbody>
         </table>
       </div>
-      <h2>Last requests</h2>
-
-      <div>
-        <table className='table'>
-          <thead>
-            <tr>
-              <th>template</th>
-              <th>started</th>
-            </tr>
-          </thead>
-          <tbody>
-          {(logsWithTemplates).map((l, k) => <tr key={k} onClick={() => this.openLogs(l)}>
-            <td className='selection'><a style={{textDecoration: 'underline'}} onClick={() => l.template._id ? openTab({_id: l.template._id}) : null}>{l.template.name}</a></td>
-            <td>{new Date(l.timestamp).toLocaleString()}</td>
-          </tr>)}
-          </tbody>
-        </table>
-      </div>
-
-      <h2>LAst failed requests</h2>
-      <div>
-        <table className='table'>
-          <thead>
-            <tr>
-              <th>template</th>
-              <th>error</th>
-              <th>started</th>
-            </tr>
-          </thead>
-          <tbody>
-          {(failedLogsWithTemplates).map((l, k) => <tr key={k} onClick={() => this.openLogs(l)}>
-            <td className='selection'><a style={{textDecoration: 'underline'}} onClick={() => l.template._id ? openTab({_id: l.template._id}) : null}>{l.template.name}</a></td>
-            <td>{!l.error.message || l.error.message.length < 90 ? l.error.message : (l.error.message.substring(0, 80) + '...')}</td>
-            <td>{new Date(l.timestamp).toLocaleString()}</td>
-          </tr>)}
-          </tbody>
-        </table>
-      </div>
+      {extensions.studio.options.requestLogEnabled === false ? <div /> : this.renderRequestLogs(logsWithTemplates, failedLogsWithTemplates)}
     </div>
   }
 }
