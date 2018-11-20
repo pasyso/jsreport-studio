@@ -4,9 +4,10 @@ import { connect } from 'react-redux'
 import { DropTarget } from 'react-dnd'
 import HighlightedArea from './HighlightedArea'
 import EntityTreeNode from './EntityTreeNode'
+import HierarchyReplaceEntityModal from '../Modals/HierarchyReplaceEntityModal'
 import style from './EntityTree.scss'
 import ENTITY_NODE_DRAG_TYPE from './nodeDragType'
-import { checkIsGroupNode, checkIsGroupEntityNode, getNodeDOMId, getNodeTitleDOMId } from './utils'
+import { checkIsGroupNode, checkIsGroupEntityNode, getNodeDOMId, getNodeTitleDOMId, getAllEntitiesInHierarchy } from './utils'
 import groupEntitiesByHierarchyHelper from '../../helpers/groupEntitiesByHierarchy'
 import { selectors as entitiesSelectors } from '../../redux/entities'
 import { actions as editorActions } from '../../redux/editor'
@@ -14,7 +15,8 @@ import {
   entitySets,
   entityTreeOrder,
   entityTreeToolbarComponents,
-  entityTreeFilterItemResolvers
+  entityTreeFilterItemResolvers,
+  modalHandler
 } from '../../lib/configuration.js'
 
 const paddingByLevelInTree = 0.8
@@ -62,6 +64,8 @@ const entityTreeTarget = {
     const sourceEntitySet = monitor.getItem().entitySet
     const sourceNode = monitor.getItem().node
     const targetNode = dragOverContext ? dragOverContext.targetNode : undefined
+    let sourceInfo
+    let targetInfo
 
     if (sourceNode && dragOverContext && !dragOverContext.containerTargetEntity) {
       if (!dragOverContext.overRoot) {
@@ -70,16 +74,15 @@ const entityTreeTarget = {
         }
       }
 
-      component.dragOverContext = null
-      component.clearHighlightedArea()
-
-      props.hierarchyMove({
+      sourceInfo = {
         id: sourceNode.data._id,
         entitySet: sourceEntitySet
-      }, {
+      }
+
+      targetInfo = {
         shortid: null,
         referenceProperty: 'folder'
-      })
+      }
     } else if (
       sourceNode &&
       dragOverContext &&
@@ -101,13 +104,23 @@ const entityTreeTarget = {
       component.dragOverContext = null
       component.clearHighlightedArea()
 
-      props.hierarchyMove({
+      sourceInfo = {
         id: sourceNode.data._id,
         entitySet: sourceEntitySet
-      }, {
+      }
+
+      targetInfo = {
         shortid: dragOverContext.containerTargetEntity.shortid,
+        children: getAllEntitiesInHierarchy(component.entityNodesById[dragOverContext.containerTargetEntity._id]),
         referenceProperty: 'folder'
-      })
+      }
+    }
+
+    if (sourceInfo && targetInfo) {
+      component.dragOverContext = null
+      component.clearHighlightedArea()
+
+      component.copyOrMoveEntity(sourceInfo, targetInfo)
     }
   }
 }
@@ -152,6 +165,7 @@ class EntityTree extends Component {
     }
 
     this.dragOverContext = null
+    this.entityNodesById = {}
 
     this.setListContainerNode = this.setListContainerNode.bind(this)
     this.setListNode = this.setListNode.bind(this)
@@ -161,13 +175,14 @@ class EntityTree extends Component {
     this.isValidHierarchyTarget = this.isValidHierarchyTarget.bind(this)
     this.showHighlightedArea = this.showHighlightedArea.bind(this)
     this.clearHighlightedArea = this.clearHighlightedArea.bind(this)
+    this.copyOrMoveEntity = this.copyOrMoveEntity.bind(this)
     this.releaseClipboardTo = this.releaseClipboardTo.bind(this)
     this.getSetsToRender = this.getSetsToRender.bind(this)
     this.getEntityTypeNameAttr = this.getEntityTypeNameAttr.bind(this)
+    this.registerEntityNode = this.registerEntityNode.bind(this)
     this.contextMenu = this.contextMenu.bind(this)
     this.collapse = this.collapse.bind(this)
     this.getEntityTreeListContainerDimensions = this.getEntityTreeListContainerDimensions.bind(this)
-    this.getAllChildrenIds = this.getAllChildrenIds.bind(this)
     this.groupEntitiesByType = this.groupEntitiesByType.bind(this)
     this.handleGlobalClick = this.handleGlobalClick.bind(this)
     this.handleNodeClick = this.handleNodeClick.bind(this)
@@ -198,6 +213,7 @@ class EntityTree extends Component {
 
   componentWillUnmount () {
     window.removeEventListener('click', this.handleGlobalClick, true)
+    this.entityNodesById = {}
   }
 
   connectDropping (el) {
@@ -274,6 +290,18 @@ class EntityTree extends Component {
 
   setContextMenuNode (el) {
     this.contextMenuNode = el
+  }
+
+  registerEntityNode (id, node) {
+    if (id == null || node === undefined) {
+      return
+    }
+
+    if (node === null) {
+      delete this.entityNodesById[id]
+    } else {
+      this.entityNodesById[id] = node
+    }
   }
 
   setFilter (newFilterState) {
@@ -437,6 +465,24 @@ class EntityTree extends Component {
     })
   }
 
+  copyOrMoveEntity (sourceInfo, targetInfo, shouldCopy = false) {
+    const { hierarchyMove } = this.props
+
+    hierarchyMove(sourceInfo, targetInfo, shouldCopy, false, true).then((result) => {
+      if (result.duplicatedEntity !== true) {
+        return
+      }
+
+      modalHandler.open(HierarchyReplaceEntityModal, {
+        sourceId: sourceInfo.id,
+        targetShortId: targetInfo.shortid,
+        targetChildren: targetInfo.children,
+        shouldCopy,
+        referenceProperty: targetInfo.referenceProperty
+      })
+    })
+  }
+
   releaseClipboardTo (destination) {
     const clipboard = this.state.clipboard
 
@@ -444,11 +490,12 @@ class EntityTree extends Component {
       return
     }
 
-    this.props.hierarchyMove({
+    this.copyOrMoveEntity({
       id: clipboard.entityId,
       entitySet: clipboard.entitySet
     }, {
       shortid: destination.shortid,
+      children: destination.children,
       referenceProperty: 'folder'
     }, clipboard.action === 'copy')
 
@@ -508,28 +555,6 @@ class EntityTree extends Component {
     }
 
     return entity[entitySets[setName].nameAttribute]
-  }
-
-  getAllChildrenIds (items) {
-    const children = []
-
-    if (!items) {
-      return children
-    }
-
-    items.forEach((node) => {
-      if (checkIsGroupEntityNode(node)) {
-        children.push(node.data._id)
-
-        if (node.items) {
-          this.getAllChildrenIds(node.items).forEach((i) => children.push(i))
-        }
-      } else {
-        children.push(node.data._id)
-      }
-    })
-
-    return children
   }
 
   groupEntitiesByType (sets, entitiesByType) {
@@ -598,7 +623,7 @@ class EntityTree extends Component {
     }
   }
 
-  renderContextMenu (entity, { isGroupEntity, items } = {}) {
+  renderContextMenu (entity, { isGroupEntity, node } = {}) {
     const { contextMenuId, clipboard } = this.state
     const { selectable, onNewClick, onRemove, onClone, onRename } = this.props
     const menuItems = []
@@ -702,7 +727,8 @@ class EntityTree extends Component {
                 }
 
                 this.releaseClipboardTo({
-                  shortid: isGroupEntity ? entity.shortid : (entity.folder != null ? entity.folder.shortid : null)
+                  shortid: isGroupEntity ? entity.shortid : (entity.folder != null ? entity.folder.shortid : null),
+                  children: isGroupEntity ? getAllEntitiesInHierarchy(node) : []
                 })
 
                 this.tryHide()
@@ -715,7 +741,7 @@ class EntityTree extends Component {
             onClick={(e) => {
               e.stopPropagation()
 
-              const children = this.getAllChildrenIds(items)
+              const children = getAllEntitiesInHierarchy(node)
 
               onRemove(entity._id, children.length > 0 ? children : undefined)
 
@@ -788,6 +814,7 @@ class EntityTree extends Component {
         originalEntities={entities}
         paddingByLevel={paddingByLevelInTree}
         getEntityTypeNameAttr={this.getEntityTypeNameAttr}
+        registerEntityNode={this.registerEntityNode}
         showContextMenu={this.contextMenu}
         collapseNode={this.collapse}
         renderTree={this.renderTree}

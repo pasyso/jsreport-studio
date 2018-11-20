@@ -17,13 +17,25 @@ const createError = (err, body) => {
 
   if (body && body.error) {
     let e = new Error(body.error.message)
-    e.stack = body.error.stack
+
+    Object.assign(e, body)
+
+    if (body.error.stack) {
+      e.stack = body.error.stack
+    }
+
     return e
   }
 
   if (body && body.message) {
     let e = new Error(body.message)
-    e.stack = body.stack
+
+    Object.assign(e, body)
+
+    if (body.stack) {
+      e.stack = body.stack
+    }
+
     return e
   }
 

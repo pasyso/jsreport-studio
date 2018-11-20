@@ -17,7 +17,8 @@ module.exports = {
           extensionsInDevMode: {
             anyOf: [
               {
-                type: 'string'
+                type: 'string',
+                '$jsreport-constantOrArray': []
               },
               {
                 type: 'array',

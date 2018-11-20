@@ -66,6 +66,14 @@ export function remove (id, children) {
   }
 }
 
+export function removeExisting (id, children) {
+  return (dispatch) => dispatch({
+    type: ActionTypes.REMOVE,
+    _id: id,
+    children
+  })
+}
+
 export function add (entity) {
   if (!entity || !entity._id) {
     throw new Error('Invalid entity submitted to add')

@@ -146,7 +146,7 @@ export function groupedUpdate (entity) {
   }
 }
 
-export function hierarchyMove (source, target, shouldCopy = false) {
+export function hierarchyMove (source, target, shouldCopy = false, replace = false, retry = true) {
   return async function (dispatch, getState) {
     let response
 
@@ -157,19 +157,35 @@ export function hierarchyMove (source, target, shouldCopy = false) {
         data: {
           source,
           target,
-          copy: shouldCopy === true
+          copy: shouldCopy === true,
+          replace: replace === true
         }
       })
 
-      dispatch(entities.actions.apiDone())
-    } catch (e) {
-      dispatch(entities.actions.apiFailed(e))
-      return
-    }
+      response.items.forEach((item) => {
+        dispatch(entities.actions.addExisting(item))
+      })
 
-    response.items.forEach((item) => {
-      dispatch(entities.actions.addExisting(item))
-    })
+      if (replace === true) {
+        const targetFound = entities.selectors.getByShortid(getState(), target.shortid, false)
+
+        if (targetFound) {
+          dispatch(entities.actions.removeExisting(targetFound._id, Array.isArray(target.children) ? target.children : []))
+        }
+      }
+
+      dispatch(entities.actions.apiDone())
+
+      return response.items
+    } catch (e) {
+      if (retry && e.code === 'DUPLICATED_ENTITY') {
+        dispatch(entities.actions.apiDone())
+
+        return { duplicatedEntity: true }
+      }
+
+      dispatch(entities.actions.apiFailed(e))
+    }
   }
 }
 
