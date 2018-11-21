@@ -64,7 +64,7 @@ class EntityTreeNode extends Component {
       return
     }
 
-    registerEntityNode(node.data._id, node)
+    registerEntityNode(node.data._id, Object.assign({}, node, { objectId: this.props.id }))
   }
 
   componentDidUpdate (prevProps) {
@@ -79,7 +79,7 @@ class EntityTreeNode extends Component {
       }
 
       if (isEntityNode) {
-        registerEntityNode(node.data._id, node)
+        registerEntityNode(node.data._id, Object.assign({}, node, { objectId: this.props.id }))
       }
     }
   }
@@ -178,8 +178,10 @@ class EntityTreeNode extends Component {
       node,
       depth,
       id,
+      isActive,
       isCollapsed,
       isDragging,
+      contextMenuActive,
       selectable,
       draggable,
       showContextMenu,
@@ -208,6 +210,7 @@ class EntityTreeNode extends Component {
     return (
       <div id={this.getDOMId(node)}>
         <div
+          className={`${style.link} ${contextMenuActive ? style.focused : ''} ${(isActive && !isDragging) ? style.active : ''} ${isDragging ? style.dragging : ''}`}
           onContextMenu={groupIsEntity ? (e) => showContextMenu(e, node.data) : undefined}
           style={{ paddingLeft: `${(depth + 1) * paddingByLevel}rem` }}
         >
@@ -251,6 +254,7 @@ class EntityTreeNode extends Component {
       selectable,
       isActive,
       isDragging,
+      contextMenuActive,
       originalEntities,
       paddingByLevel,
       renderContextMenu,
@@ -268,7 +272,7 @@ class EntityTreeNode extends Component {
         onContextMenu={(e) => showContextMenu(e, entity)}
         onClick={() => onClick(entity)}
         key={entity._id}
-        className={`${style.link} ${(isActive && !isDragging) ? style.active : ''} ${isDragging ? style.dragging : ''}`}
+        className={`${style.link} ${contextMenuActive ? style.focused : ''} ${(isActive && !isDragging) ? style.active : ''} ${isDragging ? style.dragging : ''}`}
         style={{ paddingLeft: `${(depth + 1) * paddingByLevel}rem` }}
       >
         {this.renderEntityTreeItemComponents('container', { entity, entities: originalEntities }, [

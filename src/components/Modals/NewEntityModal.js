@@ -44,7 +44,7 @@ export default class Modal extends Component {
 
     this.props.close()
 
-    let entity = this.props.options.entity
+    let entity = this.props.options.entity || {}
 
     if (this.props.options.defaults != null) {
       entity = Object.assign(this.props.options.defaults, entity)

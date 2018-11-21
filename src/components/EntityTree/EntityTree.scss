@@ -101,7 +101,7 @@
   color: $primarySelectionColor;
 }
 
-.link:hover {
+.link:hover, .link.focused {
   background: $primaryHoverBackgroundColor;
   color: $primaryHoverColor;
 }

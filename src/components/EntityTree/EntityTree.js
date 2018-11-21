@@ -7,7 +7,14 @@ import EntityTreeNode from './EntityTreeNode'
 import HierarchyReplaceEntityModal from '../Modals/HierarchyReplaceEntityModal'
 import style from './EntityTree.scss'
 import ENTITY_NODE_DRAG_TYPE from './nodeDragType'
-import { checkIsGroupNode, checkIsGroupEntityNode, getNodeDOMId, getNodeTitleDOMId, getAllEntitiesInHierarchy } from './utils'
+import {
+  getVisibleEntitySetsInTree,
+  checkIsGroupNode,
+  checkIsGroupEntityNode,
+  getNodeDOMId,
+  getNodeTitleDOMId,
+  getAllEntitiesInHierarchy
+} from './utils'
 import groupEntitiesByHierarchyHelper from '../../helpers/groupEntitiesByHierarchy'
 import { selectors as entitiesSelectors } from '../../redux/entities'
 import { actions as editorActions } from '../../redux/editor'
@@ -72,6 +79,11 @@ const entityTreeTarget = {
         if (!component.isValidHierarchyTarget(sourceNode, targetNode)) {
           return
         }
+      }
+
+      // drop will be at the same root level, so we stop it
+      if (sourceNode.data.folder == null) {
+        return
       }
 
       sourceInfo = {
@@ -158,6 +170,7 @@ class EntityTree extends Component {
     this.state = {
       filter: {},
       contextMenuId: null,
+      pointCoordinates: null,
       clipboard: null,
       highlightedArea: null
     }
@@ -183,8 +196,11 @@ class EntityTree extends Component {
     this.getEntityTreeListContainerDimensions = this.getEntityTreeListContainerDimensions.bind(this)
     this.groupEntitiesByType = this.groupEntitiesByType.bind(this)
     this.handleGlobalClick = this.handleGlobalClick.bind(this)
+    this.handleNewClick = this.handleNewClick.bind(this)
     this.handleNodeClick = this.handleNodeClick.bind(this)
     this.handleNodeDragOver = this.handleNodeDragOver.bind(this)
+    this.renderRootContextMenu = this.renderRootContextMenu.bind(this)
+    this.renderNodeContextMenu = this.renderNodeContextMenu.bind(this)
     this.renderContextMenu = this.renderContextMenu.bind(this)
     this.renderTree = this.renderTree.bind(this)
   }
@@ -230,17 +246,32 @@ class EntityTree extends Component {
 
   tryHide () {
     if (this.state.contextMenuId) {
-      this.setState({ contextMenuId: null })
+      this.setState({ contextMenuId: null, pointCoordinates: null })
     }
   }
 
   contextMenu (e, entity) {
     e.preventDefault()
-    this.setState({ contextMenuId: entity._id })
+    e.stopPropagation()
+
+    // prevents handling context menu clicks when the menu is shown
+    if (this.contextMenuNode && this.contextMenuNode.contains(e.target)) {
+      return
+    }
+
+    if (entity) {
+      this.setState({ contextMenuId: entity._id, pointCoordinates: null })
+    } else {
+      this.setState({ contextMenuId: '__ROOT__', pointCoordinates: { x: e.clientX, y: e.clientY } })
+    }
   }
 
-  collapse (k) {
-    this.setState({ [k]: !this.state[k] })
+  collapse (k, forceState) {
+    if (forceState != null) {
+      this.setState({ [k]: forceState })
+    } else {
+      this.setState({ [k]: !this.state[k] })
+    }
   }
 
   filterEntities (entities) {
@@ -463,7 +494,7 @@ class EntityTree extends Component {
     const { hierarchyMove } = this.props
 
     hierarchyMove(sourceInfo, targetInfo, shouldCopy, false, true).then((result) => {
-      if (result.duplicatedEntity !== true) {
+      if (result && result.duplicatedEntity !== true) {
         return
       }
 
@@ -588,6 +619,17 @@ class EntityTree extends Component {
     }
   }
 
+  handleNewClick (nodeId, ...params) {
+    const objectNode = this.entityNodesById[nodeId]
+
+    if (objectNode) {
+      // always expand the node on new entity creation
+      this.collapse(objectNode.objectId, false)
+    }
+
+    this.props.onNewClick(...params)
+  }
+
   handleNodeClick (entity) {
     const { selectable, onSelect, onClick } = this.props
 
@@ -615,36 +657,63 @@ class EntityTree extends Component {
     }
   }
 
-  renderContextMenu (entity, { isGroupEntity, node } = {}) {
-    const { contextMenuId, clipboard } = this.state
-    const { selectable, onNewClick, onRemove, onClone, onRename } = this.props
-    const menuItems = []
+  renderRootContextMenu () {
+    const { contextMenuId, pointCoordinates } = this.state
+    const { selectable } = this.props
+
+    if (selectable || contextMenuId !== '__ROOT__') {
+      return null
+    }
+
+    return this.renderContextMenu(undefined, { pointCoordinates })
+  }
+
+  renderNodeContextMenu (entity, info = {}) {
+    const { contextMenuId } = this.state
+    const { selectable } = this.props
 
     if (selectable || contextMenuId !== entity._id) {
       return null
     }
 
-    Object.keys(entitySets).forEach((setName) => {
-      const entitySet = entitySets[setName]
+    return this.renderContextMenu(entity, info)
+  }
 
-      if (entitySet.visibleInTree === false) {
-        return
-      }
+  renderContextMenu (childEntity, { isGroupEntity, node, pointCoordinates } = {}) {
+    const { clipboard } = this.state
+    const { onRemove, onClone, onRename } = this.props
+    const isRoot = childEntity == null
+    const containerStyle = {}
 
-      menuItems.push(
-        <div
-          key={entitySet.name}
-          className={style.contextButton}
-          onClick={() => { onNewClick(entitySet.name, { defaults: { folder: { shortid: entity.shortid } } }); this.tryHide() }}>
-          <i className={`fa ${entitySet.faIcon != null ? entitySet.faIcon : 'fa-file'}`} /> {entitySet.visibleName}
-        </div>
-      )
-    })
+    let menuItems = []
+
+    menuItems = getVisibleEntitySetsInTree(entitySets).map((entitySet) => (
+      <div
+        key={entitySet.name}
+        className={style.contextButton}
+        onClick={() => {
+          this.handleNewClick(
+            isRoot ? undefined : childEntity._id,
+            entitySet.name,
+            { defaults: { folder: isRoot ? null : { shortid: childEntity.shortid } } }
+          )
+
+          this.tryHide()
+        }}
+      >
+        <i className={`fa ${entitySet.faIcon != null ? entitySet.faIcon : 'fa-file'}`} /> {entitySet.visibleName}
+      </div>
+    ))
+
+    if (pointCoordinates) {
+      containerStyle.top = pointCoordinates.y
+      containerStyle.left = pointCoordinates.x
+    }
 
     return (
-      <div key='entity-contextmenu' ref={this.setContextMenuNode} className={style.contextMenuContainer}>
+      <div key='entity-contextmenu' ref={this.setContextMenuNode} className={style.contextMenuContainer} style={containerStyle}>
         <div className={style.contextMenu}>
-          {isGroupEntity && (
+          {(isRoot || isGroupEntity) && (
             <div
               className={`${style.contextButton} ${style.hasNestedLevels}`}
               onClick={(e) => { e.stopPropagation() }}>
@@ -656,59 +725,72 @@ class EntityTree extends Component {
               </div>
             </div>
           )}
-          {isGroupEntity && (
+          {(isRoot || isGroupEntity) && (
             <div
               className={style.contextButton}
-              onClick={(e) => { e.stopPropagation(); onNewClick('folders', { defaults: { folder: { shortid: entity.shortid } } }); this.tryHide() }}>
-              <i className='fa fa-folder' /> New Folder
-            </div>
-          )}
-          {isGroupEntity && <hr />}
-          <div
-            className={style.contextButton}
-            onClick={(e) => { e.stopPropagation(); onRename(entity._id); this.tryHide() }}>
-            <i className='fa fa-pencil' /> Rename
-          </div>
-          {isGroupEntity == null && (
-            <div
-              className={style.contextButton}
-              onClick={(e) => { e.stopPropagation(); onClone(entity); this.tryHide() }}>
-              <i className='fa fa-clone' /> Clone
-            </div>
-          )}
-          {(isGroupEntity || isGroupEntity == null) && (
-            <div
-              className={`${style.contextButton} ${entity.__isNew === true ? style.disabled : ''}`}
               onClick={(e) => {
                 e.stopPropagation()
 
-                if (entity.__isNew === true) {
+                this.handleNewClick(
+                  isRoot ? null : childEntity._id,
+                  'folders',
+                  { defaults: { folder: isRoot ? null : { shortid: childEntity.shortid } } }
+                )
+
+                this.tryHide()
+              }}
+            >
+              <i className='fa fa-folder' /> New Folder
+            </div>
+          )}
+          {(isRoot || isGroupEntity) && <hr />}
+          {!isRoot && (
+            <div
+              className={style.contextButton}
+              onClick={(e) => { e.stopPropagation(); onRename(childEntity._id); this.tryHide() }}>
+              <i className='fa fa-pencil' /> Rename
+            </div>
+          )}
+          {!isRoot && isGroupEntity == null && (
+            <div
+              className={style.contextButton}
+              onClick={(e) => { e.stopPropagation(); onClone(childEntity); this.tryHide() }}>
+              <i className='fa fa-clone' /> Clone
+            </div>
+          )}
+          {!isRoot && (isGroupEntity || isGroupEntity == null) && (
+            <div
+              className={`${style.contextButton} ${childEntity.__isNew === true ? style.disabled : ''}`}
+              onClick={(e) => {
+                e.stopPropagation()
+
+                if (childEntity.__isNew === true) {
                   return
                 }
 
-                this.setClipboard({ action: 'move', entityId: entity._id, entitySet: entity.__entitySet })
+                this.setClipboard({ action: 'move', entityId: childEntity._id, entitySet: childEntity.__entitySet })
                 this.tryHide()
               }}>
               <i className='fa fa-cut' /> Cut
             </div>
           )}
-          {(isGroupEntity == null) && (
+          {!isRoot && (isGroupEntity == null) && (
             <div
-              className={`${style.contextButton} ${entity.__isNew === true ? style.disabled : ''}`}
+              className={`${style.contextButton} ${childEntity.__isNew === true ? style.disabled : ''}`}
               onClick={(e) => {
                 e.stopPropagation()
 
-                if (entity.__isNew === true) {
+                if (childEntity.__isNew === true) {
                   return
                 }
 
-                this.setClipboard({ action: 'copy', entityId: entity._id, entitySet: entity.__entitySet })
+                this.setClipboard({ action: 'copy', entityId: childEntity._id, entitySet: childEntity.__entitySet })
                 this.tryHide()
               }}>
               <i className='fa fa-copy' /> Copy
             </div>
           )}
-          {(isGroupEntity || isGroupEntity == null) && (
+          {(isRoot || (isGroupEntity || isGroupEntity == null)) && (
             <div
               className={`${style.contextButton} ${clipboard == null ? style.disabled : ''}`}
               onClick={(e) => {
@@ -719,8 +801,8 @@ class EntityTree extends Component {
                 }
 
                 this.releaseClipboardTo({
-                  shortid: isGroupEntity ? entity.shortid : (entity.folder != null ? entity.folder.shortid : null),
-                  children: isGroupEntity ? getAllEntitiesInHierarchy(node) : []
+                  shortid: isRoot ? null : (isGroupEntity ? childEntity.shortid : (childEntity.folder != null ? childEntity.folder.shortid : null)),
+                  children: isRoot ? [] : (isGroupEntity ? getAllEntitiesInHierarchy(node) : [])
                 })
 
                 this.tryHide()
@@ -728,19 +810,21 @@ class EntityTree extends Component {
               <i className='fa fa-paste' /> Paste
             </div>
           )}
-          <div
-            className={style.contextButton}
-            onClick={(e) => {
-              e.stopPropagation()
+          {!isRoot && (
+            <div
+              className={style.contextButton}
+              onClick={(e) => {
+                e.stopPropagation()
 
-              const children = getAllEntitiesInHierarchy(node)
+                const children = getAllEntitiesInHierarchy(node)
 
-              onRemove(entity._id, children.length > 0 ? children : undefined)
+                onRemove(childEntity._id, children.length > 0 ? children : undefined)
 
-              this.tryHide()
-            }}>
-            <i className='fa fa-trash' /> Delete
-          </div>
+                this.tryHide()
+              }}>
+              <i className='fa fa-trash' /> Delete
+            </div>
+          )}
         </div>
       </div>
     )
@@ -808,9 +892,10 @@ class EntityTree extends Component {
         getEntityTypeNameAttr={this.getEntityTypeNameAttr}
         registerEntityNode={this.registerEntityNode}
         showContextMenu={this.contextMenu}
+        contextMenuActive={this.state.contextMenuId === node.data._id}
         collapseNode={this.collapse}
         renderTree={this.renderTree}
-        renderContextMenu={this.renderContextMenu}
+        renderContextMenu={this.renderNodeContextMenu}
         onClick={this.handleNodeClick}
         onNewClick={onNewClick}
         onNodeSelect={onNodeSelect}
@@ -834,7 +919,7 @@ class EntityTree extends Component {
     const children = this.props.children
 
     return this.connectDropping(
-      <div className={style.treeListContainer}>
+      <div className={style.treeListContainer} onContextMenu={(e) => this.contextMenu(e, null)}>
         {
           this.props.toolbar && entityTreeToolbarComponents.length > 0 && (
             <div className={style.toolbar}>
@@ -871,6 +956,7 @@ class EntityTree extends Component {
             getContainerDimensions={this.getEntityTreeListContainerDimensions}
           />
         </div>
+        {this.renderRootContextMenu()}
       </div>
     )
   }
