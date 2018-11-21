@@ -212,7 +212,7 @@ class EntityTreeNode extends Component {
           style={{ paddingLeft: `${(depth + 1) * paddingByLevel}rem` }}
         >
           {selectable ? <input type='checkbox' {...extraPropsSelectable} onChange={(v) => {
-            onNodeSelect(getAllEntitiesInHierarchy(node), !!v.target.checked)
+            onNodeSelect(getAllEntitiesInHierarchy(node, true), !!v.target.checked)
           }} /> : null}
           <span
             id={this.getTitleDOMId(node)}

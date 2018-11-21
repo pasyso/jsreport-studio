@@ -24,8 +24,7 @@ export default class ReplaceEntityModal extends Component {
       entitySet: sourceEntity.__entitySet
     }, {
       shortid: targetEntity.shortid,
-      children: options.targetChildren,
-      referenceProperty: options.referenceProperty
+      children: options.targetChildren
     }, options.shouldCopy, true, false)
   }
 

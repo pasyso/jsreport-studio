@@ -80,8 +80,7 @@ const entityTreeTarget = {
       }
 
       targetInfo = {
-        shortid: null,
-        referenceProperty: 'folder'
+        shortid: null
       }
     } else if (
       sourceNode &&
@@ -111,8 +110,7 @@ const entityTreeTarget = {
 
       targetInfo = {
         shortid: dragOverContext.containerTargetEntity.shortid,
-        children: getAllEntitiesInHierarchy(component.entityNodesById[dragOverContext.containerTargetEntity._id]),
-        referenceProperty: 'folder'
+        children: getAllEntitiesInHierarchy(component.entityNodesById[dragOverContext.containerTargetEntity._id])
       }
     }
 
@@ -334,11 +332,7 @@ class EntityTree extends Component {
     if (sourceNode.data.__entitySet === 'folders') {
       containerSourceEntity = getEntityByShortid(sourceNode.data.shortid)
     } else {
-      if (sourceNode.data.folder == null) {
-        return true
-      }
-
-      containerSourceEntity = getEntityByShortid(sourceNode.data.folder.shortid)
+      return true
     }
 
     if (targetNode.data.__entitySet === 'folders') {
@@ -477,8 +471,7 @@ class EntityTree extends Component {
         sourceId: sourceInfo.id,
         targetShortId: targetInfo.shortid,
         targetChildren: targetInfo.children,
-        shouldCopy,
-        referenceProperty: targetInfo.referenceProperty
+        shouldCopy
       })
     })
   }
@@ -495,8 +488,7 @@ class EntityTree extends Component {
       entitySet: clipboard.entitySet
     }, {
       shortid: destination.shortid,
-      children: destination.children,
-      referenceProperty: 'folder'
+      children: destination.children
     }, clipboard.action === 'copy')
 
     this.setState({

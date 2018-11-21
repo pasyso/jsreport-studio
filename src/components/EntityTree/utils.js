@@ -25,23 +25,25 @@ export function getNodeTitleDOMId (entity) {
   return `${nodeDOMId}--title`
 }
 
-export function getAllEntitiesInHierarchy (node, allEntities) {
+export function getAllEntitiesInHierarchy (node, includeRoot = false, allEntities) {
   const entities = allEntities == null ? [] : allEntities
 
   if (!node) {
     return entities
   }
 
-  if (checkIsGroupNode(node)) {
-    if (checkIsGroupEntityNode(node)) {
+  if (includeRoot === true) {
+    if (checkIsGroupNode(node)) {
+      if (checkIsGroupEntityNode(node)) {
+        entities.push(node.data._id)
+      }
+    } else {
       entities.push(node.data._id)
     }
-  } else {
-    entities.push(node.data._id)
   }
 
   if (node.items) {
-    node.items.forEach((cNode) => getAllEntitiesInHierarchy(cNode, entities))
+    node.items.forEach((cNode) => getAllEntitiesInHierarchy(cNode, true, entities))
   }
 
   return entities
