@@ -494,7 +494,7 @@ class EntityTree extends Component {
     const { hierarchyMove } = this.props
 
     hierarchyMove(sourceInfo, targetInfo, shouldCopy, false, true).then((result) => {
-      if (result && result.duplicatedEntity !== true) {
+      if (!result || result.duplicatedEntity !== true) {
         return
       }
 
@@ -850,12 +850,18 @@ class EntityTree extends Component {
     const { entities, selectable, activeEntity, onNewClick, onNodeSelect } = this.props
     const name = node.name
     const isGroupNode = checkIsGroupNode(node)
-    let objectId = name
     let treeDepth = depth || 0
+    let objectId
     let isDraggable
 
     if (parentId != null) {
       objectId = `${parentId}--${name}`
+    } else {
+      objectId = name
+    }
+
+    if (!isGroupNode) {
+      objectId = `${objectId}-${node.data.shortid}`
     }
 
     if (treeDepth <= 0) {

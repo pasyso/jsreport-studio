@@ -150,79 +150,91 @@ export function hierarchyMove (source, target, shouldCopy = false, replace = fal
   return async function (dispatch, getState) {
     let response
 
-    try {
-      dispatch(entities.actions.apiStart())
+    let sourceEntity = entities.selectors.getById(getState(), source.id)
 
-      response = await api.post('/studio/hierarchyMove', {
-        data: {
-          source: {
-            entitySet: source.entitySet,
-            id: source.id
-          },
-          target: {
-            shortid: target.shortid
-          },
-          copy: shouldCopy === true,
-          replace: replace === true
-        }
-      })
+    if (sourceEntity.__isNew || sourceEntity.__isDirty) {
+      dispatch(entities.actions.flushUpdates())
 
-      if (replace === true) {
-        if (Array.isArray(target.children)) {
-          const sourceEntity = entities.selectors.getById(getState(), source.id, false)
-          const sourceEntitySetNameAttr = entitySets[sourceEntity.__entitySet].nameAttribute
+      sourceEntity = entities.selectors.getById(getState(), source.id)
 
-          let childTargetId
-          let childTargetChildren = []
+      dispatch(entities.actions.update(Object.assign({}, sourceEntity, {
+        folder: target.shortid != null ? { shortid: target.shortid } : null
+      })))
+    } else {
+      try {
+        dispatch(entities.actions.apiStart())
 
-          const allFolders = target.children.reduce((acu, childId) => {
-            const childEntity = entities.selectors.getById(getState(), childId, false)
-            const childEntitySetNameAttr = entitySets[childEntity.__entitySet].nameAttribute
+        response = await api.post('/studio/hierarchyMove', {
+          data: {
+            source: {
+              entitySet: source.entitySet,
+              id: source.id
+            },
+            target: {
+              shortid: target.shortid
+            },
+            copy: shouldCopy === true,
+            replace: replace === true
+          }
+        })
 
-            if (
-              ((target.shortid == null && childEntity.folder == null) ||
-              (target.shortid != null && childEntity.folder.shortid === target.shortid)) &&
-              childEntity[childEntitySetNameAttr] === sourceEntity[sourceEntitySetNameAttr]
-            ) {
-              childTargetId = childEntity._id
+        if (replace === true) {
+          if (Array.isArray(target.children)) {
+            const sourceEntity = entities.selectors.getById(getState(), source.id, false)
+            const sourceEntitySetNameAttr = entitySets[sourceEntity.__entitySet].nameAttribute
+
+            let childTargetId
+            let childTargetChildren = []
+
+            const allFolders = target.children.reduce((acu, childId) => {
+              const childEntity = entities.selectors.getById(getState(), childId, false)
+              const childEntitySetNameAttr = entitySets[childEntity.__entitySet].nameAttribute
+
+              if (
+                ((target.shortid == null && childEntity.folder == null) ||
+                (target.shortid != null && childEntity.folder.shortid === target.shortid)) &&
+                childEntity[childEntitySetNameAttr] === sourceEntity[sourceEntitySetNameAttr]
+              ) {
+                childTargetId = childEntity._id
+              }
+
+              if (childEntity.__entitySet === 'folders') {
+                acu.push(childEntity.shortid)
+              }
+
+              return acu
+            }, [])
+
+            target.children.forEach((childId) => {
+              const childEntity = entities.selectors.getById(getState(), childId, false)
+
+              if (childEntity.folder && allFolders.indexOf(childEntity.folder.shortid) !== -1) {
+                childTargetChildren.push(childEntity._id)
+              }
+            })
+
+            if (childTargetId) {
+              dispatch(entities.actions.removeExisting(childTargetId, childTargetChildren))
             }
-
-            if (childEntity.__entitySet === 'folders') {
-              acu.push(childEntity.shortid)
-            }
-
-            return acu
-          }, [])
-
-          target.children.forEach((childId) => {
-            const childEntity = entities.selectors.getById(getState(), childId, false)
-
-            if (childEntity.folder && allFolders.indexOf(childEntity.folder.shortid) !== -1) {
-              childTargetChildren.push(childEntity._id)
-            }
-          })
-
-          if (childTargetId) {
-            dispatch(entities.actions.removeExisting(childTargetId, childTargetChildren))
           }
         }
-      }
 
-      response.items.forEach((item) => {
-        dispatch(entities.actions.addExisting(item))
-      })
+        response.items.forEach((item) => {
+          dispatch(entities.actions.addExisting(item))
+        })
 
-      dispatch(entities.actions.apiDone())
-
-      return response.items
-    } catch (e) {
-      if (retry && e.code === 'DUPLICATED_ENTITY') {
         dispatch(entities.actions.apiDone())
 
-        return { duplicatedEntity: true }
-      }
+        return response.items
+      } catch (e) {
+        if (retry && e.code === 'DUPLICATED_ENTITY') {
+          dispatch(entities.actions.apiDone())
 
-      dispatch(entities.actions.apiFailed(e))
+          return { duplicatedEntity: true }
+        }
+
+        dispatch(entities.actions.apiFailed(e))
+      }
     }
   }
 }
