@@ -42,6 +42,7 @@ export default () => {
     faIcon: 'fa-folder',
     visibleName: 'folder',
     visibleInTree: false,
+    editorMode: false,
     nameAttribute: 'name',
     referenceAttributes: ['name', 'shortid'],
     onNew: (options) => configuration.modalHandler.open(NewFolderModal, options)

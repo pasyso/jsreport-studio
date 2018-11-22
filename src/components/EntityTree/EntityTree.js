@@ -636,7 +636,7 @@ class EntityTree extends Component {
     if (selectable) {
       onSelect(entity)
     } else {
-      onClick(entity._id)
+      onClick(entity._id, entitySets[entity.__entitySet].editorMode === false)
     }
 
     this.tryHide()

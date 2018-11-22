@@ -5,6 +5,7 @@ import createReducer from '../createReducer.js'
 const reducer = createReducer({
   tabs: [],
   activeTabKey: null,
+  activeEntityId: null,
   lastActiveTemplateKey: null,
   undockMode: false
 })
@@ -18,6 +19,7 @@ reducer.handleAction(ActionTypes.OPEN_TAB, (state, { tab }) => ({
 reducer.handleAction(ActionTypes.OPEN_NEW_TAB, (state, { tab }) => ({
   ...state,
   activeTabKey: tab.key,
+  activeEntityId: null,
   tabs: [...state.tabs, tab],
   lastActiveTemplateKey: (tab.entitySet === 'templates') ? tab._id : state.lastActiveTemplateKey
 }))
@@ -49,6 +51,7 @@ reducer.handleActions([EntityActionTypes.REMOVE, ActionTypes.CLOSE_TAB], (state,
   return {
     ...state,
     activeTabKey: newActiveTabKey,
+    activeEntityId: state.activeTabKey !== newActiveTabKey ? null : state.activeEntityId,
     tabs: newTabs,
     lastActiveTemplateKey: (newActiveTab && newActiveTab.entitySet === 'templates') ? newActiveTab._id
       : (newTabs.filter((t) => t._id === state.lastActiveTemplateKey).length ? state.lastActiveTemplateKey : null)
@@ -61,7 +64,17 @@ reducer.handleAction(ActionTypes.ACTIVATE_TAB, (state, action) => {
   return {
     ...state,
     activeTabKey: action.key,
+    activeEntityId: null,
     lastActiveTemplateKey: newTab.entitySet === 'templates' ? newTab._id : state.lastActiveTemplateKey
+  }
+})
+
+reducer.handleAction(ActionTypes.ACTIVATE_ENTITY, (state, action) => {
+  return {
+    ...state,
+    activeEntityId: action.entity._id,
+    activeTabKey: null,
+    lastActiveTemplateKey: null
   }
 })
 
@@ -95,13 +108,16 @@ reducer.handleAction(EntityActionTypes.SAVE_NEW, (state, action) => {
     tabs.push(tab)
   })
 
+  const newActiveTabKey = (state.lastActiveTemplateKey === action.oldId || state.activeTabKey === action.oldId) ? ((
+    // looking if the last activeTabKey was a header/footer tab
+    state.activeTabKey.indexOf(state.lastActiveTemplateKey) === 0 && state.activeTabKey !== state.lastActiveTemplateKey
+  ) ? state.activeTabKey.replace(action.oldId, action.entity._id) : action.entity._id) : state.activeTabKey
+
   return {
     ...state,
     tabs: tabs,
-    activeTabKey: (state.lastActiveTemplateKey === action.oldId || state.activeTabKey === action.oldId) ? ((
-      // looking if the last activeTabKey was a header/footer tab
-      state.activeTabKey.indexOf(state.lastActiveTemplateKey) === 0 && state.activeTabKey !== state.lastActiveTemplateKey
-    ) ? state.activeTabKey.replace(action.oldId, action.entity._id) : action.entity._id) : state.activeTabKey,
+    activeTabKey: newActiveTabKey,
+    activeEntityId: state.activeTabKey !== newActiveTabKey ? null : state.activeEntityId,
     lastActiveTemplateKey: state.lastActiveTemplateKey === action.oldId ? action.entity._id : state.lastActiveTemplateKey
   }
 })
@@ -122,10 +138,13 @@ reducer.handleAction(EntityActionTypes.REPLACE, (state, action) => {
     })
   })
 
+  const newActiveTabKey = (state.activeTabKey && state.activeTabKey.indexOf(action.oldId) === 0) ? state.activeTabKey.replace(action.oldId, action.entity._id) : state.activeTabKey
+
   return {
     ...state,
     tabs: tabs,
-    activeTabKey: (state.activeTabKey && state.activeTabKey.indexOf(action.oldId) === 0) ? state.activeTabKey.replace(action.oldId, action.entity._id) : state.activeTabKey,
+    activeTabKey: newActiveTabKey,
+    activeEntityId: state.activeTabKey !== newActiveTabKey ? null : state.activeEntityId,
     lastActiveTemplateKey: state.lastActiveTemplateKey === action.oldId ? action.entity._id : state.lastActiveTemplateKey
   }
 })
