@@ -25,26 +25,6 @@ export function closeTab (id) {
   }
 }
 
-export function activateEntity (entity) {
-  return async function (dispatch, getState) {
-    let entityStored
-
-    try {
-      entityStored = entities.selectors.getById(getState(), entity._id)
-    } catch (e) {
-      dispatch(push(resolveUrl('/')))
-      return
-    }
-
-    await entities.actions.load(entityStored._id)(dispatch, getState)
-
-    dispatch({
-      type: ActionTypes.ACTIVATE_ENTITY,
-      entity: entityStored
-    })
-  }
-}
-
 export function openTab (tab) {
   return async function (dispatch, getState) {
     if (tab.shortid && !tab._id) {
@@ -253,7 +233,7 @@ export function save () {
       dispatch({
         type: ActionTypes.SAVE_STARTED
       })
-      await entities.actions.save(selectors.getActiveEntity(getState())._id)(dispatch, getState)
+      await entities.actions.save(selectors.getActiveTab(getState())._id)(dispatch, getState)
       dispatch({
         type: ActionTypes.SAVE_SUCCESS
       })

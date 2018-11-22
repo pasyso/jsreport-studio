@@ -9,15 +9,13 @@ export const getTabWithEntities = (state) => state.editor.tabs.map((t) => ({
 export const getActiveTab = (state) => state.editor.activeTabKey ? state.editor.tabs.filter((t) => t.key === state.editor.activeTabKey)[0] : null
 
 export const getActiveEntity = (state) => {
-  if (state.editor.activeEntityId) {
-    return selectors.getById(state, state.editor.activeEntityId, false)
-  } else if (state.editor.activeTabKey) {
-    const tab = getActiveTab(state)
-
-    return tab.type === 'entity' ? selectors.getById(state, tab._id, false) : null
+  if (!state.editor.activeTabKey) {
+    return null
   }
 
-  return null
+  const tab = getActiveTab(state)
+
+  return tab.type === 'entity' ? selectors.getById(state, tab._id, false) : null
 }
 
 export const getActiveTabWithEntity = (state) => {

@@ -272,7 +272,7 @@ class App extends Component {
       minHeight: 0
     }
 
-    const { activeEntity, references, activateEntity, openTab } = this.props
+    const { activeEntity, references, openTab } = this.props
 
     const entityTreeProps = {
       toolbar: true,
@@ -287,7 +287,7 @@ class App extends Component {
       onRemove: (id, children) => removeHandler ? removeHandler(id, children) : this.openModal(DeleteConfirmationModal, {_id: id, childrenIds: children}),
       activeEntity,
       entities: references,
-      onClick: (_id, noEditorMode) => { noEditorMode === true ? activateEntity({ _id }) : openTab({ _id }) },
+      onClick: (_id) => openTab({_id: _id}),
       onNewClick: (es, options) => entitySets[es].onNew ? entitySets[es].onNew(options || {}) : this.openModal(NewEntityModal, {...options, entitySet: es})
     }
 

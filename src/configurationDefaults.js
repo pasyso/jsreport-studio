@@ -18,6 +18,7 @@ export default () => {
   })
 
   configuration.editorComponents.templates = require('./components/Editor/TemplateEditor.js')
+
   configuration.editorComponents.templates.reformat = (reformatter, entity) => {
     const content = reformatter(entity.content, 'html')
     const helpers = reformatter(entity.helpers, 'js')
@@ -27,6 +28,9 @@ export default () => {
       helpers: helpers
     }
   }
+
+  configuration.editorComponents.folders = require('./components/Editor/FolderEditor.js')
+
   configuration.editorComponents.startup = Startup
 
   configuration.entitySets.templates = {
@@ -42,7 +46,6 @@ export default () => {
     faIcon: 'fa-folder',
     visibleName: 'folder',
     visibleInTree: false,
-    editorMode: false,
     nameAttribute: 'name',
     referenceAttributes: ['name', 'shortid'],
     onNew: (options) => configuration.modalHandler.open(NewFolderModal, options)

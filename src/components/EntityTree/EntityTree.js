@@ -636,7 +636,7 @@ class EntityTree extends Component {
     if (selectable) {
       onSelect(entity)
     } else {
-      onClick(entity._id, entitySets[entity.__entitySet].editorMode === false)
+      onClick(entity._id)
     }
 
     this.tryHide()
@@ -744,6 +744,13 @@ class EntityTree extends Component {
             </div>
           )}
           {(isRoot || isGroupEntity) && <hr />}
+          {isGroupEntity && (
+            <div
+              className={style.contextButton}
+              onClick={(e) => { e.stopPropagation(); this.handleNodeClick(childEntity); this.tryHide() }}>
+              <i className='fa fa-edit' /> Edit
+            </div>
+          )}
           {!isRoot && (
             <div
               className={style.contextButton}

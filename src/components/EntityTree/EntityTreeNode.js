@@ -190,7 +190,6 @@ class EntityTreeNode extends Component {
       renderTree,
       renderContextMenu,
       onNewClick,
-      onClick,
       onNodeSelect
     } = this.props
 
@@ -213,7 +212,7 @@ class EntityTreeNode extends Component {
         <div
           className={`${style.link} ${contextMenuActive ? style.focused : ''} ${(isActive && !isDragging) ? style.active : ''} ${isDragging ? style.dragging : ''}`}
           onContextMenu={groupIsEntity ? (e) => showContextMenu(e, node.data) : undefined}
-          onClick={(ev) => { ev.preventDefault(); ev.stopPropagation(); groupIsEntity && onClick(node.data) }}
+          onClick={(ev) => { ev.preventDefault(); ev.stopPropagation(); collapseNode(id) }}
           style={{ paddingLeft: `${(depth + 1) * paddingByLevel}rem` }}
         >
           {selectable ? <input type='checkbox' {...extraPropsSelectable} onChange={(v) => {
@@ -222,7 +221,6 @@ class EntityTreeNode extends Component {
           <span
             id={this.getTitleDOMId(node)}
             className={`${style.nodeTitle} ${isCollapsed ? style.collapsed : ''}`}
-            onClick={(ev) => { ev.preventDefault(); ev.stopPropagation(); collapseNode(id) }}
           >
             {this.connectDragging(
               <div className={`${style.nodeBoxItemContent} ${isDragging ? style.dragging : ''}`}>
