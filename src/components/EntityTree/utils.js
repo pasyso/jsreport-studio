@@ -41,7 +41,7 @@ export function getNodeTitleDOMId (entity) {
   return `${nodeDOMId}--title`
 }
 
-export function getAllEntitiesInHierarchy (node, includeRoot = false, allEntities) {
+export function getAllEntitiesInHierarchy (node, includeRoot = false, onlyDirectChildren = false, allEntities) {
   const entities = allEntities == null ? [] : allEntities
 
   if (!node) {
@@ -59,7 +59,11 @@ export function getAllEntitiesInHierarchy (node, includeRoot = false, allEntitie
   }
 
   if (node.items) {
-    node.items.forEach((cNode) => getAllEntitiesInHierarchy(cNode, true, entities))
+    node.items.forEach((cNode) => {
+      const nodeToEvaluate = onlyDirectChildren === true ? Object.assign({}, cNode, { items: null }) : cNode
+
+      return getAllEntitiesInHierarchy(nodeToEvaluate, true, false, entities)
+    })
   }
 
   return entities

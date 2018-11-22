@@ -455,7 +455,6 @@ class EntityTree extends Component {
         return
       }
 
-      const hierarchyEntityDimensions = hierarchyEntityDOMNode.getBoundingClientRect()
       const hierachyEntityTitleDimensions = hierarchyEntityTitleDOMNode.getBoundingClientRect()
 
       highlightedArea.label = {
@@ -465,11 +464,32 @@ class EntityTree extends Component {
         height: hierachyEntityTitleDimensions.height
       }
 
-      highlightedArea.hierarchy = {
-        top: hierachyEntityTitleDimensions.top + (hierachyEntityTitleDimensions.height + 4),
-        left: hierachyEntityTitleDimensions.left,
-        width: `${paddingByLevelInTree}rem`,
-        height: hierarchyEntityDimensions.height - (hierachyEntityTitleDimensions.height + 4)
+      let containerTargetIsCollapsed = false
+      let containerTargetHasEntities = false
+
+      if (containerTargetInContext && this.entityNodesById[containerTargetInContext._id]) {
+        const nodeObj = this.entityNodesById[containerTargetInContext._id]
+
+        if (getAllEntitiesInHierarchy(nodeObj, false, true).length > 0) {
+          containerTargetHasEntities = true
+        }
+
+        if (this.state[nodeObj.objectId] === true) {
+          containerTargetIsCollapsed = true
+        }
+      }
+
+      if (containerTargetInContext && (containerTargetIsCollapsed || !containerTargetHasEntities)) {
+        highlightedArea.hierarchy = null
+      } else {
+        const hierarchyEntityDimensions = hierarchyEntityDOMNode.getBoundingClientRect()
+
+        highlightedArea.hierarchy = {
+          top: hierachyEntityTitleDimensions.top + (hierachyEntityTitleDimensions.height + 4),
+          left: hierachyEntityTitleDimensions.left,
+          width: `${paddingByLevelInTree}rem`,
+          height: hierarchyEntityDimensions.height - (hierachyEntityTitleDimensions.height + 4)
+        }
       }
     }
 
