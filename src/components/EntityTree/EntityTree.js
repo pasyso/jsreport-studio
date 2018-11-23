@@ -548,7 +548,21 @@ class EntityTree extends Component {
   }
 
   getEntityTreeListContainerDimensions () {
-    return this.listContainerNode.getBoundingClientRect()
+    const dimensions = this.listContainerNode.getBoundingClientRect()
+    const relativeTop = dimensions.top - this.listContainerNode.scrollTop
+    const relativeBottom = dimensions.bottom + this.listContainerNode.scrollTop
+    const relativeLeft = dimensions.left - this.listContainerNode.scrollLeft
+    const relativeRight = dimensions.right + this.listContainerNode.scrollLeft
+
+    return {
+      ...dimensions,
+      top: relativeTop,
+      left: relativeLeft,
+      y: relativeTop,
+      x: relativeLeft,
+      bottom: relativeBottom,
+      right: relativeRight
+    }
   }
 
   getSetsToRender (sets) {
