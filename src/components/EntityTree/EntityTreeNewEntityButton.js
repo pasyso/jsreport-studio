@@ -1,7 +1,7 @@
 import React, { Component } from 'react'
 import NewEntityModal from '../Modals/NewEntityModal'
 import EntityTreeButton from './EntityTreeButton'
-import { getVisibleEntitySetsInTree } from './utils'
+import getVisibleEntitySetsInTree from '../../helpers/getVisibleEntitySetsInTree'
 import {
   entitySets,
   modalHandler

@@ -39,6 +39,25 @@ reducer.handleAction(ActionTypes.LOAD, (state, action) => ({
   }, getMetaReferenceAttributes(state[action.entity._id]))
 }))
 
+reducer.handleAction(ActionTypes.LOAD_CHILDREN, (state, action) => {
+  const parentEntity = {
+    [action.entity._id]: Object.assign({}, state[action.entity._id], action.entity, {
+      __childrenLoaded: true
+    }, getMetaReferenceAttributes(state[action.entity._id]))
+  }
+
+  const children = action.children != null && action.children.length > 0 ? action.children.reduce((acu, child) => {
+    acu[child._id] = Object.assign({}, child, getMetaReferenceAttributes(child))
+    return acu
+  }, {}) : {}
+
+  return {
+    ...state,
+    ...parentEntity,
+    ...children
+  }
+})
+
 reducer.handleActions([ActionTypes.UPDATE, ActionTypes.DEBOUNCED_UPDATE], (state, action) => ({
   ...state,
   [action.entity._id]: Object.assign({}, state[action.entity._id], action.entity, { __isDirty: true })
@@ -84,6 +103,11 @@ reducer.handleAction(ActionTypes.LOAD_REFERENCES, (state, action) => {
   action.entities.forEach((e) => {
     e.__entitySet = action.entitySet
     e.__name = e[entitySets[action.entitySet].nameAttribute]
+
+    if (action.entitySet === 'folders') {
+      e.__childrenLoaded = action.lazy !== true
+    }
+
     newStateRef[e._id] = e
   })
   return newStateRef
@@ -104,7 +128,7 @@ reducer.handleAction(ActionTypes.UNLOAD, (state, action) => {
       __entitySet: state[action._id].__entitySet,
       __isNew: state[action._id].__isNew,
       _id: action._id
-    }, getReferenceAttributes(state[action._id]))
+    }, state[action._id].__entitySet === 'folders' ? { __childrenLoaded: false } : {}, getReferenceAttributes(state[action._id]))
   }
 })
 

@@ -8,15 +8,15 @@ import HierarchyReplaceEntityModal from '../Modals/HierarchyReplaceEntityModal'
 import style from './EntityTree.scss'
 import ENTITY_NODE_DRAG_TYPE from './nodeDragType'
 import {
-  getVisibleEntitySetsInTree,
   checkIsGroupNode,
   checkIsGroupEntityNode,
   getNodeDOMId,
   getNodeTitleDOMId,
   getAllEntitiesInHierarchy
 } from './utils'
+import getVisibleEntitySetsInTree from '../../helpers/getVisibleEntitySetsInTree'
 import groupEntitiesByHierarchyHelper from '../../helpers/groupEntitiesByHierarchy'
-import { selectors as entitiesSelectors } from '../../redux/entities'
+import { actions as entitiesActions, selectors as entitiesSelectors } from '../../redux/entities'
 import { actions as editorActions } from '../../redux/editor'
 import {
   entitySets,
@@ -183,6 +183,7 @@ class EntityTree extends Component {
     this.setContextMenuNode = this.setContextMenuNode.bind(this)
     this.setFilter = this.setFilter.bind(this)
     this.setClipboard = this.setClipboard.bind(this)
+    this.isNodeCollapsed = this.isNodeCollapsed.bind(this)
     this.isValidHierarchyTarget = this.isValidHierarchyTarget.bind(this)
     this.showHighlightedArea = this.showHighlightedArea.bind(this)
     this.clearHighlightedArea = this.clearHighlightedArea.bind(this)
@@ -266,11 +267,21 @@ class EntityTree extends Component {
     }
   }
 
-  collapse (k, forceState) {
+  collapse ({ objectId, id }, forceState) {
+    let newState
+
     if (forceState != null) {
-      this.setState({ [k]: forceState })
+      newState = forceState === true
     } else {
-      this.setState({ [k]: !this.state[k] })
+      newState = !this.isNodeCollapsed(objectId)
+    }
+
+    this.setState({
+      [objectId]: newState
+    })
+
+    if (newState === false && id != null) {
+      this.props.loadChildren(id)
     }
   }
 
@@ -352,6 +363,10 @@ class EntityTree extends Component {
         entitySet
       }
     })
+  }
+
+  isNodeCollapsed (nodeObjectId) {
+    return this.state[nodeObjectId] == null || this.state[nodeObjectId] === true
   }
 
   isValidHierarchyTarget (sourceNode, targetNode) {
@@ -474,7 +489,7 @@ class EntityTree extends Component {
           containerTargetHasEntities = true
         }
 
-        if (this.state[nodeObj.objectId] === true) {
+        if (this.isNodeCollapsed(nodeObj.objectId)) {
           containerTargetIsCollapsed = true
         }
       }
@@ -566,13 +581,7 @@ class EntityTree extends Component {
   }
 
   getSetsToRender (sets) {
-    const setsNames = Object.keys(sets).filter((setName) => {
-      if (entitySets[setName].visibleInTree === false) {
-        return false
-      }
-
-      return true
-    })
+    const setsNames = getVisibleEntitySetsInTree(sets).map((s) => s.name)
 
     let setsInOrderSpecification = []
 
@@ -658,7 +667,10 @@ class EntityTree extends Component {
 
     if (objectNode) {
       // always expand the node on new entity creation
-      this.collapse(objectNode.objectId, false)
+      this.collapse({
+        objectId: objectNode.objectId,
+        id: nodeId
+      }, false)
     }
 
     this.props.onNewClick(...params)
@@ -930,7 +942,7 @@ class EntityTree extends Component {
         id={objectId}
         node={node}
         depth={treeDepth}
-        isCollapsed={this.state[objectId] === true}
+        isCollapsed={this.isNodeCollapsed(objectId)}
         isActive={activeEntity !== null && node.data != null && node.data._id === activeEntity._id}
         selectable={selectable}
         draggable={isDraggable}
@@ -1013,5 +1025,5 @@ export default connect(
   (state) => ({
     getEntityByShortid: (shortid) => entitiesSelectors.getByShortid(state, shortid)
   }),
-  { ...editorActions }
+  { ...editorActions, ...entitiesActions }
 )(DropTarget(ENTITY_NODE_DRAG_TYPE, entityTreeTarget, collect)(EntityTree))

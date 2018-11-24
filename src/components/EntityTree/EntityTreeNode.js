@@ -54,6 +54,7 @@ class EntityTreeNode extends Component {
 
     this.getDOMId = this.getDOMId.bind(this)
     this.getTitleDOMId = this.getTitleDOMId.bind(this)
+    this.collapse = this.collapse.bind(this)
   }
 
   componentDidMount () {
@@ -81,6 +82,10 @@ class EntityTreeNode extends Component {
       if (isEntityNode) {
         registerEntityNode(node.data._id, Object.assign({}, node, { objectId: this.props.id }))
       }
+    }
+
+    if (node.data._id === prevNode.data._id) {
+      registerEntityNode(node.data._id, Object.assign({}, node, { objectId: this.props.id, items: node.items || [] }))
     }
   }
 
@@ -113,6 +118,18 @@ class EntityTreeNode extends Component {
     }
 
     return connectDropTarget(el)
+  }
+
+  collapse (objectId, node) {
+    const params = {
+      objectId
+    }
+
+    if (checkIsGroupEntityNode(node)) {
+      params.id = node.data._id
+    }
+
+    this.props.collapseNode(params)
   }
 
   getDOMId (node) {
@@ -185,7 +202,6 @@ class EntityTreeNode extends Component {
       selectable,
       draggable,
       showContextMenu,
-      collapseNode,
       paddingByLevel,
       renderTree,
       renderContextMenu,
@@ -212,7 +228,7 @@ class EntityTreeNode extends Component {
         <div
           className={`${style.link} ${contextMenuActive ? style.focused : ''} ${(isActive && !isDragging) ? style.active : ''} ${isDragging ? style.dragging : ''}`}
           onContextMenu={groupIsEntity ? (e) => showContextMenu(e, node.data) : undefined}
-          onClick={(ev) => { if (!selectable) { ev.preventDefault(); ev.stopPropagation(); collapseNode(id) } }}
+          onClick={(ev) => { if (!selectable) { ev.preventDefault(); ev.stopPropagation(); this.collapse(id, node) } }}
           style={{ paddingLeft: `${(depth + 1) * paddingByLevel}rem` }}
         >
           {selectable ? <input type='checkbox' {...extraPropsSelectable} onChange={(v) => {
@@ -221,7 +237,7 @@ class EntityTreeNode extends Component {
           <span
             id={this.getTitleDOMId(node)}
             className={`${style.nodeTitle} ${isCollapsed ? style.collapsed : ''}`}
-            onClick={(ev) => { if (selectable) { ev.preventDefault(); ev.stopPropagation(); collapseNode(id) } }}
+            onClick={(ev) => { if (selectable) { ev.preventDefault(); ev.stopPropagation(); this.collapse(id, node) } }}
           >
             {this.connectDragging(
               <div className={`${style.nodeBoxItemContent} ${isDragging ? style.dragging : ''}`}>
