@@ -54,7 +54,6 @@ export default class Modal extends Component {
     })
 
     response.__entitySet = 'folders'
-    response.__childrenLoaded = true
 
     this.props.addExisting(response)
 

@@ -71,13 +71,8 @@ const entityTreeTarget = {
     const sourceEntitySet = monitor.getItem().entitySet
     const sourceNode = monitor.getItem().node
     const targetNode = dragOverContext ? dragOverContext.targetNode : undefined
-    const dropResult = monitor.getDropResult()
     let sourceInfo
     let targetInfo
-
-    if (monitor.didDrop() && (!dropResult || dropResult.cancelled === true)) {
-      return
-    }
 
     if (sourceNode && dragOverContext && !dragOverContext.containerTargetEntity) {
       if (!dragOverContext.overRoot) {
@@ -272,7 +267,7 @@ class EntityTree extends Component {
     }
   }
 
-  collapse ({ objectId, id }, forceState) {
+  collapse ({ objectId }, forceState) {
     let newState
 
     if (forceState != null) {
@@ -284,10 +279,6 @@ class EntityTree extends Component {
     this.setState({
       [objectId]: newState
     })
-
-    if (newState === false && id != null) {
-      this.props.loadChildren(id)
-    }
   }
 
   filterEntities (entities) {
@@ -684,7 +675,7 @@ class EntityTree extends Component {
   handleNewClick (nodeId, ...params) {
     const objectNode = this.entityNodesById[nodeId]
 
-    if (objectNode) {
+    if (objectNode && objectNode.isEntitySet !== true) {
       // always expand the node on new entity creation
       this.collapse({
         objectId: objectNode.objectId,
@@ -966,12 +957,11 @@ class EntityTree extends Component {
         selectable={selectable}
         draggable={isDraggable}
         originalEntities={entities}
-        childrenLoaded={node.data.__entitySet === 'folders' && node.data.__childrenLoaded === true}
         paddingByLevel={paddingByLevelInTree}
         getEntityTypeNameAttr={this.getEntityTypeNameAttr}
         registerEntityNode={this.registerEntityNode}
         showContextMenu={this.contextMenu}
-        contextMenuActive={this.state.contextMenuId === node.data._id}
+        contextMenuActive={node.data != null && this.state.contextMenuId === node.data._id}
         collapseNode={this.collapse}
         renderTree={this.renderTree}
         renderContextMenu={this.renderNodeContextMenu}
@@ -997,6 +987,12 @@ class EntityTree extends Component {
     const entities = this.filterEntities(this.props.entities)
     const children = this.props.children
 
+    const renderDefaultTree = () => (
+      <div ref={this.setListNode}>
+        {this.renderTree(this.groupEntitiesByHierarchy(entitySets, entities))}
+      </div>
+    )
+
     return this.connectDropping(
       <div className={style.treeListContainer} onContextMenu={(e) => this.contextMenu(e, null)}>
         {
@@ -1016,7 +1012,7 @@ class EntityTree extends Component {
             typeof children === 'function' ? children({
               // we render the root tree with a wraper div to be able to
               // calculate some things for the drag and drop interactions
-              renderDefaultTree: () => <div ref={this.setListNode}>{this.renderTree(this.groupEntitiesByHierarchy(entitySets, entities))}</div>,
+              renderDefaultTree,
               renderTree: (...args) => <div ref={this.setListNode}>{this.renderTree(...args)}</div>,
               getSetsToRender: this.getSetsToRender,
               getEntityTypeNameAttr: this.getEntityTypeNameAttr,
@@ -1025,9 +1021,7 @@ class EntityTree extends Component {
               entitySets,
               entities
             }) : (
-              <div ref={this.setListNode}>
-                {this.renderTree(this.groupEntitiesByHierarchy(entitySets, entities))}
-              </div>
+              renderDefaultTree()
             )
           }
           <HighlightedArea

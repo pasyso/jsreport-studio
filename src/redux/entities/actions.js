@@ -2,7 +2,7 @@ import * as ActionTypes from './constants.js'
 import api from '../../helpers/api.js'
 import getVisibleEntitySetsInTree from '../../helpers/getVisibleEntitySetsInTree'
 import * as selectors from './selectors.js'
-import { entitySets, lazyLoadEntities, referencesLoader } from '../../lib/configuration.js'
+import { entitySets, referencesLoader } from '../../lib/configuration.js'
 
 export const prune = (entity) => {
   let pruned = {}
@@ -122,50 +122,6 @@ export function load (id, force) {
   }
 }
 
-export function loadChildren (id, force) {
-  return async function (dispatch, getState) {
-    let entity = selectors.getById(getState(), id)
-
-    if (!force && (entity.__childrenLoaded || entity.__isNew)) {
-      return
-    }
-
-    dispatch(apiStart())
-    try {
-      const setsToLoad = [entitySets.folders, ...getVisibleEntitySetsInTree(entitySets)]
-      const requests = []
-      let requestResults
-      let children = []
-
-      setsToLoad.forEach((entitySet) => {
-        const nameAttribute = entitySet.nameAttribute
-        const referenceAttributes = entitySet.referenceAttributes
-        requests.push(
-          api.get(`/odata/${entitySet.name}?$filter=folder/shortid eq '${entity.shortid}'&$select=${referenceAttributes}&$orderby=${nameAttribute}`)
-          .then((r) => r.value.map((e) => Object.assign({}, e, { __entitySet: entitySet.name })))
-        )
-      })
-
-      requestResults = await Promise.all(requests)
-
-      requestResults.forEach((result) => {
-        result.forEach((e) => children.push(e))
-      })
-
-      dispatch(apiDone())
-
-      dispatch({
-        type: ActionTypes.LOAD_CHILDREN,
-        entity: entity,
-        children
-      })
-    } catch (e) {
-      dispatch(apiFailed(e))
-      throw e
-    }
-  }
-}
-
 export function unload (id) {
   return async function (dispatch, getState) {
     return dispatch({
@@ -188,27 +144,18 @@ export function loadReferences (entitySet) {
     let entities
 
     if (referencesLoader) {
-      entities = await referencesLoader(entitySet, lazyLoadEntities)
+      entities = await referencesLoader(entitySet)
     } else {
       const nameAttribute = entitySets[entitySet].nameAttribute
       const referenceAttributes = entitySets[entitySet].referenceAttributes
-
-      let entitiesUrl
-
-      if (lazyLoadEntities === true) {
-        entitiesUrl = `/odata/${entitySet}?$filter=folder eq null&$select=${referenceAttributes}&$orderby=${nameAttribute}`
-      } else {
-        entitiesUrl = `/odata/${entitySet}?$select=${referenceAttributes}&$orderby=${nameAttribute}`
-      }
-
+      const entitiesUrl = `/odata/${entitySet}?$select=${referenceAttributes}&$orderby=${nameAttribute}`
       entities = (await api.get(entitiesUrl)).value
     }
 
     dispatch({
       type: ActionTypes.LOAD_REFERENCES,
       entities: entities,
-      entitySet: entitySet,
-      lazy: lazyLoadEntities
+      entitySet: entitySet
     })
   }
 }
