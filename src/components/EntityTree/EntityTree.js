@@ -2,6 +2,7 @@ import React, {Component} from 'react'
 import ReactList from 'react-list'
 import { connect } from 'react-redux'
 import { DropTarget } from 'react-dnd'
+import throttle from 'lodash.throttle'
 import HighlightedArea from './HighlightedArea'
 import EntityTreeNode from './EntityTreeNode'
 import HierarchyReplaceEntityModal from '../Modals/HierarchyReplaceEntityModal'
@@ -41,30 +42,11 @@ const entityTreeTarget = {
       return
     }
 
-    const clientOffset = monitor.getClientOffset()
-    const sourceNode = monitor.getItem().node
-    const listNodeDimensions = component.listNode.getBoundingClientRect()
-    const isInsideContainer = pointIsInsideContainer(listNodeDimensions, clientOffset)
-
-    if (
-      monitor.isOver({ shallow: true }) &&
-      !isInsideContainer
-    ) {
-      if (clientOffset.y < listNodeDimensions.top) {
-        component.dragOverContext = null
-        return component.clearHighlightedArea()
-      } else {
-        return component.showHighlightedArea(sourceNode)
-      }
-    }
-
-    const { targetNode } = component.dragOverContext || {}
-
-    if (!targetNode) {
-      return
-    }
-
-    component.showHighlightedArea(sourceNode, targetNode)
+    component.handleDragOver({
+      clientOffset: monitor.getClientOffset(),
+      sourceNode: monitor.getItem().node,
+      isOverShallow: monitor.isOver({ shallow: true })
+    })
   },
   drop (props, monitor, component) {
     const dragOverContext = component.dragOverContext
@@ -199,6 +181,15 @@ class EntityTree extends Component {
     this.handleGlobalClick = this.handleGlobalClick.bind(this)
     this.handleNewClick = this.handleNewClick.bind(this)
     this.handleNodeClick = this.handleNodeClick.bind(this)
+
+    // it is important to throttle the launching of the event to avoid having a
+    // bad experience while dragging
+    this.handleDragOver = throttle(
+      this.handleDragOver.bind(this),
+      100,
+      { leading: true, trailing: false }
+    )
+
     this.handleNodeDragOver = this.handleNodeDragOver.bind(this)
     this.renderRootContextMenu = this.renderRootContextMenu.bind(this)
     this.renderNodeContextMenu = this.renderNodeContextMenu.bind(this)
@@ -267,17 +258,17 @@ class EntityTree extends Component {
     }
   }
 
-  collapse ({ objectId }, forceState) {
+  collapse (nodeObj, forceState) {
     let newState
 
     if (forceState != null) {
       newState = forceState === true
     } else {
-      newState = !this.isNodeCollapsed(objectId)
+      newState = !this.isNodeCollapsed(nodeObj)
     }
 
     this.setState({
-      [objectId]: newState
+      [nodeObj.objectId]: newState
     })
   }
 
@@ -361,8 +352,12 @@ class EntityTree extends Component {
     })
   }
 
-  isNodeCollapsed (nodeObjectId) {
-    return this.state[nodeObjectId] == null || this.state[nodeObjectId] === true
+  isNodeCollapsed (nodeObject, groupNode) {
+    if (checkIsGroupNode(nodeObject) && !checkIsGroupEntityNode(nodeObject)) {
+      return this.state[nodeObject.objectId] == null ? false : this.state[nodeObject.objectId] === true
+    }
+
+    return this.state[nodeObject.objectId] == null ? true : this.state[nodeObject.objectId] === true
   }
 
   isValidHierarchyTarget (sourceNode, targetNode) {
@@ -490,7 +485,7 @@ class EntityTree extends Component {
           containerTargetHasEntities = true
         }
 
-        if (this.isNodeCollapsed(nodeObj.objectId)) {
+        if (this.isNodeCollapsed(nodeObj)) {
           containerTargetIsCollapsed = true
         }
       }
@@ -533,10 +528,7 @@ class EntityTree extends Component {
       if (targetInfo.shortid != null) {
         const targetEntity = this.props.getEntityByShortid(targetInfo.shortid)
 
-        this.collapse({
-          objectId: this.entityNodesById[targetEntity._id].objectId,
-          id: targetEntity._id
-        }, false)
+        this.collapse(this.entityNodesById[targetEntity._id], false)
       }
 
       if (!result || result.duplicatedEntity !== true) {
@@ -677,10 +669,7 @@ class EntityTree extends Component {
 
     if (objectNode && objectNode.isEntitySet !== true) {
       // always expand the node on new entity creation
-      this.collapse({
-        objectId: objectNode.objectId,
-        id: nodeId
-      }, false)
+      this.collapse(objectNode, false)
     }
 
     this.props.onNewClick(...params)
@@ -696,6 +685,31 @@ class EntityTree extends Component {
     }
 
     this.tryHide()
+  }
+
+  handleDragOver ({ clientOffset, sourceNode, isOverShallow }) {
+    const listNodeDimensions = this.listNode.getBoundingClientRect()
+    const isInsideContainer = pointIsInsideContainer(listNodeDimensions, clientOffset)
+
+    if (
+      isOverShallow &&
+      !isInsideContainer
+    ) {
+      if (clientOffset.y < listNodeDimensions.top) {
+        this.dragOverContext = null
+        return this.clearHighlightedArea()
+      } else {
+        return this.showHighlightedArea(sourceNode)
+      }
+    }
+
+    const { targetNode } = this.dragOverContext || {}
+
+    if (!targetNode) {
+      return
+    }
+
+    this.showHighlightedArea(sourceNode, targetNode)
   }
 
   handleNodeDragOver (dragOverContext) {
@@ -721,7 +735,7 @@ class EntityTree extends Component {
       return null
     }
 
-    return this.renderContextMenu(undefined, { pointCoordinates })
+    return this.renderContextMenu(undefined, { getCoordinates: () => pointCoordinates })
   }
 
   renderNodeContextMenu (entity, info = {}) {
@@ -735,7 +749,7 @@ class EntityTree extends Component {
     return this.renderContextMenu(entity, info)
   }
 
-  renderContextMenu (childEntity, { isGroupEntity, node, pointCoordinates } = {}) {
+  renderContextMenu (childEntity, { isGroupEntity, node, getCoordinates } = {}) {
     const { clipboard } = this.state
     const { onRemove, onClone, onRename } = this.props
     const isRoot = childEntity == null
@@ -761,10 +775,10 @@ class EntityTree extends Component {
       </div>
     ))
 
-    if (pointCoordinates) {
-      containerStyle.top = pointCoordinates.y
-      containerStyle.left = pointCoordinates.x
-    }
+    const pointCoordinates = getCoordinates()
+
+    containerStyle.top = pointCoordinates.y + 2
+    containerStyle.left = pointCoordinates.x
 
     return (
       <div key='entity-contextmenu' ref={this.setContextMenuNode} className={style.contextMenuContainer} style={containerStyle}>
@@ -946,14 +960,24 @@ class EntityTree extends Component {
       }
     }
 
+    let isActiveNode = false
+
+    if (
+      activeEntity != null &&
+      (checkIsGroupEntityNode(node) || !checkIsGroupNode(node)) &&
+      node.data != null && node.data._id === activeEntity._id
+    ) {
+      isActiveNode = true
+    }
+
     return (
       <EntityTreeNode
         key={objectId}
         id={objectId}
         node={node}
         depth={treeDepth}
-        isCollapsed={this.isNodeCollapsed(objectId)}
-        isActive={activeEntity !== null && node.data != null && node.data._id === activeEntity._id}
+        isCollapsed={this.isNodeCollapsed(Object.assign({}, node, { objectId }))}
+        isActive={isActiveNode}
         selectable={selectable}
         draggable={isDraggable}
         originalEntities={entities}

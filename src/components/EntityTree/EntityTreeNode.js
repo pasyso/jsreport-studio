@@ -54,8 +54,10 @@ class EntityTreeNode extends Component {
   constructor (props) {
     super(props)
 
+    this.setNodeTitle = this.setNodeTitle.bind(this)
     this.getDOMId = this.getDOMId.bind(this)
     this.getTitleDOMId = this.getTitleDOMId.bind(this)
+    this.getCoordinates = this.getCoordinates.bind(this)
     this.collapse = this.collapse.bind(this)
 
     this.draggingExpandTimeout = null
@@ -157,10 +159,15 @@ class EntityTreeNode extends Component {
 
   collapse (objectId) {
     const params = {
-      objectId
+      objectId,
+      ...this.props.node
     }
 
     this.props.collapseNode(params)
+  }
+
+  setNodeTitle (el) {
+    this.nodeTitle = el
   }
 
   getDOMId (node) {
@@ -177,6 +184,15 @@ class EntityTreeNode extends Component {
     }
 
     return getNodeTitleDOMId(node.data)
+  }
+
+  getCoordinates () {
+    const dimensions = this.nodeTitle.getBoundingClientRect()
+
+    return {
+      x: dimensions.x,
+      y: dimensions.y + dimensions.height
+    }
   }
 
   resolveEntityTreeIconStyle (entity, info) {
@@ -258,7 +274,14 @@ class EntityTreeNode extends Component {
       <div id={this.getDOMId(node)}>
         <div
           className={`${style.link} ${contextMenuActive ? style.focused : ''} ${(isActive && !isDragging) ? style.active : ''} ${isDragging ? style.dragging : ''}`}
-          onContextMenu={groupIsEntity ? (e) => showContextMenu(e, node.data) : undefined}
+          onContextMenu={(e) => {
+            if (!groupIsEntity) {
+              e.preventDefault()
+              e.stopPropagation()
+            } else {
+              showContextMenu(e, node.data)
+            }
+          }}
           onClick={(ev) => { if (!selectable) { ev.preventDefault(); ev.stopPropagation(); this.collapse(id) } }}
           style={{ paddingLeft: `${(depth + 1) * paddingByLevel}rem` }}
         >
@@ -266,6 +289,7 @@ class EntityTreeNode extends Component {
             onNodeSelect(getAllEntitiesInHierarchy(node, true), !!v.target.checked)
           }} /> : null}
           <span
+            ref={this.setNodeTitle}
             id={this.getTitleDOMId(node)}
             className={`${style.nodeTitle} ${isCollapsed ? style.collapsed : ''}`}
             onClick={(ev) => { if (selectable) { ev.preventDefault(); ev.stopPropagation(); this.collapse(id) } }}
@@ -290,8 +314,7 @@ class EntityTreeNode extends Component {
             ) : null
           ) : null}
           {groupIsEntity ? renderContextMenu(
-            node.data,
-            { isGroupEntity: groupIsEntity, node }
+            node.data, { isGroupEntity: groupIsEntity, node, getCoordinates: this.getCoordinates }
           ) : null}
         </div>
         <div className={`${style.nodeContainer} ${isDragging ? style.dragging : ''} ${isCollapsed ? style.collapsed : ''}`}>
@@ -333,6 +356,7 @@ class EntityTreeNode extends Component {
           this.connectDragging(
             <div
               id={this.getTitleDOMId(node)}
+              ref={this.setNodeTitle}
               key='container-entity'
               className={`${style.nodeBoxItemContent} ${isDragging ? style.dragging : ''}`}
             >
@@ -342,7 +366,10 @@ class EntityTreeNode extends Component {
               {this.renderEntityTreeItemComponents('right', { entity, entities: originalEntities })}
             </div>
           ),
-          renderContextMenu(entity, { node })
+          renderContextMenu(entity, {
+            node,
+            getCoordinates: this.getCoordinates
+          })
         ])}
       </div>
     )

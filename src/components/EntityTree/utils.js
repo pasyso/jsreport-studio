@@ -12,7 +12,15 @@ export function checkIsGroupEntityNode (node) {
 }
 
 export function getNodeDOMId (entity) {
-  return `entityNode--${entity.__entitySet}--${entity.shortid}`
+  let currentF = entity.folder
+  let hierarchy = ''
+
+  while (currentF != null) {
+    hierarchy += `--${currentF.shortid}`
+    currentF = currentF.folder
+  }
+
+  return `entityNode--${entity.__entitySet}--${entity.shortid}${hierarchy}`
 }
 
 export function getNodeTitleDOMId (entity) {
