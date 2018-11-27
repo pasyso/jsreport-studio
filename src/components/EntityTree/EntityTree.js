@@ -71,8 +71,13 @@ const entityTreeTarget = {
     const sourceEntitySet = monitor.getItem().entitySet
     const sourceNode = monitor.getItem().node
     const targetNode = dragOverContext ? dragOverContext.targetNode : undefined
+    const dropResult = monitor.getDropResult()
     let sourceInfo
     let targetInfo
+
+    if (monitor.didDrop() && (!dropResult || dropResult.cancelled === true)) {
+      return
+    }
 
     if (sourceNode && dragOverContext && !dragOverContext.containerTargetEntity) {
       if (!dragOverContext.overRoot) {
@@ -422,7 +427,12 @@ class EntityTree extends Component {
     const highlightedArea = {}
     let containerTargetInContext
 
-    if (!targetEntityNode) {
+    if (
+      !targetEntityNode ||
+      // support highlight root hierarchy when over entities at root
+      (targetEntityNode.data.__entitySet !== 'folders' &&
+      targetEntityNode.data.folder == null)
+    ) {
       const hierarchyEntityDimensions = this.listNode.getBoundingClientRect()
 
       highlightedArea.hierarchy = {
@@ -529,6 +539,15 @@ class EntityTree extends Component {
     const { hierarchyMove } = this.props
 
     hierarchyMove(sourceInfo, targetInfo, shouldCopy, false, true).then((result) => {
+      if (targetInfo.shortid != null) {
+        const targetEntity = this.props.getEntityByShortid(targetInfo.shortid)
+
+        this.collapse({
+          objectId: this.entityNodesById[targetEntity._id].objectId,
+          id: targetEntity._id
+        }, false)
+      }
+
       if (!result || result.duplicatedEntity !== true) {
         return
       }
@@ -947,6 +966,7 @@ class EntityTree extends Component {
         selectable={selectable}
         draggable={isDraggable}
         originalEntities={entities}
+        childrenLoaded={node.data.__entitySet === 'folders' && node.data.__childrenLoaded === true}
         paddingByLevel={paddingByLevelInTree}
         getEntityTypeNameAttr={this.getEntityTypeNameAttr}
         registerEntityNode={this.registerEntityNode}

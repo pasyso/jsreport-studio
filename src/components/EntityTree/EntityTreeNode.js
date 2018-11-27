@@ -30,6 +30,17 @@ const nodeTarget = {
         targetNode: node
       })
     }
+  },
+  drop (props, monitor, component) {
+    const { childrenLoading } = component.state
+
+    if (monitor.didDrop()) {
+      return
+    }
+
+    if (childrenLoading !== false) {
+      return { cancelled: true }
+    }
   }
 }
 
@@ -55,6 +66,10 @@ class EntityTreeNode extends Component {
     this.getDOMId = this.getDOMId.bind(this)
     this.getTitleDOMId = this.getTitleDOMId.bind(this)
     this.collapse = this.collapse.bind(this)
+
+    this.state = {
+      childrenLoading: false
+    }
   }
 
   componentDidMount () {
@@ -66,6 +81,24 @@ class EntityTreeNode extends Component {
     }
 
     registerEntityNode(node.data._id, Object.assign({}, node, { objectId: this.props.id }))
+  }
+
+  componentWillReceiveProps (nextProps) {
+    const { childrenLoading } = this.state
+    const props = this.props
+
+    if (
+      childrenLoading !== false &&
+      props.node.data &&
+      nextProps.node.data &&
+      props.node.data._id === nextProps.node.data._id &&
+      props.node.data.__childrenLoaded !== true &&
+      nextProps.node.data.__childrenLoaded === true
+    ) {
+      this.setState({
+        childrenLoading: false
+      })
+    }
   }
 
   componentDidUpdate (prevProps) {
@@ -101,9 +134,11 @@ class EntityTreeNode extends Component {
   }
 
   connectDragging (el) {
+    const { childrenLoading } = this.state
     const { selectable, draggable, connectDragSource, connectDragPreview } = this.props
+    const isLoading = childrenLoading !== false
 
-    if (selectable || !draggable) {
+    if (selectable || !draggable || isLoading) {
       return el
     }
 
@@ -120,13 +155,34 @@ class EntityTreeNode extends Component {
     return connectDropTarget(el)
   }
 
-  collapse (objectId, node) {
+  collapse (objectId) {
+    const { childrenLoading } = this.state
+    const { node } = this.props
+
     const params = {
       objectId
     }
 
+    if (childrenLoading !== false) {
+      return
+    }
+
     if (checkIsGroupEntityNode(node)) {
       params.id = node.data._id
+
+      if (node.data.__childrenLoaded !== true) {
+        this.setState({
+          childrenLoading: 'initial'
+        })
+
+        setTimeout(() => {
+          if (this.props.node.data.__childrenLoaded !== true) {
+            this.setState({
+              childrenLoading: 'animation'
+            })
+          }
+        }, 250)
+      }
     }
 
     this.props.collapseNode(params)
@@ -191,6 +247,8 @@ class EntityTreeNode extends Component {
   }
 
   renderGroupNode () {
+    const { childrenLoading } = this.state
+
     const {
       node,
       depth,
@@ -213,6 +271,8 @@ class EntityTreeNode extends Component {
     const items = node.items
     const extraPropsSelectable = {}
     const groupStyle = node.data != null ? this.resolveEntityTreeIconStyle(node.data, { isCollapsed }) : null
+    const isLoading = childrenLoading !== false
+    const shouldShowLoading = childrenLoading === 'animation'
     let groupIsEntity = checkIsGroupEntityNode(node)
 
     if (groupIsEntity) {
@@ -224,11 +284,11 @@ class EntityTreeNode extends Component {
     }
 
     return (
-      <div id={this.getDOMId(node)}>
+      <div id={this.getDOMId(node)} style={{ opacity: shouldShowLoading ? 0.6 : 1 }}>
         <div
           className={`${style.link} ${contextMenuActive ? style.focused : ''} ${(isActive && !isDragging) ? style.active : ''} ${isDragging ? style.dragging : ''}`}
           onContextMenu={groupIsEntity ? (e) => showContextMenu(e, node.data) : undefined}
-          onClick={(ev) => { if (!selectable) { ev.preventDefault(); ev.stopPropagation(); this.collapse(id, node) } }}
+          onClick={(ev) => { if (!selectable) { ev.preventDefault(); ev.stopPropagation(); this.collapse(id) } }}
           style={{ paddingLeft: `${(depth + 1) * paddingByLevel}rem` }}
         >
           {selectable ? <input type='checkbox' {...extraPropsSelectable} onChange={(v) => {
@@ -237,7 +297,7 @@ class EntityTreeNode extends Component {
           <span
             id={this.getTitleDOMId(node)}
             className={`${style.nodeTitle} ${isCollapsed ? style.collapsed : ''}`}
-            onClick={(ev) => { if (selectable) { ev.preventDefault(); ev.stopPropagation(); this.collapse(id, node) } }}
+            onClick={(ev) => { if (selectable) { ev.preventDefault(); ev.stopPropagation(); this.collapse(id) } }}
           >
             {this.connectDragging(
               <div className={`${style.nodeBoxItemContent} ${isDragging ? style.dragging : ''}`}>
@@ -245,14 +305,21 @@ class EntityTreeNode extends Component {
                   <i key='entity-icon' className={style.entityIcon + ' fa ' + (groupStyle || '')} />
                 )}
                 {name + (groupIsEntity && node.data.__isDirty ? '*' : '')}
-              </div>,
+                {shouldShowLoading && (
+                  <span style={{ display: 'inline-block' }}>
+                    <span className={style.loadingDot}>.</span>
+                    <span className={style.loadingDot}>.</span>
+                    <span className={style.loadingDot}>.</span>
+                  </span>
+                )}
+              </div>
             )}
           </span>
           {this.renderEntityTreeItemComponents('groupRight', node.data, undefined)}
           {node.isEntitySet ? (
             !selectable ? <a key={id + 'new'} onClick={() => onNewClick(name)} className={style.add}></a> : null
           ) : null}
-          {groupIsEntity ? renderContextMenu(
+          {(groupIsEntity && !isLoading) ? renderContextMenu(
             node.data,
             { isGroupEntity: groupIsEntity, node }
           ) : null}

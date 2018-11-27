@@ -11,6 +11,8 @@ import NewFolderModal from './components/Modals/NewFolderModal'
 import { openTab } from './redux/editor/actions'
 
 export default () => {
+  configuration.lazyLoadEntities = true
+
   configuration.propertiesComponents.push({
     title: TemplateProperties.title,
     shouldDisplay: (entity) => entity.__entitySet === 'templates',

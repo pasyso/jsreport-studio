@@ -2,7 +2,7 @@ import * as ActionTypes from './constants.js'
 import api from '../../helpers/api.js'
 import getVisibleEntitySetsInTree from '../../helpers/getVisibleEntitySetsInTree'
 import * as selectors from './selectors.js'
-import { entitySets, referencesLoader } from '../../lib/configuration.js'
+import { entitySets, lazyLoadEntities, referencesLoader } from '../../lib/configuration.js'
 
 export const prune = (entity) => {
   let pruned = {}
@@ -183,19 +183,19 @@ export function unloadAll () {
   }
 }
 
-export function loadReferences (entitySet, lazy = true) {
+export function loadReferences (entitySet) {
   return async function (dispatch) {
     let entities
 
     if (referencesLoader) {
-      entities = await referencesLoader(entitySet, lazy)
+      entities = await referencesLoader(entitySet, lazyLoadEntities)
     } else {
       const nameAttribute = entitySets[entitySet].nameAttribute
       const referenceAttributes = entitySets[entitySet].referenceAttributes
 
       let entitiesUrl
 
-      if (lazy === true) {
+      if (lazyLoadEntities === true) {
         entitiesUrl = `/odata/${entitySet}?$filter=folder eq null&$select=${referenceAttributes}&$orderby=${nameAttribute}`
       } else {
         entitiesUrl = `/odata/${entitySet}?$select=${referenceAttributes}&$orderby=${nameAttribute}`
@@ -208,7 +208,7 @@ export function loadReferences (entitySet, lazy = true) {
       type: ActionTypes.LOAD_REFERENCES,
       entities: entities,
       entitySet: entitySet,
-      lazy
+      lazy: lazyLoadEntities
     })
   }
 }
