@@ -22,23 +22,26 @@ const nodeTarget = {
   hover (props, monitor, component) {
     const { node } = props
 
-    if (monitor.isOver({ shallow: true }) && props.onDragOver) {
-      props.onDragOver({
-        entitySet: node.data.__entitySet,
-        isGroupEntity: checkIsGroupEntityNode(node),
-        isCollapsed: props.isCollapsed,
-        targetNode: node
-      })
+    if (monitor.isOver({ shallow: true })) {
+      if (props.onDragOver) {
+        props.onDragOver({
+          entitySet: node.data.__entitySet,
+          isGroupEntity: checkIsGroupEntityNode(node),
+          isCollapsed: props.isCollapsed,
+          targetNode: node
+        })
+      }
     }
   },
   drop (props, monitor, component) {
+    const { node } = props
     const { childrenLoading } = component.state
 
     if (monitor.didDrop()) {
       return
     }
 
-    if (childrenLoading !== false) {
+    if (checkIsGroupEntityNode(node) && childrenLoading !== false) {
       return { cancelled: true }
     }
   }
@@ -55,7 +58,7 @@ function collectForSource (connect, monitor) {
 function collectForTarget (connect, monitor) {
   return {
     connectDropTarget: connect.dropTarget(),
-    isOver: monitor.isOver()
+    isOverShallow: monitor.isOver({ shallow: true })
   }
 }
 
@@ -66,6 +69,8 @@ class EntityTreeNode extends Component {
     this.getDOMId = this.getDOMId.bind(this)
     this.getTitleDOMId = this.getTitleDOMId.bind(this)
     this.collapse = this.collapse.bind(this)
+
+    this.draggingExpandTimeout = null
 
     this.state = {
       childrenLoading: false
@@ -84,11 +89,36 @@ class EntityTreeNode extends Component {
   }
 
   componentWillReceiveProps (nextProps) {
-    const { childrenLoading } = this.state
     const props = this.props
 
+    if (props.isOverShallow === false && nextProps.isOverShallow === true) {
+      clearTimeout(this.draggingExpandTimeout)
+
+      if (
+        this.state.childrenLoading !== false ||
+        !checkIsGroupEntityNode(nextProps.node) ||
+        !nextProps.isCollapsed) {
+        return
+      }
+
+      // expand the node is we have been over for a while
+      this.draggingExpandTimeout = setTimeout(() => {
+        if (
+          this.state.childrenLoading !== false ||
+          !checkIsGroupEntityNode(nextProps.node) ||
+          !nextProps.isCollapsed
+        ) {
+          return
+        }
+
+        this.collapse(nextProps.id)
+      }, 900)
+    } else if (props.isOverShallow === true && nextProps.isOverShallow === false) {
+      clearTimeout(this.draggingExpandTimeout)
+    }
+
     if (
-      childrenLoading !== false &&
+      this.state.childrenLoading !== false &&
       props.node.data &&
       nextProps.node.data &&
       props.node.data._id === nextProps.node.data._id &&
@@ -157,7 +187,7 @@ class EntityTreeNode extends Component {
 
   collapse (objectId) {
     const { childrenLoading } = this.state
-    const { node } = this.props
+    const { node, isCollapsed } = this.props
 
     const params = {
       objectId
@@ -167,7 +197,7 @@ class EntityTreeNode extends Component {
       return
     }
 
-    if (checkIsGroupEntityNode(node)) {
+    if (checkIsGroupEntityNode(node) && isCollapsed) {
       params.id = node.data._id
 
       if (node.data.__childrenLoaded !== true) {
