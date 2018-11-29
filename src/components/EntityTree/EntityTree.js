@@ -146,8 +146,8 @@ class EntityTree extends Component {
     // onNewClick: React.PropTypes.func.isRequired
   }
 
-  constructor () {
-    super()
+  constructor (props) {
+    super(props)
 
     this.state = {
       filter: {},
@@ -155,6 +155,38 @@ class EntityTree extends Component {
       pointCoordinates: null,
       clipboard: null,
       highlightedArea: null
+    }
+
+    if (this.props.initialEntity != null) {
+      const parentFolders = []
+      let currentEntity = this.props.getEntityByShortid(this.props.initialEntity.shortid, false)
+
+      while (currentEntity != null) {
+        if (currentEntity.folder != null) {
+          currentEntity = this.props.getEntityByShortid(currentEntity.folder.shortid, false)
+
+          if (currentEntity != null) {
+            parentFolders.unshift(currentEntity)
+          }
+        } else {
+          currentEntity = null
+        }
+      }
+
+      if (parentFolders.length > 0) {
+        const ids = []
+
+        parentFolders.forEach((folder, idx) => {
+          ids.push(this.getNodeId(folder.name, folder, idx === 0 ? null : ids[idx - 1], idx))
+        })
+
+        const foldersExpanded = ids.reduce((acu, id) => {
+          acu[id] = false
+          return acu
+        }, {})
+
+        this.state = { ...this.state, ...foldersExpanded }
+      }
     }
 
     this.dragOverContext = null
@@ -171,6 +203,7 @@ class EntityTree extends Component {
     this.clearHighlightedArea = this.clearHighlightedArea.bind(this)
     this.copyOrMoveEntity = this.copyOrMoveEntity.bind(this)
     this.releaseClipboardTo = this.releaseClipboardTo.bind(this)
+    this.getNodeId = this.getNodeId.bind(this)
     this.getSetsToRender = this.getSetsToRender.bind(this)
     this.getEntityTypeNameAttr = this.getEntityTypeNameAttr.bind(this)
     this.registerEntityNode = this.registerEntityNode.bind(this)
@@ -352,7 +385,7 @@ class EntityTree extends Component {
     })
   }
 
-  isNodeCollapsed (nodeObject, groupNode) {
+  isNodeCollapsed (nodeObject) {
     if (checkIsGroupNode(nodeObject) && !checkIsGroupEntityNode(nodeObject)) {
       return this.state[nodeObject.objectId] == null ? false : this.state[nodeObject.objectId] === true
     }
@@ -562,6 +595,34 @@ class EntityTree extends Component {
     this.setState({
       clipboard: null
     })
+  }
+
+  getNodeId (name, entity, parentId, depth) {
+    let id
+
+    if (parentId != null) {
+      id = `${parentId}--${name}`
+    } else {
+      id = name
+    }
+
+    if (entity) {
+      id = `${id}-${entity.shortid}`
+    }
+
+    if (depth <= 0) {
+      depth = 0
+    }
+
+    if (!entity) {
+      id += '--group'
+    } else {
+      id += `--${entity.__entitySet}`
+    }
+
+    id += `--${depth}`
+
+    return id
   }
 
   getEntityTreeListContainerDimensions () {
@@ -919,32 +980,10 @@ class EntityTree extends Component {
   renderItemNode (node = {}, depth, parentId, treeIsDraggable) {
     const { entities, selectable, activeEntity, onNewClick, onNodeSelect } = this.props
     const name = node.name
-    const isGroupNode = checkIsGroupNode(node)
     let treeDepth = depth || 0
-    let objectId
+    const isOnlyGroupNode = checkIsGroupNode(node) && !checkIsGroupEntityNode(node)
+    const objectId = this.getNodeId(name, isOnlyGroupNode ? null : node.data, parentId, treeDepth)
     let isDraggable
-
-    if (parentId != null) {
-      objectId = `${parentId}--${name}`
-    } else {
-      objectId = name
-    }
-
-    if (!isGroupNode) {
-      objectId = `${objectId}-${node.data.shortid}`
-    }
-
-    if (treeDepth <= 0) {
-      treeDepth = 0
-    }
-
-    if (isGroupNode) {
-      objectId += '--group'
-    } else {
-      objectId += `--${node.data.__entitySet}`
-    }
-
-    objectId += `--${treeDepth}`
 
     if (treeIsDraggable != null) {
       isDraggable = treeIsDraggable

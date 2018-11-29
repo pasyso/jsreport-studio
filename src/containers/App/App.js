@@ -73,6 +73,11 @@ class App extends Component {
 
     this.previews = {}
 
+    this.initialEntity = this.props.params.shortid != null ? {
+      shortid: this.props.params.shortid,
+      entitySet: this.props.params.entitySet
+    } : null
+
     this.openModal = this.openModal.bind(this)
     this.handlePreviewCollapsing = this.handlePreviewCollapsing.bind(this)
     this.handlePreviewDocking = this.handlePreviewDocking.bind(this)
@@ -285,6 +290,7 @@ class App extends Component {
         })
       },
       onRemove: (id, children) => removeHandler ? removeHandler(id, children) : this.openModal(DeleteConfirmationModal, {_id: id, childrenIds: children}),
+      initialEntity: this.initialEntity,
       activeEntity,
       entities: references,
       onClick: (_id) => openTab({_id: _id}),
