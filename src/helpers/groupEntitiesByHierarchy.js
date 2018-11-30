@@ -1,8 +1,27 @@
 
 module.exports = (entitySetsNames, entities, getEntityTypeNameAttr) => {
   const newItems = []
-  const allFoldersEntities = Studio.getReferences().folders || []
+  let allFoldersEntities = Studio.getReferences().folders || []
   const entitiesByFolderLevel = {}
+
+  if (entities.folders != null) {
+    entities.folders.forEach((cF) => {
+      let foundEntity
+      const foundIndex = allFoldersEntities.findIndex((f) => {
+        const found = f._id === cF._id
+
+        if (found) {
+          foundEntity = cF
+        }
+
+        return found
+      })
+
+      if (foundIndex !== -1) {
+        allFoldersEntities[foundIndex] = { ...allFoldersEntities[foundIndex], ...foundEntity }
+      }
+    })
+  }
 
   // group folders first
   entities.folders.forEach((entityFolder) => {
