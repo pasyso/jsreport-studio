@@ -1100,7 +1100,7 @@ class EntityTree extends Component {
 
 export default connect(
   (state) => ({
-    getEntityByShortid: (shortid) => entitiesSelectors.getByShortid(state, shortid)
+    getEntityByShortid: (shortid, ...params) => entitiesSelectors.getByShortid(state, shortid, ...params)
   }),
   { ...editorActions, ...entitiesActions }
 )(DropTarget(ENTITY_NODE_DRAG_TYPE, entityTreeTarget, collect)(EntityTree))
