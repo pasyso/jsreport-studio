@@ -350,7 +350,7 @@ class EntityTreeNode extends Component {
         onClick={() => onClick(entity)}
         key={entity._id}
         className={`${style.link} ${contextMenuActive ? style.focused : ''} ${(isActive && !isDragging) ? style.active : ''} ${isDragging ? style.dragging : ''}`}
-        style={{ paddingLeft: `${(depth + 1) * paddingByLevel}rem` }}
+        style={{ paddingLeft: `${(depth + 1) * paddingByLevel + 0.6}rem` }}
       >
         {this.renderEntityTreeItemComponents('container', { entity, entities: originalEntities }, [
           this.connectDragging(

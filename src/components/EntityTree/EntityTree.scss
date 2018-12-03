@@ -15,8 +15,7 @@
   padding: 0.3rem;
 }
 
-.nodeBox {
-  margin-top: 0.5rem;
+.nodeBox {  
   flex: 1;
 }
 
@@ -29,6 +28,7 @@
   outline: 1px dashed transparent;
   outline-offset: 1px;
   opacity: 1;
+  margin-left: 0.2rem;
 }
 
 .nodeBoxItemContent.dragging,
@@ -45,29 +45,33 @@
   height: auto;
   overflow: auto;
   position: relative;
-  width: auto;
+  width: auto; 
 }
 
-.nodeTitle {
-  margin-right: 0.3rem;
+.nodeTitle {  
   font-size: 0.9rem;
   cursor: pointer;
+  width: 0.2rem;
 }
 
 .nodeTitle:before {
   font-size: 1rem;
   font-family: FontAwesome;
-  color: darkkhaki;
-  margin-right: 0.3rem;
+  color: $secondaryHoverColor;    
 }
 
 .nodeTitle:not(.collapsed):before {
   content: "\f0da";
+  transform: rotateZ(45deg);
+  display: inline-block;  
+  margin-right: 0.3rem;
+  color: $primarySelectionBackgroundColor;
 }
 
 .nodeTitle.collapsed:before {
-  content: "\f0d7";
-  color: $primarySelectionBackgroundColor;
+  content: "\f0da"; 
+  display: inline-block; 
+  margin-right: 0.3rem;  
 }
 
 .nodeTitle:hover:before {
@@ -79,10 +83,6 @@
   transition: 0.15s;
 }
 
-.nodeContainer {
-  margin-top: 0.3rem;
-}
-
 .nodeContainer.collapsed {
   max-height: 0;
   overflow: hidden;
@@ -90,7 +90,7 @@
 }
 
 .link {
-  padding: 0.2rem;
+  padding: 0.3rem;
   padding-left: 1.5rem;
   font-size: 0.9rem;
   cursor: pointer;
@@ -102,8 +102,8 @@
 }
 
 .link:hover, .link.focused {
-  background: $primaryHoverBackgroundColor;
-  color: $primaryHoverColor;
+  background: $secondaryHoverBackgroundColor;
+  color: $primarySelectionColor;
 }
 
 .link.dragging {
@@ -112,7 +112,8 @@
 }
 
 .entityIcon {
-  margin-right: 0.3rem;
+  margin-right: 0.4rem;
+  width: 0.9rem;
   color: #F16220;
 
 }
@@ -162,14 +163,16 @@
 
 .contextMenu {
   background-color: $secondaryColor;
-  position: absolute;
-  padding: 0.5rem;
+  position: absolute;  
   min-width: 9rem;
+  padding-top: 0.5rem;
+  padding-bottom: 0.5rem;
   z-index: 200;
+  box-shadow: 0.1rem 0.1rem 0.1rem 0.05rem rgba(0, 0, 0, 0.6);
 }
 
 .contextMenuContainer {
-  position: fixed;
+  position: fixed;  
   z-index: 300;
 }
 
@@ -187,10 +190,16 @@
 .contextButton {
   position: relative;
   color: $primaryColor;
-  padding: 0.5rem;
+  padding: 0.5rem 1rem 0.5rem 1rem;
   font-size: 0.8rem;
   cursor: pointer;
   @include no-select();
+}
+
+.contextButton i {  
+  width: 0.8rem;
+  margin-right: 0.6rem;  
+  display: inline-block;
 }
 
 .contextButton.disabled {
@@ -200,6 +209,7 @@
 .contextButton.hasNestedLevels:after {
   font-family: FontAwesome;
   font-size: 0.9rem;
+  padding-right: 0.5rem;
   content: "\f0da";
   position: absolute;
   right: 0;
