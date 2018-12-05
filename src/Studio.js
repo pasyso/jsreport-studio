@@ -524,6 +524,15 @@ class Studio {
     return resolveUrl(path)
   }
 
+  /**
+   * Assemble entity absolute path
+   * @param {*} entity
+   * @returns {String}
+   */
+  resolveEntityPath (entity) {
+    return entities.selectors.resolveEntityPath(this.store.getState(), entity)
+  }
+
   relativizeUrl (path) {
     console.trace('relativizeUrl is deprecated, use resolveUrl')
     return resolveUrl(path)
