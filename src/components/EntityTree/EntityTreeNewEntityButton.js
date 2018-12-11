@@ -47,6 +47,10 @@ class EntityTreeNewEntityButton extends Component {
       return
     }
 
+    if (ev.target.type === 'file') {
+      return
+    }
+
     ev.preventDefault()
 
     if (!this.menuNode.contains(ev.target)) {
@@ -73,7 +77,10 @@ class EntityTreeNewEntityButton extends Component {
       <div
         key={entitySet.name}
         className={style.contextButton}
-        onClick={() => { modalHandler.open(NewEntityModal, { entitySet: entitySet.name }); this.tryHide() }}>
+        onClick={() => {
+          this.props.onNewEntity(entitySet.name)
+          this.tryHide()
+        }}>
         <i className={`fa ${entitySet.faIcon != null ? entitySet.faIcon : 'fa-file'}`} /> {entitySet.visibleName}
       </div>
     ))

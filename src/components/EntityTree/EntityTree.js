@@ -711,6 +711,10 @@ class EntityTree extends Component {
       return
     }
 
+    if (ev.target.type === 'file') {
+      return
+    }
+
     ev.preventDefault()
 
     if (!this.contextMenuNode.contains(ev.target)) {
@@ -972,7 +976,8 @@ class EntityTree extends Component {
     return entityTreeToolbarComponents.map((p, i) => (
       React.createElement(p, {
         key: i,
-        setFilter: this.setFilter
+        setFilter: this.setFilter,
+        onNewEntity: this.props.onNewClick
       })
     ))
   }
