@@ -141,15 +141,4 @@ export default () => {
       }
     })
   })
-
-  configuration.initializeListeners.push(() => {
-    // add folders to referenceAttributes in all entities
-    Object.keys(configuration.entitySets).forEach((entitySetName) => {
-      let entitySet = configuration.entitySets[entitySetName]
-
-      if (entitySet.referenceAttributes.indexOf('folder') === -1) {
-        entitySet.referenceAttributes.push('folder')
-      }
-    })
-  })
 }

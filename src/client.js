@@ -38,6 +38,15 @@ const start = async () => {
     await Studio.initializeListeners[key]()
   }
 
+  // add folders to referenceAttributes for all entities
+  Object.keys(Studio.entitySets).forEach((entitySetName) => {
+    let entitySet = Studio.entitySets[entitySetName]
+
+    if (entitySet.referenceAttributes.indexOf('folder') === -1) {
+      entitySet.referenceAttributes.push('folder')
+    }
+  })
+
   // calculate EntityTree order after initializeListeners
   configuration.entityTreeOrder = getEntityTreeOrder(
     configuration.extensions['studio'].options.entityTreeOrder,
