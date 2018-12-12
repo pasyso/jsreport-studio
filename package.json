@@ -96,6 +96,7 @@
   "files": [
     "lib",
     "jsreport.config.js",
+    "shared",
     "src",
     "static",
     "webpack",
