@@ -24,6 +24,7 @@ import {
   entityTreeOrder,
   entityTreeToolbarComponents,
   entityTreeFilterItemResolvers,
+  registerCollapseEntityHandler,
   modalHandler
 } from '../../lib/configuration.js'
 
@@ -157,38 +158,6 @@ class EntityTree extends Component {
       highlightedArea: null
     }
 
-    if (this.props.initialEntity != null) {
-      const parentFolders = []
-      let currentEntity = this.props.getEntityByShortid(this.props.initialEntity.shortid, false)
-
-      while (currentEntity != null) {
-        if (currentEntity.folder != null) {
-          currentEntity = this.props.getEntityByShortid(currentEntity.folder.shortid, false)
-
-          if (currentEntity != null) {
-            parentFolders.unshift(currentEntity)
-          }
-        } else {
-          currentEntity = null
-        }
-      }
-
-      if (parentFolders.length > 0) {
-        const ids = []
-
-        parentFolders.forEach((folder, idx) => {
-          ids.push(this.getNodeId(folder.name, folder, idx === 0 ? null : ids[idx - 1], idx))
-        })
-
-        const foldersExpanded = ids.reduce((acu, id) => {
-          acu[id] = false
-          return acu
-        }, {})
-
-        this.state = { ...this.state, ...foldersExpanded }
-      }
-    }
-
     this.dragOverContext = null
     this.entityNodesById = {}
 
@@ -208,7 +177,8 @@ class EntityTree extends Component {
     this.getEntityTypeNameAttr = this.getEntityTypeNameAttr.bind(this)
     this.registerEntityNode = this.registerEntityNode.bind(this)
     this.contextMenu = this.contextMenu.bind(this)
-    this.collapse = this.collapse.bind(this)
+    this.collapseHandler = this.collapseHandler.bind(this)
+    this.toogleCollapse = this.toogleCollapse.bind(this)
     this.getEntityTreeListContainerDimensions = this.getEntityTreeListContainerDimensions.bind(this)
     this.groupEntitiesByType = this.groupEntitiesByType.bind(this)
     this.handleGlobalClick = this.handleGlobalClick.bind(this)
@@ -232,6 +202,10 @@ class EntityTree extends Component {
 
   componentDidMount () {
     window.addEventListener('click', this.handleGlobalClick, true)
+
+    if (this.props.main === true) {
+      registerCollapseEntityHandler(this.collapseHandler)
+    }
   }
 
   componentWillReceiveProps (nextProps) {
@@ -291,18 +265,73 @@ class EntityTree extends Component {
     }
   }
 
-  collapse (nodeObj, forceState) {
-    let newState
+  collapseHandler (idOrShortid, state, options = {}) {
+    const { parents, self = true } = options
+    const toCollapse = []
+    let entity
 
-    if (forceState != null) {
-      newState = forceState === true
-    } else {
-      newState = !this.isNodeCollapsed(nodeObj)
+    if (idOrShortid._id) {
+      entity = this.props.getEntityById(idOrShortid._id, false)
+    } else if (idOrShortid.shortid) {
+      entity = this.props.getEntityByShortid(idOrShortid.shortid, false)
     }
 
-    this.setState({
-      [nodeObj.objectId]: newState
+    if (!entity) {
+      return
+    }
+
+    if (entity.__entitySet === 'folders' && self === true) {
+      toCollapse.push(entity)
+    }
+
+    if (parents === true) {
+      let currentEntity = entity
+
+      while (currentEntity != null) {
+        if (currentEntity.folder != null) {
+          currentEntity = this.props.getEntityByShortid(currentEntity.folder.shortid, false)
+
+          if (currentEntity != null) {
+            toCollapse.unshift(currentEntity)
+          }
+        } else {
+          currentEntity = null
+        }
+      }
+    }
+
+    const ids = []
+
+    toCollapse.forEach((folder, idx) => {
+      ids.push(this.getNodeId(folder.name, folder, idx === 0 ? null : ids[idx - 1], idx))
     })
+
+    this.toogleCollapse(ids.map((id) => ({ objectId: id })), state)
+  }
+
+  toogleCollapse (node, forceState) {
+    const nodesToProcess = Array.isArray(node) ? node : [node]
+    let newState
+
+    if (nodesToProcess.length === 0) {
+      return
+    }
+
+    newState = nodesToProcess.reduce((acu, nodeObj) => {
+      let newCollapseState
+
+      if (forceState != null) {
+        newCollapseState = forceState === true
+      } else {
+        newCollapseState = !this.isNodeCollapsed(nodeObj)
+      }
+
+      acu[nodeObj.objectId] = newCollapseState
+
+      return acu
+    }, {})
+
+    this.setState(newState)
   }
 
   filterEntities (entities) {
@@ -561,7 +590,7 @@ class EntityTree extends Component {
       if (targetInfo.shortid != null) {
         const targetEntity = this.props.getEntityByShortid(targetInfo.shortid)
 
-        this.collapse(this.entityNodesById[targetEntity._id], false)
+        this.toogleCollapse(this.entityNodesById[targetEntity._id], false)
       }
 
       if (!result || result.duplicatedEntity !== true) {
@@ -734,7 +763,7 @@ class EntityTree extends Component {
 
     if (objectNode && objectNode.isEntitySet !== true) {
       // always expand the node on new entity creation
-      this.collapse(objectNode, false)
+      this.toogleCollapse(objectNode, false)
     }
 
     this.props.onNewClick(...params)
@@ -1030,7 +1059,7 @@ class EntityTree extends Component {
         registerEntityNode={this.registerEntityNode}
         showContextMenu={this.contextMenu}
         contextMenuActive={node.data != null && this.state.contextMenuId === node.data._id}
-        collapseNode={this.collapse}
+        collapseNode={this.toogleCollapse}
         renderTree={this.renderTree}
         renderContextMenu={this.renderNodeContextMenu}
         onClick={this.handleNodeClick}
@@ -1105,6 +1134,7 @@ class EntityTree extends Component {
 
 export default connect(
   (state) => ({
+    getEntityById: (id, ...params) => entitiesSelectors.getById(state, id, ...params),
     getEntityByShortid: (shortid, ...params) => entitiesSelectors.getByShortid(state, shortid, ...params)
   }),
   { ...editorActions, ...entitiesActions }

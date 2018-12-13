@@ -316,6 +316,13 @@ class Studio {
   }
 
   /**
+   * Collapse entity in EntityTree
+   */
+  collapseEntity (entityIdOrShortid, state = true, options = {}) {
+    configuration.collapseEntityHandler(entityIdOrShortid, state, options)
+  }
+
+  /**
    * Collapse left pane
    */
   collapseLeftPane (type = true) {

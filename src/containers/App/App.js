@@ -1,6 +1,6 @@
 import Promise from 'bluebird'
 import React, {Component, PropTypes} from 'react'
-import {connect} from 'react-redux'
+import { connect } from 'react-redux'
 import { DragDropContext } from 'react-dnd'
 import HTML5Backend from 'react-dnd-html5-backend'
 import { actions, selectors } from 'redux/editor'
@@ -33,6 +33,7 @@ import {
   shouldOpenStartupPage,
   registerCollapseLeftHandler,
   registerCollapsePreviewHandler,
+  collapseEntityHandler,
   entityTreeWrapperComponents
 } from '../../lib/configuration.js'
 
@@ -51,7 +52,8 @@ const progressActions = progress.actions
   tabsWithEntities: selectors.getTabWithEntities(state),
   activeEntity: selectors.getActiveEntity(state),
   lastActiveTemplate: selectors.getLastActiveTemplate(state),
-  undockMode: state.editor.undockMode
+  undockMode: state.editor.undockMode,
+  getEntityByShortid: (shortid, ...params) => entities.selectors.getByShortid(state, shortid, ...params)
 }), { ...actions, ...progressActions })
 class App extends Component {
   static contextTypes = {
@@ -72,11 +74,6 @@ class App extends Component {
     super(props)
 
     this.previews = {}
-
-    this.initialEntity = this.props.params.shortid != null ? {
-      shortid: this.props.params.shortid,
-      entitySet: this.props.params.entitySet
-    } : null
 
     this.openModal = this.openModal.bind(this)
     this.handlePreviewCollapsing = this.handlePreviewCollapsing.bind(this)
@@ -122,6 +119,8 @@ class App extends Component {
     })
 
     if (this.props.params.shortid) {
+      collapseEntityHandler({ shortid: this.props.params.shortid }, false, { parents: true })
+
       this.props.openTab({ shortid: this.props.params.shortid, entitySet: this.props.params.entitySet })
       return
     }
@@ -280,6 +279,7 @@ class App extends Component {
     const { activeEntity, references, openTab } = this.props
 
     const entityTreeProps = {
+      main: true,
       toolbar: true,
       onRename: (id) => this.openModal(RenameModal, { _id: id }),
       onClone: (entity) => {
@@ -289,8 +289,7 @@ class App extends Component {
           initialName: getCloneName(entity[entitySets[entity.__entitySet].nameAttribute])
         })
       },
-      onRemove: (id, children) => removeHandler ? removeHandler(id, children) : this.openModal(DeleteConfirmationModal, {_id: id, childrenIds: children}),
-      initialEntity: this.initialEntity,
+      onRemove: (id, children) => removeHandler ? removeHandler(id, children) : this.openModal(DeleteConfirmationModal, { _id: id, childrenIds: children }),
       activeEntity,
       entities: references,
       onClick: (_id) => openTab({_id: _id}),
