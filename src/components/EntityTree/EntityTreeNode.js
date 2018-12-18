@@ -253,6 +253,7 @@ class EntityTreeNode extends Component {
       return (
         <input
           key='select-group'
+          style={{ marginRight: '5px' }}
           type='checkbox'
           checked={node.data == null || node.data.__selected === true}
           onChange={(v) => {
@@ -272,6 +273,7 @@ class EntityTreeNode extends Component {
     return (
       <input
         key='select-entity'
+        style={{ marginRight: '5px' }}
         type={selectionMode.mode === 'single' ? 'radio' : 'checkbox'}
         readOnly
         checked={node.data.__selected === true}

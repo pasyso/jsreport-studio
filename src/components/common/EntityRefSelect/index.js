@@ -10,36 +10,68 @@ class EntityRefSelect extends Component {
     super(props)
 
     this.handleOpenTree = this.handleOpenTree.bind(this)
-    this.renderSelectedList = this.renderSelectedList
+    this.renderSelectedControl = this.renderSelectedControl
   }
 
   handleOpenTree () {
     const { onChange } = this.props
 
     modalHandler.open(EntityTreeSelectionModal, {
-      entitySet: this.props.entitySet,
+      headingLabel: this.props.headingLabel,
+      filter: this.props.filter,
+      selectableFilter: this.props.selectableFilter,
       selected: this.props.value,
-      multiple: this.props.multiple !== false,
+      multiple: this.props.multiple === true,
       onSave: (selected) => onChange(selected)
     })
   }
 
-  renderSelectedList () {
+  renderSelectedControl () {
     const {
       value,
-      size = 5,
+      size,
       multiple = false,
       getEntityByShortid,
       resolveEntityPath
     } = this.props
 
-    const height = 16.46 * size
     let currentValue
-    let items = []
 
     if (value != null) {
       currentValue = multiple === true ? value : [value]
     }
+
+    if (!multiple) {
+      let textToShow
+
+      if (currentValue != null && currentValue[0] != null) {
+        const entity = getEntityByShortid(currentValue[0], false)
+
+        if (!entity) {
+          textToShow = ''
+        } else {
+          textToShow = resolveEntityPath(entity)
+        }
+      } else {
+        textToShow = ''
+      }
+
+      return (
+        <input
+          style={{ display: 'inline', padding: '0px', margin: '0px' }}
+          title={textToShow}
+          type='text'
+          placeholder={'not selected'}
+          value={textToShow}
+          readOnly
+        />
+      )
+    }
+
+    const sizeToUse = size != null ? size : multiple ? 5 : 1
+    const height = 16.46 * sizeToUse
+
+    let items = []
 
     if (currentValue) {
       currentValue.forEach((eShortid) => {
@@ -52,7 +84,7 @@ class EntityRefSelect extends Component {
         const namePath = resolveEntityPath(entity)
 
         items.push(
-          <li key={namePath} className={styles.listOption}>
+          <li key={namePath} title={namePath} className={styles.listOption}>
             <span>{namePath}</span>
           </li>
         )
@@ -72,6 +104,7 @@ class EntityRefSelect extends Component {
 
   render () {
     const { value, multiple } = this.props
+    let content
     let label
 
     if (multiple) {
@@ -80,19 +113,42 @@ class EntityRefSelect extends Component {
       label = value != null ? 'edit...' : 'select...'
     }
 
-    return (
-      <div>
-        <div className={styles.heading}>
+    if (!multiple) {
+      content = (
+        <div>
+          <div style={{ display: 'inline-block' }}>
+            <button
+              className={styles.openTree}
+              title={label}
+              style={{ display: 'inline', width: '25px' }}
+              onClick={this.handleOpenTree}
+            >
+              <i className='fa fa-edit' />
+            </button>
+            {' '}
+            {this.renderSelectedControl()}
+          </div>
+        </div>
+      )
+    } else {
+      content = [
+        <div key='heading' className={styles.heading}>
           <button
             className={styles.openTree}
             onClick={this.handleOpenTree}
           >
             {label}
           </button>
+        </div>,
+        <div key='select' className={styles.select}>
+          {this.renderSelectedControl()}
         </div>
-        <div className={styles.select}>
-          {this.renderSelectedList()}
-        </div>
+      ]
+    }
+
+    return (
+      <div>
+        {content}
       </div>
     )
   }

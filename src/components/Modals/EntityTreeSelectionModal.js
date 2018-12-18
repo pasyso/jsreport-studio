@@ -66,26 +66,24 @@ class EntityTreeSelectionModal extends Component {
     })
   }
 
-  filterEntities (references, entitySet) {
-    const result = {}
+  filterEntities (references) {
+    const { filter } = this.props.options
 
-    if (!entitySet) {
+    if (!filter) {
       return references
     }
 
-    let entitySets
+    let result = filter(references)
 
-    if (!Array.isArray(entitySet)) {
-      entitySets = [entitySet]
-    } else {
-      entitySets = entitySet
-    }
+    result = result == null ? {} : result
 
-    Object.keys(references).forEach((k) => {
-      result[k] = references[k].filter((entity) => {
-        return entitySets.includes(entity.__entitySet)
-      })
-    })
+    result = Object.keys(references).reduce((acu, k) => {
+      if (acu[k] == null) {
+        acu[k] = []
+      }
+
+      return acu
+    }, result)
 
     return result
   }
@@ -114,9 +112,8 @@ class EntityTreeSelectionModal extends Component {
   }
 
   render () {
-    const { multiple, entitySet } = this.props.options
-    const entitySets = entitySet != null ? !Array.isArray(entitySet) ? [entitySet] : entitySet : null
-    const entities = this.filterEntities(this.props.references, entitySet)
+    const { multiple, headingLabel, selectableFilter } = this.props.options
+    const entities = this.filterEntities(this.props.references)
 
     Object.keys(entities).forEach((k) => {
       Object.keys(entities[k]).forEach((e) => (entities[k][e] = Object.assign({}, entities[k][e], { __selected: this.state.selected[entities[k][e]._id] })))
@@ -126,7 +123,7 @@ class EntityTreeSelectionModal extends Component {
       <div>
         <div>
           <h1>
-            <i className='fa fa-check-square' /> Entity selection{entitySets != null ? ` (${entitySets.join(', ')})` : ''}
+            <i className='fa fa-check-square' /> {headingLabel != null ? headingLabel : 'Select entity'}
           </h1>
         </div>
         <div style={{ height: '30rem', overflow: 'auto' }}>
@@ -136,15 +133,15 @@ class EntityTreeSelectionModal extends Component {
             selectionMode={{
               mode: multiple ? 'multiple' : 'single',
               isSelectable: (isGroup, entity) => {
+                if (selectableFilter) {
+                  return Boolean(selectableFilter(isGroup, entity))
+                }
+
                 if (isGroup) {
                   return false
                 }
 
-                if (!entitySets || entitySets.length === 0) {
-                  return true
-                }
-
-                return entitySets.includes(entity.__entitySet)
+                return true
               }
             }}
             onNodeSelect={(es, v) => this.handleTreeNodeSelect(entities, es, v)}
