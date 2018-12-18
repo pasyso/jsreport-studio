@@ -116,7 +116,7 @@ class EntityRefSelect extends Component {
     if (!multiple) {
       content = (
         <div>
-          <div style={{ display: 'inline-block' }}>
+          <div style={{ display: 'inline-block', minWidth: '170px' }}>
             <button
               className={styles.openTree}
               title={label}
