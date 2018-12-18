@@ -237,6 +237,48 @@ class EntityTreeNode extends Component {
     )
   }
 
+  renderSelectControl (selectionMode, node) {
+    const { selectable, onNodeSelect } = this.props
+    const isGroup = checkIsGroupNode(node)
+
+    if (!selectable) {
+      return null
+    }
+
+    if (selectionMode.isSelectable && !selectionMode.isSelectable(isGroup, node.data)) {
+      return null
+    }
+
+    if (isGroup) {
+      return (
+        <input
+          key='select-group'
+          type='checkbox'
+          checked={node.data == null || node.data.__selected === true}
+          onChange={(v) => {
+            const newValue = !!v.target.checked
+
+            if (selectionMode.mode === 'single') {
+              onNodeSelect([node.data._id], newValue)
+            } else {
+              onNodeSelect(getAllEntitiesInHierarchy(node, true), newValue)
+            }
+          }
+        }
+        />
+      )
+    }
+
+    return (
+      <input
+        key='select-entity'
+        type={selectionMode.mode === 'single' ? 'radio' : 'checkbox'}
+        readOnly
+        checked={node.data.__selected === true}
+      />
+    )
+  }
+
   renderGroupNode () {
     const {
       node,
@@ -247,27 +289,23 @@ class EntityTreeNode extends Component {
       isDragging,
       contextMenuActive,
       selectable,
+      selectionMode,
       draggable,
       showContextMenu,
       paddingByLevel,
       renderTree,
       renderContextMenu,
-      onNewClick,
-      onNodeSelect
+      onNewClick
     } = this.props
 
     const name = node.name
     const items = node.items
-    const extraPropsSelectable = {}
     const groupStyle = node.data != null ? this.resolveEntityTreeIconStyle(node.data, { isCollapsed }) : null
     let groupIsEntity = checkIsGroupEntityNode(node)
+    let currentSelectionMode = selectionMode != null ? selectionMode : 'multiple'
 
-    if (groupIsEntity) {
-      if (selectable) {
-        extraPropsSelectable.checked = node.data.__selected !== false
-      } else {
-        extraPropsSelectable.defaultChecked = true
-      }
+    if (typeof currentSelectionMode === 'string') {
+      currentSelectionMode = { mode: currentSelectionMode }
     }
 
     return (
@@ -285,9 +323,7 @@ class EntityTreeNode extends Component {
           onClick={(ev) => { if (!selectable) { ev.preventDefault(); ev.stopPropagation(); this.collapse(id) } }}
           style={{ paddingLeft: `${(depth + 1) * paddingByLevel}rem` }}
         >
-          {selectable ? <input type='checkbox' {...extraPropsSelectable} onChange={(v) => {
-            onNodeSelect(getAllEntitiesInHierarchy(node, true), !!v.target.checked)
-          }} /> : null}
+          {this.renderSelectControl(currentSelectionMode, node)}
           <span
             ref={this.setNodeTitle}
             id={this.getTitleDOMId(node)}
@@ -328,7 +364,7 @@ class EntityTreeNode extends Component {
     const {
       node,
       depth,
-      selectable,
+      selectionMode,
       isActive,
       isDragging,
       contextMenuActive,
@@ -342,6 +378,11 @@ class EntityTreeNode extends Component {
 
     const entity = node.data
     const entityStyle = this.resolveEntityTreeIconStyle(entity, {})
+    let currentSelectionMode = selectionMode != null ? selectionMode : 'multiple'
+
+    if (typeof currentSelectionMode === 'string') {
+      currentSelectionMode = { mode: currentSelectionMode }
+    }
 
     return (
       <div
@@ -360,7 +401,7 @@ class EntityTreeNode extends Component {
               key='container-entity'
               className={`${style.nodeBoxItemContent} ${isDragging ? style.dragging : ''}`}
             >
-              {selectable ? <input key='search-name' type='checkbox' readOnly checked={entity.__selected !== false} /> : null}
+              {this.renderSelectControl(currentSelectionMode, node)}
               <i key='entity-icon' className={style.entityIcon + ' fa ' + (entityStyle || (entitySets[entity.__entitySet].faIcon || style.entityDefaultIcon))}></i>
               <a key='entity-name'>{getEntityTypeNameAttr(entity.__entitySet, entity) + (entity.__isDirty ? '*' : '')}</a>
               {this.renderEntityTreeItemComponents('right', { entity, entities: originalEntities })}

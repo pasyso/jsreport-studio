@@ -9,6 +9,7 @@ import api, { methods } from './helpers/api.js'
 import SplitPane from './components/common/SplitPane/SplitPane.js'
 import Popover from './components/common/Popover/index.js'
 import MultiSelect from './components/common/MultiSelect/index.js'
+import EntityRefSelect from './components/common/EntityRefSelect/index.js'
 import TextEditor from './components/Editor/TextEditor.js'
 import EntityTree from './components/EntityTree/EntityTree.js'
 import EntityTreeButton from './components/EntityTree/EntityTreeButton.js'
@@ -610,6 +611,14 @@ class Studio {
    */
   get MultiSelect () {
     return MultiSelect
+  }
+
+  /**
+   * Component used to select entity refs
+   * @returns {EntityRefSelect}
+   */
+  get EntityRefSelect () {
+    return EntityRefSelect
   }
 
   constructor (store) {

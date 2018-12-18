@@ -1012,7 +1012,7 @@ class EntityTree extends Component {
   }
 
   renderItemNode (node = {}, depth, parentId, treeIsDraggable) {
-    const { entities, selectable, activeEntity, onNewClick, onNodeSelect } = this.props
+    const { entities, selectable, selectionMode, activeEntity, onNewClick, onNodeSelect } = this.props
     const name = node.name
     let treeDepth = depth || 0
     const isOnlyGroupNode = checkIsGroupNode(node) && !checkIsGroupEntityNode(node)
@@ -1052,6 +1052,7 @@ class EntityTree extends Component {
         isCollapsed={this.isNodeCollapsed(Object.assign({}, node, { objectId }))}
         isActive={isActiveNode}
         selectable={selectable}
+        selectionMode={selectionMode}
         draggable={isDraggable}
         originalEntities={entities}
         paddingByLevel={paddingByLevelInTree}
