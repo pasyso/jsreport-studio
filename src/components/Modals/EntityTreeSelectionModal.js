@@ -88,6 +88,12 @@ class EntityTreeSelectionModal extends Component {
     return result
   }
 
+  unselect () {
+    this.setState({
+      selected: {}
+    })
+  }
+
   save () {
     const selected = this.state.selected
     const values = []
@@ -150,6 +156,7 @@ class EntityTreeSelectionModal extends Component {
         </div>
         <div className='button-bar'>
           <button className='button confirmation' ref='cancel' onClick={() => this.cancel()}>Cancel</button>
+          <button className='button confirmation' onClick={() => this.unselect()}>Unselect</button>
           <button className='button danger' onClick={() => this.save()}>Ok</button>
         </div>
       </div>
