@@ -1,23 +1,26 @@
 import 'babel-polyfill'
+import Promise from 'bluebird'
 import React from 'react'
 import ReactDOM from 'react-dom'
-import createStore from './redux/create'
 import {Provider} from 'react-redux'
 import { Router, browserHistory } from 'react-router'
+import { syncHistoryWithStore } from 'react-router-redux'
+import ReactModal from 'react-modal'
+import zipObject from 'lodash/zipObject'
+import createStore from './redux/create'
 import getRoutes from './routes'
-import fetchExtensions from 'lib/fetchExtensions'
+import fetchExtensions from './lib/fetchExtensions'
 import './theme/style.scss'
-import * as entities from 'redux/entities'
-import * as settings from 'redux/settings'
-import Promise from 'bluebird'
+import * as entities from './redux/entities'
+import * as settings from './redux/settings'
 import * as configuration from './lib/configuration.js'
 import { createStudio as createStudio } from './Studio'
 import defaults from './configurationDefaults.js'
 import getEntityTreeOrder from './helpers/getEntityTreeOrder'
-import zipObject from 'lodash/zipObject'
-import { syncHistoryWithStore } from 'react-router-redux'
 
 window.React = React
+
+ReactModal.setAppElement(getAppElement())
 
 __webpack_public_path__ = configuration.rootPath() + '/studio/assets/'
 
@@ -70,7 +73,7 @@ const start = async () => {
     <Provider store={store} key='provider'>
       {component}
     </Provider>,
-    document.getElementById('content')
+    getAppElement()
   )
 
   document.getElementById('loader').style.display = 'none'
@@ -78,6 +81,10 @@ const start = async () => {
   for (const key in Studio.readyListeners) {
     await Studio.readyListeners[key]()
   }
+}
+
+function getAppElement () {
+  return document.getElementById('content')
 }
 
 start()
