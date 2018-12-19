@@ -11,7 +11,7 @@ class TabTitle extends Component {
 
   componentDidMount () {
     // workaround for chrome not handling middle click on normal "onClick" listener
-    const isChrome = !!window.chrome && !!window.chrome.webstore
+    const isChrome = !!window.chrome
 
     if (isChrome) {
       const el = findDOMNode(this.refs.container)
