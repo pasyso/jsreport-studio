@@ -482,7 +482,17 @@ class Studio {
   }
 
   /**
-   * Searches for the entity in the UI state based on specified the shortid
+   * Searches for the entity in the UI state based on specified _id
+   * @param {String} _id
+   * @param {Boolean} shouldThrow
+   * @returns {Object|null}
+   */
+  getEntityById (_id, shouldThrow = true) {
+    return entities.selectors.getById(this.store.getState(), _id, shouldThrow)
+  }
+
+  /**
+   * Searches for the entity in the UI state based on specified shortid
    * @param {String} shortid
    * @param {Boolean} shouldThrow
    * @returns {Object|null}
