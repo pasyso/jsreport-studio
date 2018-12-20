@@ -119,7 +119,7 @@ class App extends Component {
     })
 
     if (this.props.params.shortid) {
-      collapseEntityHandler({ shortid: this.props.params.shortid }, false, { parents: true })
+      collapseEntityHandler({ shortid: this.props.params.shortid }, false, { parents: true, self: false })
 
       this.props.openTab({ shortid: this.props.params.shortid, entitySet: this.props.params.entitySet })
       return

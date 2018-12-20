@@ -1,11 +1,11 @@
 import React, {Component} from 'react'
-import { findDOMNode } from 'react-dom'
 import { tabTitleComponents, entitySets } from '../../lib/configuration.js'
 import style from './Tabs.scss'
 
 class TabTitle extends Component {
   constructor (props) {
     super(props)
+    this.setNode = this.setNode.bind(this)
     this.handleChromeAuxClick = this.handleChromeAuxClick.bind(this)
   }
 
@@ -13,9 +13,8 @@ class TabTitle extends Component {
     // workaround for chrome not handling middle click on normal "onClick" listener
     const isChrome = !!window.chrome
 
-    if (isChrome) {
-      const el = findDOMNode(this.refs.container)
-      el.addEventListener('auxclick', this.handleChromeAuxClick)
+    if (isChrome && this.node) {
+      this.node.addEventListener('auxclick', this.handleChromeAuxClick)
     }
   }
 
@@ -23,10 +22,13 @@ class TabTitle extends Component {
     // workaround for chrome not handling middle click on normal "onClick" listener
     const isChrome = !!window.chrome && !!window.chrome.webstore
 
-    if (isChrome) {
-      const el = findDOMNode(this.refs.container)
-      el.removeEventListener('auxclick', this.handleChromeAuxClick)
+    if (isChrome && this.node) {
+      this.node.removeEventListener('auxclick', this.handleChromeAuxClick)
     }
+  }
+
+  setNode (el) {
+    this.node = el
   }
 
   handleChromeAuxClick (e) {
@@ -36,20 +38,39 @@ class TabTitle extends Component {
   }
 
   render () {
-    const { tab, active, contextMenu, onClick, onContextMenu, onClose } = this.props
+    const { tab, active, contextMenu, complementTitle, resolveEntityPath, onClick, onContextMenu, onClose } = this.props
+    let tabTooltip
+
+    if (tab.entity) {
+      tabTooltip = resolveEntityPath(tab.entity, { parents: true, self: false })
+    }
 
     return (
       <div
-        ref='container'
+        ref={this.setNode}
+        key={tab.tab.key}
         className={style.tabTitle + ' ' + (active ? style.active : '')}
         data-tab-key={tab.tab.key}
+        title={tabTooltip}
         onClick={(e) => onClick(e, tab)}
         onContextMenu={(e) => onContextMenu(e, tab)}
       >
-        <span>{tab.tab.titleComponentKey ? React.createElement(tabTitleComponents[tab.tab.titleComponentKey], {
-          entity: tab.entity,
-          tab: tab.tab
-        }) : (<span>{tab.tab.title || (tab.entity[entitySets[tab.entity.__entitySet].nameAttribute] + (tab.entity.__isDirty ? '*' : ''))}</span>)}</span>
+        <span>
+          {tab.tab.titleComponentKey ? (
+            React.createElement(tabTitleComponents[tab.tab.titleComponentKey], {
+              entity: tab.entity,
+              complementTitle,
+              tab: tab.tab
+            })
+          ) : (
+            [
+              <span>{tab.tab.title || (tab.entity[entitySets[tab.entity.__entitySet].nameAttribute] + (tab.entity.__isDirty ? '*' : ''))}</span>,
+              (complementTitle != null && (
+                <span className={style.tabComplementTitle}>&nbsp;{`- ${complementTitle}`}</span>
+              ))
+            ]
+          )}
+        </span>
         <div className={style.tabClose} onClick={(e) => { e.stopPropagation(); onClose(tab.tab.key) }}></div>
         {contextMenu != null ? contextMenu : <div key='empty-contextmenu' />}
       </div>
