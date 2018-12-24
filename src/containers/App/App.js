@@ -36,6 +36,16 @@ import intl from 'react-intl-universal'
 
 const progressActions = progress.actions
 
+function removePrefix(name) {
+  let p = name.indexOf('!');
+  return p > -1 ? [name.substring(0, p), name.substring(p+1)] : [null, name];
+}
+
+function formatEntityName(name1) {
+  const [prefix, name] = removePrefix(name1)
+  return name.indexOf('.') !== -1 ? name.slice(0, name.indexOf('.')) + '(clone)' + name.slice(name.indexOf('.')) : name + '(clone)'
+}
+
 @connect((state) => ({
   entities: state.entities,
   references: entities.selectors.getReferences(state),
@@ -271,7 +281,7 @@ export default class App extends Component {
     }
 
     const { activeEntity, references, openTab } = this.props
-
+    
     const entityTreeProps = {
       toolbar: true,
       onRename: (id) => this.openModal(RenameModal, { _id: id }),
@@ -279,7 +289,7 @@ export default class App extends Component {
         this.openModal(NewEntityModal, {
           entity: entity,
           entitySet: entity.__entitySet,
-          initialName: entity.name.indexOf('.') !== -1 ? entity.name.slice(0, entity.name.indexOf('.')) + '(clone)' + entity.name.slice(entity.name.indexOf('.')) : entity.name + '(clone)'
+          initialName: formatEntityName(entity.name)
         })
       },
       onRemove: (id) => removeHandler ? removeHandler(id) : this.openModal(DeleteConfirmationModal, {_id: id}),

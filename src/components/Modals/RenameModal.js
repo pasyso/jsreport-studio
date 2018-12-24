@@ -5,6 +5,11 @@ import api from '../../helpers/api.js'
 import { entitySets } from '../../lib/configuration.js'
 import intl from 'react-intl-universal'
 
+function removePrefix(name) {
+  let p = name.indexOf('!');
+  return p > -1 ? [name.substring(0, p), name.substring(p+1)] : [null, name];
+}
+
 @connect((state, props) => ({ entity: selectors.getById(state, props.options._id) }), { ...actions })
 export default class RenameModal extends Component {
   static propTypes = {
@@ -25,7 +30,7 @@ export default class RenameModal extends Component {
       return
     }
 
-    const newName = this.refs.name.value
+    const newName = this.refs.prefix.value ? `${this.refs.prefix.value}!${this.refs.name.value}` : this.refs.name.value
     const nameAttribute = entitySets[this.props.entity.__entitySet].nameAttribute
 
     try {
@@ -60,10 +65,13 @@ export default class RenameModal extends Component {
     const { entity } = this.props
     const nameAttribute = entitySets[entity.__entitySet].nameAttribute
 
+    const {prefix, name} = removePrefix(entity[nameAttribute])
+
     return <div>
       <div className='form-group'>
         <label>{intl.get('renameModal.title').d('rename entity')}</label>
-        <input ref='name' type='text' defaultValue={entity[nameAttribute]} />
+        <input ref='name' type='text' defaultValue={name} />
+        <input ref='prefix' type='hidden' defaultValue={prefix} />
       </div>
       <div className='form-group'>
         <span style={{color: 'red', display: error ? 'block' : 'none'}}>{error}</span>

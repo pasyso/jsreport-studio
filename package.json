@@ -33,6 +33,7 @@
     "bluebird": "3.5.1",
     "compression": "1.6.2",
     "css-loader": "1.0.1",
+    "jsreport-postgres-store": "1.2.1",
     "lodash": "4.17.5",
     "react-intl-universal": "1.15.2",
     "serve-favicon": "2.4.5",

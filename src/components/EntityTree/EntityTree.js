@@ -11,6 +11,20 @@ import {
 } from '../../lib/configuration.js'
 import intl from 'react-intl-universal'
 
+function removePrefix(name) {
+  if (!name) return name
+  let p = name.indexOf('!');
+  return p > -1 ? [name.substring(0, p), name.substring(p+1)] : [null, name];
+}
+
+function formatEntityName(name) {
+  const [prefix, newName] = removePrefix(name)
+  if (!prefix) return name;
+  const Studio = window.Studio
+  const currentSc = (Studio && Studio.kadmosAuthentication && Studio.kadmosAuthentication.user) ? Studio.kadmosAuthentication.user.systemClientId : null;
+  return prefix!=currentSc ? name : newName
+}
+
 export default class EntityTree extends Component {
   static propTypes = {
     entities: React.PropTypes.object.isRequired,
@@ -210,12 +224,18 @@ export default class EntityTree extends Component {
       }))
     )
   }
+  
+  getNodeName(entity) {
+    Studio.kadmosAuthentication.user.systemClientId;
+    let name = entity[entitySets[entity.__entitySet].nameAttribute]
+  }
 
   renderNode (entity) {
     const { activeEntity, onSelect, onClick, selectable, entities: originalEntities } = this.props
     const { contextMenuId } = this.state
 
     const entityStyle = this.resolveEntityTreeIconStyle(entity)
+    const entityName = formatEntityName(entity[entitySets[entity.__entitySet].nameAttribute])
 
     return (
       <div
@@ -227,7 +247,7 @@ export default class EntityTree extends Component {
         {this.renderEntityTreeItemComponents('container', { entity, entities: originalEntities }, [
           selectable ? <input key='search-name' type='checkbox' readOnly checked={entity.__selected !== false} /> : <span key='empty-search-name' />,
           <i key='entity-icon' className={style.entityIcon + ' fa ' + (entityStyle || (entitySets[entity.__entitySet].faIcon || style.entityDefaultIcon))}></i>,
-          <a key='entity-name'>{entity[entitySets[entity.__entitySet].nameAttribute] + (entity.__isDirty ? '*' : '')}</a>,
+          <a key='entity-name'>{entityName + (entity.__isDirty ? '*' : '')}</a>,
           this.renderEntityTreeItemComponents('right', { entity, entities: originalEntities }),
           !selectable && contextMenuId === entity._id ? this.renderContextMenu(entity) : <div key='empty-contextmenu' />
         ])}

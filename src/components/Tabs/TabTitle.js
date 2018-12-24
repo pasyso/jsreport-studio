@@ -3,6 +3,20 @@ import { findDOMNode } from 'react-dom'
 import { tabTitleComponents, entitySets } from '../../lib/configuration.js'
 import style from './Tabs.scss'
 
+function removePrefix(name) {
+  let p = name.indexOf('!');
+  return p > -1 ? [name.substring(0, p), name.substring(p+1)] : [null, name];
+}
+
+function formatEntityName(name) {
+  if (!name) return name
+  const [prefix, newName] = removePrefix(name)
+  if (!prefix) return name;
+  const Studio = window.Studio
+  const currentSc = (Studio && Studio.kadmosAuthentication && Studio.kadmosAuthentication.user) ? Studio.kadmosAuthentication.user.systemClientId : null;
+  return prefix!=currentSc ? name : newName
+}
+
 class TabTitle extends Component {
   constructor (props) {
     super(props)
@@ -49,7 +63,7 @@ class TabTitle extends Component {
         <span>{tab.tab.titleComponentKey ? React.createElement(tabTitleComponents[tab.tab.titleComponentKey], {
           entity: tab.entity,
           tab: tab.tab
-        }) : (<span>{tab.tab.title || (tab.entity[entitySets[tab.entity.__entitySet].nameAttribute] + (tab.entity.__isDirty ? '*' : ''))}</span>)}</span>
+        }) : (<span>{formatEntityName(tab.tab.title) || (formatEntityName(tab.entity[entitySets[tab.entity.__entitySet].nameAttribute]) + (tab.entity.__isDirty ? '*' : ''))}</span>)}</span>
         <div className={style.tabClose} onClick={(e) => { e.stopPropagation(); onClose(tab.tab.key) }}></div>
         {contextMenu != null ? contextMenu : <div key='empty-contextmenu' />}
       </div>

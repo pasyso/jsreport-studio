@@ -3,6 +3,11 @@ import style from './Properties.scss'
 import { entitySets, propertiesComponents } from '../../lib/configuration.js'
 import intl from 'react-intl-universal'
 
+function removePrefix(name) {
+  let p = name.indexOf('!');
+  return p > -1 ? [name.substring(0, p), name.substring(p+1)] : [null, name];
+}
+
 export default class Properties extends Component {
   static propTypes = {
     entity: React.PropTypes.object,
@@ -48,13 +53,15 @@ export default class Properties extends Component {
 
     const nameAttribute = entitySets[entity.__entitySet].nameAttribute
 
+    const [prefix, name] = entity[nameAttribute] ? removePrefix(entity[nameAttribute]) : [null, '']
+
     return <div className={style.propertiesNodes}>
       <div>
         <div className='form-group'>
           <label>{intl.get('entityAttr.'+nameAttribute).d(nameAttribute)}</label>
           <input
-            type='text' value={entity[nameAttribute] || ''}
-            onChange={(v) => onChange({_id: entity._id, [nameAttribute]: v.target.value})} />
+            type='text' value={name}
+            onChange={(v) => onChange({_id: entity._id, [nameAttribute]: prefix ? `${prefix}!${v.target.value}` : v.target.value})} />
         </div>
       </div>
       {propertiesComponents.map((p, i) => this.renderOne(p, i, entity, entities, onChange))}

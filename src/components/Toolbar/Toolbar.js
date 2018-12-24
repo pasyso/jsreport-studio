@@ -1,7 +1,7 @@
 import React, {Component} from 'react'
 import style from './Toolbar.scss'
 import { toolbarComponents, toolbarVisibilityResolver } from '../../lib/configuration.js'
-import logo from './js-logo.png'
+import logo from './logo_holon_powervhc21.png'
 
 import intl from 'react-intl-universal'
 
