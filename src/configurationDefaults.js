@@ -131,7 +131,7 @@ export default () => {
       }
     })
 
-    configuration.entityTreeIconResolvers.push((entity, info) => {
+    configuration.entityTreeIconResolvers.push((entity, info = {}) => {
       if (entity.__entitySet === 'folders') {
         if (info.isCollapsed) {
           return 'fa-folder'

@@ -1,6 +1,7 @@
 import React, {Component} from 'react'
+import EntityFuzzyFinderModal from '../Modals/EntityFuzzyFinderModal.js'
+import { modalHandler, toolbarComponents, toolbarVisibilityResolver } from '../../lib/configuration.js'
 import style from './Toolbar.scss'
-import { toolbarComponents, toolbarVisibilityResolver } from '../../lib/configuration.js'
 import logo from './js-logo.png'
 
 export default class Toolbar extends Component {
@@ -15,7 +16,6 @@ export default class Toolbar extends Component {
     canSaveAll: React.PropTypes.bool.isRequired,
     onReformat: React.PropTypes.func.isRequired,
     canReformat: React.PropTypes.bool.isRequired,
-
     isPending: React.PropTypes.bool.isRequired,
     activeTab: React.PropTypes.object
   }
@@ -25,16 +25,34 @@ export default class Toolbar extends Component {
     this.state = {}
     this.tryHide = this.tryHide.bind(this)
     this.handleShortcut = this.handleShortcut.bind(this)
+    this.handleEarlyShortcut = this.handleEarlyShortcut.bind(this)
   }
 
   componentDidMount () {
     window.addEventListener('click', this.tryHide)
     window.addEventListener('keydown', this.handleShortcut)
+    window.addEventListener('keydown', this.handleEarlyShortcut, true)
   }
 
   componentWillUnmount () {
     window.removeEventListener('click', this.tryHide)
     window.removeEventListener('keydown', this.handleShortcut)
+    window.addEventListener('keydown', this.handleEarlyShortcut, true)
+  }
+
+  // this place captures key events very early (capture phase) so it can work
+  // across other contexts that are using keybindings too (like the Ace editor)
+  handleEarlyShortcut (e) {
+    // ctrl + p -> activates Entity fuzzy finder modal
+    if (e.ctrlKey && e.which === 80) {
+      if (!modalHandler.isModalOpen()) {
+        e.preventDefault()
+        e.stopPropagation()
+
+        modalHandler.open(EntityFuzzyFinderModal, {})
+        return false
+      }
+    }
   }
 
   handleShortcut (e) {

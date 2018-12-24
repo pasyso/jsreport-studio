@@ -67,6 +67,7 @@
     "react-dnd": "3.0.2",
     "react-dnd-html5-backend": "3.0.2",
     "react-dom": "15.6.2",
+    "react-fuzzy-filter": "4.0.0",
     "react-helmet": "3.1.0",
     "react-inline-css": "2.1.1",
     "react-list": "0.7.18",

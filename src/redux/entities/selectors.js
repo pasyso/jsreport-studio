@@ -36,6 +36,17 @@ export const getReferences = (state) => {
   return result
 }
 
+export const getNormalizedEntities = (state) => {
+  return getAll(state).map((entity) => {
+    return {
+      _id: entity._id,
+      name: getEntityName(entity),
+      path: resolveEntityPath(state, entity),
+      entity: entity
+    }
+  })
+}
+
 export const resolveEntityPath = (state, { _id }) => {
   let entity = state.entities[_id]
 

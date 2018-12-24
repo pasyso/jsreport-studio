@@ -15,7 +15,7 @@
   padding: 0.3rem;
 }
 
-.nodeBox {  
+.nodeBox {
   flex: 1;
 }
 
@@ -45,10 +45,10 @@
   height: auto;
   overflow: auto;
   position: relative;
-  width: auto; 
+  width: auto;
 }
 
-.nodeTitle {  
+.nodeTitle {
   font-size: 0.9rem;
   cursor: pointer;
   width: 0.2rem;
@@ -57,21 +57,21 @@
 .nodeTitle:before {
   font-size: 1rem;
   font-family: FontAwesome;
-  color: $secondaryHoverColor;    
+  color: $secondaryHoverColor;
 }
 
 .nodeTitle:not(.collapsed):before {
   content: "\f0da";
   transform: rotateZ(45deg);
-  display: inline-block;  
+  display: inline-block;
   margin-right: 0.3rem;
   color: $primarySelectionBackgroundColor;
 }
 
 .nodeTitle.collapsed:before {
-  content: "\f0da"; 
-  display: inline-block; 
-  margin-right: 0.3rem;  
+  content: "\f0da";
+  display: inline-block;
+  margin-right: 0.3rem;
 }
 
 .nodeTitle:hover:before {
@@ -115,7 +115,6 @@
   margin-right: 0.4rem;
   width: 0.9rem;
   color: #F16220;
-
 }
 
 .entityDefaultIcon:after {
@@ -163,7 +162,7 @@
 
 .contextMenu {
   background-color: $secondaryColor;
-  position: absolute;  
+  position: absolute;
   min-width: 9rem;
   padding-top: 0.5rem;
   padding-bottom: 0.5rem;
@@ -172,7 +171,7 @@
 }
 
 .contextMenuContainer {
-  position: fixed;  
+  position: fixed;
   z-index: 300;
 }
 
@@ -196,9 +195,9 @@
   @include no-select();
 }
 
-.contextButton i {  
+.contextButton i {
   width: 0.8rem;
-  margin-right: 0.6rem;  
+  margin-right: 0.6rem;
   display: inline-block;
 }
 
