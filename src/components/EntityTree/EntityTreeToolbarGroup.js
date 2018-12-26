@@ -1,14 +1,9 @@
-import React, { Component } from 'react'
-import NewEntityModal from '../Modals/NewEntityModal'
+import React, {Component} from 'react'
 import EntityTreeButton from './EntityTreeButton'
-import getVisibleEntitySetsInTree from '../../helpers/getVisibleEntitySetsInTree'
-import {
-  entitySets,
-  modalHandler
-} from '../../lib/configuration'
+import { entityTreeToolbarComponents } from '../../lib/configuration.js'
 import style from './EntityTree.scss'
 
-class EntityTreeNewEntityButton extends Component {
+class EntityTreeToolbarGroup extends Component {
   constructor (props) {
     super(props)
 
@@ -67,21 +62,20 @@ class EntityTreeNewEntityButton extends Component {
 
   renderMenu () {
     const { isMenuActive } = this.state
-    let menuItems = []
 
     if (!isMenuActive) {
       return null
     }
 
-    menuItems = getVisibleEntitySetsInTree(entitySets).map((entitySet) => (
+    const menuItems = entityTreeToolbarComponents.group.map((p, i) => (
       <div
-        key={entitySet.name}
-        className={style.contextButton}
-        onClick={() => {
-          this.props.onNewEntity(entitySet.name)
-          this.tryHide()
-        }}>
-        <i className={`fa ${entitySet.faIcon != null ? entitySet.faIcon : 'fa-file'}`} /> {entitySet.visibleName}
+        key={`EntityToolbarGroupItem${i}`}
+        className={`${style.contextButton}`}
+      >
+        {React.createElement(p, {
+          ...this.props,
+          closeMenu: this.tryHide
+        })}
       </div>
     ))
 
@@ -96,10 +90,10 @@ class EntityTreeNewEntityButton extends Component {
 
   render () {
     return (
-      <div title='Add new entity' style={{ display: 'inline-block', marginLeft: '0.2rem', marginRight: '0.2rem' }}>
+      <div title={'more options...'} style={{ display: 'inline-block', marginLeft: '0.2rem', marginRight: '0.2rem' }}>
         <EntityTreeButton onClick={() => this.setState((state) => ({ isMenuActive: !state.isMenuActive }))}>
           <span style={{ display: 'inline-block' }}>
-            <i className='fa fa-file' />
+            <i className='fa fa-bars' />
           </span>
         </EntityTreeButton>
         {this.renderMenu()}
@@ -108,4 +102,4 @@ class EntityTreeNewEntityButton extends Component {
   }
 }
 
-export default EntityTreeNewEntityButton
+export default EntityTreeToolbarGroup

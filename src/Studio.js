@@ -98,8 +98,8 @@ class Studio {
    *
    * @param {ReactComponent|Function} entityTreeToolbarComponent
    */
-  addEntityTreeToolbarComponent (entityTreeToolbarComponent) {
-    configuration.entityTreeToolbarComponents.push(entityTreeToolbarComponent)
+  addEntityTreeToolbarComponent (entityTreeToolbarComponent, position = 'single') {
+    configuration.entityTreeToolbarComponents[position].push(entityTreeToolbarComponent)
   }
 
   /**

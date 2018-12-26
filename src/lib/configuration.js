@@ -9,7 +9,10 @@ export const entityTreeOrder = []
 export const entityTreeWrapperComponents = []
 export const entityTreeIconResolvers = []
 export const entityTreeFilterItemResolvers = []
-export const entityTreeToolbarComponents = []
+export const entityTreeToolbarComponents = {
+  single: [],
+  group: []
+}
 export const entityTreeItemComponents = {
   container: [],
   right: [],

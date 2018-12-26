@@ -5,6 +5,7 @@ import { DropTarget } from 'react-dnd'
 import throttle from 'lodash.throttle'
 import HighlightedArea from './HighlightedArea'
 import EntityTreeNode from './EntityTreeNode'
+import EntityTreeToolbarGroup from './EntityTreeToolbarGroup'
 import HierarchyReplaceEntityModal from '../Modals/HierarchyReplaceEntityModal'
 import style from './EntityTree.scss'
 import ENTITY_NODE_DRAG_TYPE from './nodeDragType'
@@ -1002,13 +1003,28 @@ class EntityTree extends Component {
   }
 
   renderEntityTreeToolbarComponents () {
-    return entityTreeToolbarComponents.map((p, i) => (
-      React.createElement(p, {
-        key: i,
-        setFilter: this.setFilter,
-        onNewEntity: this.props.onNewClick
+    const commonProps = {
+      setFilter: this.setFilter,
+      onNewEntity: this.props.onNewClick
+    }
+
+    const toolbarElements = entityTreeToolbarComponents.single.map((p, i) => {
+      return React.createElement(p, {
+        key: `EntityToolbar${i}`,
+        ...commonProps
       })
-    ))
+    })
+
+    if (entityTreeToolbarComponents.group.length > 0) {
+      toolbarElements.push(
+        <EntityTreeToolbarGroup
+          key={`EntityToolbar${toolbarElements.length}`}
+          {...commonProps}
+        />
+      )
+    }
+
+    return toolbarElements
   }
 
   renderItemNode (node = {}, depth, parentId, treeIsDraggable) {
@@ -1094,7 +1110,9 @@ class EntityTree extends Component {
     return this.connectDropping(
       <div className={style.treeListContainer} onContextMenu={(e) => this.contextMenu(e, null)}>
         {
-          this.props.toolbar && entityTreeToolbarComponents.length > 0 && (
+          this.props.toolbar &&
+          (entityTreeToolbarComponents.single.length > 0 || entityTreeToolbarComponents.group.length > 0) &&
+          (
             <div className={style.toolbar}>
               {this.renderEntityTreeToolbarComponents()}
             </div>

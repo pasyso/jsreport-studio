@@ -2,8 +2,7 @@ import { connect } from 'react-redux'
 import * as configuration from './lib/configuration.js'
 import TemplateProperties from './components/Properties/TemplateProperties.js'
 import EntityTree from './components/EntityTree/EntityTree.js'
-import EntityTreeNewEntityButton from './components/EntityTree/EntityTreeNewEntityButton'
-import EntityTreeNewFolderButton from './components/EntityTree/EntityTreeNewFolderButton'
+import EntityTreeNewButton from './components/EntityTree/EntityTreeNewButton'
 import EntityTreeInputSearch from './components/EntityTree/EntityTreeInputSearch.js'
 import Startup from './containers/Startup/Startup.js'
 import ApiModal from './components/Modals/ApiModal.js'
@@ -79,15 +78,11 @@ export default () => {
     return entityName.indexOf(name) !== -1
   })
 
-  configuration.entityTreeToolbarComponents.push((props) => (
-    <EntityTreeNewEntityButton {...props} />
+  configuration.entityTreeToolbarComponents.single.push((props) => (
+    <EntityTreeNewButton {...props} />
   ))
 
-  configuration.entityTreeToolbarComponents.push((props) => (
-    <EntityTreeNewFolderButton {...props} />
-  ))
-
-  configuration.entityTreeToolbarComponents.push((props) => (
+  configuration.entityTreeToolbarComponents.single.push((props) => (
     <EntityTreeInputSearch {...props} />
   ))
 
