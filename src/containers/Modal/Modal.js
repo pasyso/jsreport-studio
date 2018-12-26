@@ -2,7 +2,7 @@ import React, {Component} from 'react'
 import ReactModal from 'react-modal'
 import {connect} from 'react-redux'
 import {actions} from 'redux/modal'
-import debounce from 'lodash.debounce'
+import debounce from 'lodash/debounce'
 import { registerModalHandler } from '../../lib/configuration.js'
 import style from './Modal.scss'
 
