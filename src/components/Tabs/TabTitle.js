@@ -64,7 +64,7 @@ class TabTitle extends Component {
             })
           ) : (
             [
-              <span key='main-title'>{tab.tab.title || (tab.entity[entitySets[tab.entity.__entitySet].nameAttribute] + (tab.entity.__isDirty ? '*' : ''))}</span>,
+              <span key='main-title' className={style.tabMainTitle}>{tab.tab.title || (tab.entity[entitySets[tab.entity.__entitySet].nameAttribute] + (tab.entity.__isDirty ? '*' : ''))}</span>,
               (complementTitle != null && (
                 <span key='complement-title' className={style.tabComplementTitle}>&nbsp;{`- ${complementTitle}`}</span>
               ))

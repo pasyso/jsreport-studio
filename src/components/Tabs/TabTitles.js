@@ -204,7 +204,11 @@ class TabTitles extends Component {
 
       if (duplicated) {
         const currentPath = resolveEntityPath(t.entity)
-        complementTitle = `/${currentPath.split('/').slice(1, -1).join('/')}`
+        complementTitle = `${currentPath.split('/').slice(1, -1).join('/')}`
+
+        if (complementTitle === '') {
+          complementTitle = null
+        }
       }
     }
 
