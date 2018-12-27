@@ -42,7 +42,11 @@ class TabTitle extends Component {
     let tabTooltip
 
     if (tab.entity) {
-      tabTooltip = resolveEntityPath(tab.entity, { parents: true, self: false })
+      const fullPath = resolveEntityPath(tab.entity, { parents: true, self: false })
+
+      if (fullPath) {
+        tabTooltip = fullPath
+      }
     }
 
     return (

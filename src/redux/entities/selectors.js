@@ -50,6 +50,10 @@ export const getNormalizedEntities = (state) => {
 export const resolveEntityPath = (state, { _id }) => {
   let entity = state.entities[_id]
 
+  if (!entity) {
+    return
+  }
+
   const pathFragments = [getEntityName(entity)]
 
   while (entity.folder) {
