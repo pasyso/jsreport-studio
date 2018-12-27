@@ -10,6 +10,14 @@ module.exports = {
             type: 'boolean',
             default: true
           },
+          requestLogDiscriminatorPath: {
+            type: ['string', 'null'],
+            default: null
+          },
+          flushLogsInterval: {
+            type: 'number',
+            default: 2000
+          },
           entityTreeOrder: {
             type: 'array',
             items: { type: 'string' }
