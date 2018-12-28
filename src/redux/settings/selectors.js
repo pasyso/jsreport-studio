@@ -5,12 +5,12 @@ const getLogs = (logs, state) => (logs || []).map((l) => {
   let template = selectors.getByShortid(state, l.template.shortid, false)
 
   if (!template) {
-    template = { name: 'anonymous' }
+    template = { name: 'anonymous', path: 'anonymous' }
   }
 
   return {
     ...l,
-    template: { ...template }
+    template: { ...template, path: selectors.resolveEntityPath(state, template) }
   }
 })
 
