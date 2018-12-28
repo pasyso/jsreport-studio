@@ -47,7 +47,7 @@ jsreport.config.json
 
 data
 
-# main.js
+main.js
 main.js.map
-# dist/
+dist/
 extensions_dev.js
