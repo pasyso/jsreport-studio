@@ -29,9 +29,8 @@ export default class Startup extends Component {
 
     this.fetchRequested = true
     const response = await api.get('/odata/templates?$top=5&$select=name,recipe,modificationDate&$orderby=modificationDate desc')
-    debugger
+
     await this.props.load()
-    debugger
 
     this.setState({
       templates: response.value.map((t) => ({
