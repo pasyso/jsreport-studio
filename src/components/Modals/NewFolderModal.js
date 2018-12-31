@@ -1,11 +1,9 @@
 import React, {Component, PropTypes} from 'react'
 import {connect} from 'react-redux'
-import {actions} from '../../redux/editor'
+import {actions as entitiesActions} from '../../redux/entities'
 import api from '../../helpers/api.js'
-import { entitySets } from '../../lib/configuration.js'
-import intl from 'react-intl-universal'
 
-@connect((state) => ({}), { ...actions })
+@connect((state) => ({}), { ...entitiesActions })
 export default class Modal extends Component {
   static propTypes = {
     close: PropTypes.func.isRequired,
@@ -27,10 +25,22 @@ export default class Modal extends Component {
   }
 
   async submit (val) {
+    let entity = {}
     const name = val || this.refs.nameInput.value
+    let response
+
+    entity.name = name
+
+    if (this.props.options.defaults != null) {
+      entity = Object.assign(this.props.options.defaults, entity)
+    }
 
     try {
-      await api.post('/studio/validate-entity-name', { data: { name } })
+      await api.post('/studio/validate-entity-name', { data: entity })
+
+      response = await api.post('/odata/folders', {
+        data: entity
+      })
     } catch (e) {
       this.setState({
         error: e.message
@@ -43,19 +53,11 @@ export default class Modal extends Component {
       error: null
     })
 
+    response.__entitySet = 'folders'
+
+    this.props.addExisting(response)
+
     this.props.close()
-
-    let entity = this.props.options.entity || {}
-
-    if (this.props.options.defaults != null) {
-      entity = Object.assign(this.props.options.defaults, entity)
-    }
-
-    this.props.openNewTab({
-      entity,
-      entitySet: this.props.options.entitySet,
-      name
-    })
   }
 
   // the modal component for some reason after open focuses the panel itself
@@ -65,14 +67,14 @@ export default class Modal extends Component {
 
   render () {
     const { error } = this.state
-    const { entitySet, initialName } = this.props.options
+    const { initialName } = this.props.options
 
     return <div>
       <div className='form-group'>
-        <label>{intl.get('newEntityModal.title').d('New')} {intl.get('entity.' + entitySets[entitySet].name).d(entitySets[entitySet].visibleName)}</label>
+        <label>New folder</label>
         <input
           type='text'
-          placeholder={intl.get('newEntityModal.name').d('name...')}
+          placeholder='name...'
           ref='nameInput'
           defaultValue={initialName}
           onKeyPress={(e) => this.handleKeyPress(e)}
@@ -82,7 +84,7 @@ export default class Modal extends Component {
         <span style={{color: 'red', display: error ? 'block' : 'none'}}>{error}</span>
       </div>
       <div className='button-bar'>
-        <button className='button confirmation' onClick={() => this.submit()}>{intl.get('ok').d('ok')}</button>
+        <button className='button confirmation' onClick={() => this.submit()}>ok</button>
       </div>
     </div>
   }

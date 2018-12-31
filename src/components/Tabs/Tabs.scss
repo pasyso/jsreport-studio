@@ -50,6 +50,20 @@
   color: $primaryHoverColor;
 }
 
+.tabMainTitle {
+  vertical-align: middle;
+}
+
+.tabComplementTitle {
+  display: inline-block;
+  max-width: 70px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  vertical-align: middle;
+  opacity: 0.5;
+  font-size: 0.8rem;
+}
+
 .tabClose {
   display: inline-block;
   margin-left: 0.3rem;

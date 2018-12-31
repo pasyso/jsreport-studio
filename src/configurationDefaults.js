@@ -2,9 +2,11 @@ import { connect } from 'react-redux'
 import * as configuration from './lib/configuration.js'
 import TemplateProperties from './components/Properties/TemplateProperties.js'
 import EntityTree from './components/EntityTree/EntityTree.js'
+import EntityTreeNewButton from './components/EntityTree/EntityTreeNewButton'
 import EntityTreeInputSearch from './components/EntityTree/EntityTreeInputSearch.js'
 import Startup from './containers/Startup/Startup.js'
 import ApiModal from './components/Modals/ApiModal.js'
+import NewFolderModal from './components/Modals/NewFolderModal'
 import { openTab } from './redux/editor/actions'
 import intl from 'react-intl-universal'
 
@@ -16,6 +18,7 @@ export default () => {
   })
 
   configuration.editorComponents.templates = require('./components/Editor/TemplateEditor.js')
+
   configuration.editorComponents.templates.reformat = (reformatter, entity) => {
     const content = reformatter(entity.content, 'html')
     const helpers = reformatter(entity.helpers, 'js')
@@ -25,13 +28,27 @@ export default () => {
       helpers: helpers
     }
   }
+
+  configuration.editorComponents.folders = require('./components/Editor/FolderEditor.js')
+
   configuration.editorComponents.startup = Startup
+
   configuration.entitySets.templates = {
     name: 'templates',
     visibleName: 'template',
     nameAttribute: 'name',
     referenceAttributes: ['name', 'recipe', 'shortid'],
     entityTreePosition: 1000
+  }
+
+  configuration.entitySets.folders = {
+    name: 'folders',
+    faIcon: 'fa-folder',
+    visibleName: 'folder',
+    visibleInTree: false,
+    nameAttribute: 'name',
+    referenceAttributes: ['name', 'shortid'],
+    onNew: (options) => configuration.modalHandler.open(NewFolderModal, options)
   }
 
   configuration.sharedComponents.EntityTree = EntityTree
@@ -62,7 +79,11 @@ export default () => {
     return entityName.indexOf(name) !== -1
   })
 
-  configuration.entityTreeToolbarComponents.push((props) => (
+  configuration.entityTreeToolbarComponents.single.push((props) => (
+    <EntityTreeNewButton {...props} />
+  ))
+
+  configuration.entityTreeToolbarComponents.single.push((props) => (
     <EntityTreeInputSearch {...props} />
   ))
 
@@ -103,6 +124,16 @@ export default () => {
 
       if (entity.recipe.indexOf('html') !== -1) {
         return 'fa-html5'
+      }
+    })
+
+    configuration.entityTreeIconResolvers.push((entity, info = {}) => {
+      if (entity.__entitySet === 'folders') {
+        if (info.isCollapsed) {
+          return 'fa-folder'
+        } else {
+          return 'fa-folder-open'
+        }
       }
     })
   })

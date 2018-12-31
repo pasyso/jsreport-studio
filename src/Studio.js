@@ -9,6 +9,7 @@ import api, { methods } from './helpers/api.js'
 import SplitPane from './components/common/SplitPane/SplitPane.js'
 import Popover from './components/common/Popover/index.js'
 import MultiSelect from './components/common/MultiSelect/index.js'
+import EntityRefSelect from './components/common/EntityRefSelect/index.js'
 import TextEditor from './components/Editor/TextEditor.js'
 import EntityTree from './components/EntityTree/EntityTree.js'
 import EntityTreeButton from './components/EntityTree/EntityTreeButton.js'
@@ -97,8 +98,8 @@ class Studio {
    *
    * @param {ReactComponent|Function} entityTreeToolbarComponent
    */
-  addEntityTreeToolbarComponent (entityTreeToolbarComponent) {
-    configuration.entityTreeToolbarComponents.push(entityTreeToolbarComponent)
+  addEntityTreeToolbarComponent (entityTreeToolbarComponent, position = 'single') {
+    configuration.entityTreeToolbarComponents[position].push(entityTreeToolbarComponent)
   }
 
   /**
@@ -316,6 +317,13 @@ class Studio {
   }
 
   /**
+   * Collapse entity in EntityTree
+   */
+  collapseEntity (entityIdOrShortid, state = true, options = {}) {
+    configuration.collapseEntityHandler(entityIdOrShortid, state, options)
+  }
+
+  /**
    * Collapse left pane
    */
   collapseLeftPane (type = true) {
@@ -474,7 +482,17 @@ class Studio {
   }
 
   /**
-   * Searches for the entity in the UI state based on specified the shortid
+   * Searches for the entity in the UI state based on specified _id
+   * @param {String} _id
+   * @param {Boolean} shouldThrow
+   * @returns {Object|null}
+   */
+  getEntityById (_id, shouldThrow = true) {
+    return entities.selectors.getById(this.store.getState(), _id, shouldThrow)
+  }
+
+  /**
+   * Searches for the entity in the UI state based on specified shortid
    * @param {String} shortid
    * @param {Boolean} shouldThrow
    * @returns {Object|null}
@@ -522,6 +540,15 @@ class Studio {
    */
   resolveUrl (path) {
     return resolveUrl(path)
+  }
+
+  /**
+   * Assemble entity absolute path
+   * @param {*} entity
+   * @returns {String}
+   */
+  resolveEntityPath (entity) {
+    return entities.selectors.resolveEntityPath(this.store.getState(), entity)
   }
 
   relativizeUrl (path) {
@@ -594,6 +621,14 @@ class Studio {
    */
   get MultiSelect () {
     return MultiSelect
+  }
+
+  /**
+   * Component used to select entity refs
+   * @returns {EntityRefSelect}
+   */
+  get EntityRefSelect () {
+    return EntityRefSelect
   }
 
   constructor (store) {

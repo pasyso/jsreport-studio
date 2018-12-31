@@ -1,5 +1,6 @@
 import * as ActionTypes from './constants.js'
 import api from '../../helpers/api.js'
+import getVisibleEntitySetsInTree from '../../helpers/getVisibleEntitySetsInTree'
 import * as selectors from './selectors.js'
 import { entitySets, referencesLoader } from '../../lib/configuration.js'
 
@@ -36,14 +37,15 @@ export function groupedUpdate (entity) {
   })
 }
 
-export function remove (id) {
+export function remove (id, children) {
   return async function (dispatch, getState) {
     const entity = selectors.getById(getState(), id)
 
     if (entity.__isNew) {
       return dispatch({
         type: ActionTypes.REMOVE,
-        _id: id
+        _id: id,
+        children
       })
     }
 
@@ -53,7 +55,8 @@ export function remove (id) {
 
       dispatch({
         type: ActionTypes.REMOVE,
-        _id: id
+        _id: id,
+        children
       })
 
       dispatch(apiDone())
@@ -62,6 +65,14 @@ export function remove (id) {
       throw e
     }
   }
+}
+
+export function removeExisting (id, children) {
+  return (dispatch) => dispatch({
+    type: ActionTypes.REMOVE,
+    _id: id,
+    children
+  })
 }
 
 export function add (entity) {
@@ -137,7 +148,8 @@ export function loadReferences (entitySet) {
     } else {
       const nameAttribute = entitySets[entitySet].nameAttribute
       const referenceAttributes = entitySets[entitySet].referenceAttributes
-      entities = (await api.get(`/odata/${entitySet}?$select=${referenceAttributes}&$orderby=${nameAttribute}`)).value
+      const entitiesUrl = `/odata/${entitySet}?$select=${referenceAttributes}&$orderby=${nameAttribute}`
+      entities = (await api.get(entitiesUrl)).value
     }
 
     dispatch({

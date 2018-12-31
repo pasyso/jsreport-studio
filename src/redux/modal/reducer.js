@@ -1,34 +1,32 @@
 import * as ActionTypes from './constants.js'
 import * as EntityActionTypes from '../entities/constants.js'
+import shortid from 'shortid'
 import createReducer from '../createReducer.js'
 
 const reducer = createReducer({
-  text: null,
+  contentId: null,
   isOpen: false,
-  componentKey: null,
-  options: null
+  text: null
 })
 export default reducer.export()
 
-reducer.handleAction(ActionTypes.OPEN, (state, { text, componentKey, options }) => ({
+reducer.handleAction(ActionTypes.OPEN, (state) => ({
   ...state,
+  contentId: shortid.generate(),
   isOpen: true,
-  text: text,
-  componentKey: componentKey,
-  options: options
+  text: null
 }))
 
 reducer.handleAction(ActionTypes.CLOSE, (state) => ({
   ...state,
+  contentId: shortid.generate(),
   isOpen: false,
-  text: null,
-  componentKey: null,
-  options: null
+  text: null
 }))
 
 reducer.handleAction(EntityActionTypes.API_FAILED, (state, action) => ({
   ...state,
+  contentId: shortid.generate(),
   isOpen: true,
   text: action.error.message
 }))
-

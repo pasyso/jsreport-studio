@@ -1,6 +1,7 @@
 import * as entities from '../entities'
 import * as ActionTypes from './constants.js'
 import uid from '../../helpers/uid.js'
+import api from '../../helpers/api.js'
 import * as selectors from './selectors.js'
 import { push } from 'react-router-redux'
 import shortid from 'shortid'
@@ -53,7 +54,7 @@ export function openTab (tab) {
 }
 
 export function openNewTab ({ entitySet, entity, name }) {
-  const shouldClone = entity != null
+  const shouldClone = entity != null && entity._id != null
 
   return async function (dispatch, getState) {
     let id = uid()
@@ -72,12 +73,16 @@ export function openNewTab ({ entitySet, entity, name }) {
         [entitySets[entitySet].nameAttribute]: name
       }
     } else {
-      newEntity = {
+      if (entity != null) {
+        newEntity = Object.assign({}, entity)
+      }
+
+      newEntity = Object.assign(newEntity, {
         _id: id,
         __entitySet: entitySet,
         shortid: shortid.generate(),
         [entitySets[entitySet].nameAttribute]: name
-      }
+      })
 
       if (entitySet === 'templates') {
         newEntity.recipe = recipes.includes('chrome-pdf') ? 'chrome-pdf' : 'html'
@@ -138,6 +143,99 @@ export function update (entity) {
 export function groupedUpdate (entity) {
   return async function (dispatch, getState) {
     await entities.actions.groupedUpdate(entity)(dispatch, getState)
+  }
+}
+
+export function hierarchyMove (source, target, shouldCopy = false, replace = false, retry = true) {
+  return async function (dispatch, getState) {
+    let response
+
+    let sourceEntity = entities.selectors.getById(getState(), source.id)
+
+    if (sourceEntity.__isNew || sourceEntity.__isDirty) {
+      dispatch(entities.actions.flushUpdates())
+
+      sourceEntity = entities.selectors.getById(getState(), source.id)
+
+      dispatch(entities.actions.update(Object.assign({}, sourceEntity, {
+        folder: target.shortid != null ? { shortid: target.shortid } : null
+      })))
+    } else {
+      try {
+        dispatch(entities.actions.apiStart())
+
+        response = await api.post('/studio/hierarchyMove', {
+          data: {
+            source: {
+              entitySet: source.entitySet,
+              id: source.id
+            },
+            target: {
+              shortid: target.shortid
+            },
+            copy: shouldCopy === true,
+            replace: replace === true
+          }
+        })
+
+        if (replace === true) {
+          if (Array.isArray(target.children)) {
+            const sourceEntity = entities.selectors.getById(getState(), source.id, false)
+            const sourceEntitySetNameAttr = entitySets[sourceEntity.__entitySet].nameAttribute
+
+            let childTargetId
+            let childTargetChildren = []
+
+            const allFolders = target.children.reduce((acu, childId) => {
+              const childEntity = entities.selectors.getById(getState(), childId, false)
+              const childEntitySetNameAttr = entitySets[childEntity.__entitySet].nameAttribute
+
+              if (
+                ((target.shortid == null && childEntity.folder == null) ||
+                (target.shortid != null && childEntity.folder.shortid === target.shortid)) &&
+                childEntity[childEntitySetNameAttr] === sourceEntity[sourceEntitySetNameAttr]
+              ) {
+                childTargetId = childEntity._id
+              }
+
+              if (childEntity.__entitySet === 'folders') {
+                acu.push(childEntity.shortid)
+              }
+
+              return acu
+            }, [])
+
+            target.children.forEach((childId) => {
+              const childEntity = entities.selectors.getById(getState(), childId, false)
+
+              if (childEntity.folder && allFolders.indexOf(childEntity.folder.shortid) !== -1) {
+                childTargetChildren.push(childEntity._id)
+              }
+            })
+
+            if (childTargetId) {
+              dispatch(entities.actions.removeExisting(childTargetId, childTargetChildren))
+            }
+          }
+        }
+
+        response.items.forEach((item) => {
+          dispatch(entities.actions.addExisting(item))
+        })
+
+        dispatch(entities.actions.apiDone())
+
+        return response.items
+      } catch (e) {
+        if (retry && e.code === 'DUPLICATED_ENTITY') {
+          dispatch(entities.actions.apiDone())
+
+          return { duplicatedEntity: true }
+        }
+
+        dispatch(entities.actions.apiFailed(e))
+      }
+    }
   }
 }
 

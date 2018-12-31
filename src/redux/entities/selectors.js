@@ -36,4 +36,33 @@ export const getReferences = (state) => {
   return result
 }
 
+export const getNormalizedEntities = (state) => {
+  return getAll(state).map((entity) => {
+    return {
+      _id: entity._id,
+      name: getEntityName(entity),
+      path: resolveEntityPath(state, entity),
+      entity: entity
+    }
+  })
+}
+
+export const resolveEntityPath = (state, { _id }) => {
+  let entity = state.entities[_id]
+
+  if (!entity) {
+    return
+  }
+
+  const pathFragments = [getEntityName(entity)]
+
+  while (entity.folder) {
+    const folder = getByShortid(state, entity.folder.shortid)
+    pathFragments.push(folder.name)
+    entity = folder
+  }
+
+  return '/' + pathFragments.reverse().join('/')
+}
+
 export const getAll = (state) => Object.keys(state.entities).map((e) => state.entities[e])

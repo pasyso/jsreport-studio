@@ -1,0 +1,69 @@
+@import "../../theme/common";
+
+.container {
+  margin: 0;
+  width: 360px;
+}
+
+.input {
+  width: 100%;
+  box-shadow: rgba(0, 0, 0, 0.2) 0px 1px 5px 2px;
+}
+
+.results {
+  border-width: 0px 1px 1px;
+  box-shadow: rgba(0, 0, 0, 0.1) 0px 12px 30px 2px;
+  border-top-style: initial;
+  border-right-style: solid;
+  border-bottom-style: solid;
+  border-left-style: solid;
+  border-top-color: initial;
+  border-right-color: $secondaryColor;
+  border-bottom-color: $secondaryColor;
+  border-left-color: $secondaryColor;
+  border-image: initial;
+  font-size: 0.8rem;
+  margin: 0px;
+  max-height: 250px;
+  width: 100%;
+  overflow: auto;
+  position: relative;
+}
+
+.resultsItem {
+  position: relative;
+  padding: 0.6rem;
+  border-top: 1px solid $secondaryColor;
+  cursor: pointer;
+}
+
+.resultsItem::after {
+  content: "";
+  clear: both;
+  display: table;
+}
+
+.resultsItem.active {
+  background-color: $primarySelectionBackgroundColor;
+  color: #fff;
+}
+
+.resultsItemIcon {
+  margin-right: 0.2rem;
+  width: 0.9rem;
+  color: #F16220;
+}
+
+.resultsItemDefaultIcon:after {
+  font-family: FontAwesome;
+  content: "\f1fe";
+}
+
+.resultsItemPath {
+  float: right;
+  opacity: 0.5;
+}
+
+.emptyResults {
+  opacity: 0.5;
+}

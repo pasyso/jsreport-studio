@@ -9,7 +9,10 @@ export const entityTreeOrder = []
 export const entityTreeWrapperComponents = []
 export const entityTreeIconResolvers = []
 export const entityTreeFilterItemResolvers = []
-export const entityTreeToolbarComponents = []
+export const entityTreeToolbarComponents = {
+  single: [],
+  group: []
+}
 export const entityTreeItemComponents = {
   container: [],
   right: [],
@@ -35,6 +38,9 @@ export let previewHandler = () => {}
 
 export const registerModalHandler = (fn) => { modalHandler = fn }
 export let modalHandler = () => {}
+
+export const registerCollapseEntityHandler = (fn) => { collapseEntityHandler = fn }
+export let collapseEntityHandler = () => {}
 
 export const registerCollapseLeftHandler = (fn) => { collapseLeftHandler = fn }
 export let collapseLeftHandler = () => {}

@@ -71,11 +71,13 @@ export default class Properties extends Component {
   render () {
     const { entity } = this.props
 
-    return <div className={style.propertiesPanel}>
-      <div className={style.title}>{intl.get('properties.title').d('Properties')}</div>
-      <div className={style.propertiesContainer}>
-        {entity ? this.renderProperties(entity) : ''}
+    return (
+      <div className={style.propertiesPanel}>
+        <div className={style.title}>{intl.get('properties.title').d('Properties')}</div>
+        <div className={style.propertiesContainer}>
+          {entity ? this.renderProperties(entity) : ''}
+        </div>
       </div>
-    </div>
+    )
   }
 }

@@ -1,4 +1,5 @@
 export const LOAD = 'ENTITIES_LOAD'
+export const LOAD_CHILDREN = 'ENTITIES_LOAD_CHILDREN'
 export const ADD = 'ENTITIES_ADD'
 export const ADD_EXISTING = 'ENTITIES_ADD_EXISTING'
 export const SAVE = 'ENTITIES_SAVE'

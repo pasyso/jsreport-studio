@@ -89,7 +89,7 @@ reducer.handleAction(ActionTypes.LOAD_REFERENCES, (state, action) => {
   return newStateRef
 })
 
-reducer.handleAction(ActionTypes.REMOVE, (state, action) => _omit({ ...state }, action._id))
+reducer.handleAction(ActionTypes.REMOVE, (state, action) => _omit({ ...state }, [action._id, ...(action.children != null ? action.children : [])]))
 
 reducer.handleAction(ActionTypes.UNLOAD, (state, action) => {
   if (state[action._id].__isNew) {

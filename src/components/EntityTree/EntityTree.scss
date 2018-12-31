@@ -16,41 +16,63 @@
 }
 
 .nodeBox {
-  margin-top: 0.5rem;
   flex: 1;
+}
+
+.nodeBoxItem {
+  margin-top: 0;
+}
+
+.nodeBoxItemContent {
+  display: inline-block;
+  outline: 1px dashed transparent;
+  outline-offset: 1px;
+  opacity: 1;
+  margin-left: 0.2rem;
+}
+
+.nodeBoxItemContent.dragging,
+.nodeContainer.dragging .nodeBoxItemContent {
+  opacity: 0.5;
+}
+
+.nodeBoxItemContent.dragging {
+  outline-color: $tertiaryBackgroundColor;
 }
 
 .nodesBox {
-  overflow: auto;
-  width: auto;
-  height: auto;
   flex: 1;
+  height: auto;
+  overflow: auto;
+  position: relative;
+  width: auto;
 }
 
 .nodeTitle {
-  padding-left: 0.3rem;
-  margin-right: 0.3rem;
   font-size: 0.9rem;
   cursor: pointer;
+  width: 0.2rem;
 }
 
 .nodeTitle:before {
-  margin-left: 0.5rem;
   font-size: 1rem;
   font-family: FontAwesome;
-  color: darkkhaki;
-  margin-right: 0.3rem;
+  color: $secondaryHoverColor;
 }
 
 .nodeTitle:not(.collapsed):before {
   //content: "\f0da";
   content: "\f0d7";
+  transform: rotateZ(45deg);
+  display: inline-block;
+  margin-right: 0.3rem;
+  color: $primarySelectionBackgroundColor;
 }
 
 .nodeTitle.collapsed:before {
-  //content: "\f0d7";
   content: "\f0da";
-  color: $primarySelectionBackgroundColor;
+  display: inline-block;
+  margin-right: 0.3rem;
 }
 
 .nodeTitle:hover:before {
@@ -62,10 +84,6 @@
   transition: 0.15s;
 }
 
-.nodeContainer {
-  margin-top: 0.3rem;
-}
-
 .nodeContainer.collapsed {
   max-height: 0;
   overflow: hidden;
@@ -73,7 +91,7 @@
 }
 
 .link {
-  padding: 0.2rem;
+  padding: 0.3rem;
   padding-left: 1.5rem;
   font-size: 0.9rem;
   cursor: pointer;
@@ -84,15 +102,20 @@
   color: $primarySelectionColor;
 }
 
-.link:hover {
-  background: $primaryHoverBackgroundColor;
-  color: $primaryHoverColor;
+.link:hover, .link.focused {
+  background: $secondaryHoverBackgroundColor;
+  color: $primarySelectionColor;
+}
+
+.link.dragging {
+  background-color: inherit;
+  color: inherit;
 }
 
 .entityIcon {
-  margin-right: 0.3rem;
+  margin-right: 0.4rem;
+  width: 0.9rem;
   color: #F16220;
-
 }
 
 .entityDefaultIcon:after {
@@ -141,25 +164,64 @@
 .contextMenu {
   background-color: $secondaryColor;
   position: absolute;
-  padding: 0.5rem;
   min-width: 9rem;
+  padding-top: 0.5rem;
+  padding-bottom: 0.5rem;
   z-index: 200;
+  box-shadow: 0.1rem 0.1rem 0.1rem 0.05rem rgba(0, 0, 0, 0.6);
 }
 
 .contextMenuContainer {
-  position: relative;
-  z-index: 200;
+  position: fixed;
+  z-index: 300;
+}
+
+.contextMenuContainer.nestedLevel {
+  position: absolute;
+  top: 0;
+  right: 0;
+  transition: opacity;
+  transition-delay: 0.2s;
+  opacity: 0;
+  height: 0;
+  overflow: hidden;
 }
 
 .contextButton {
+  position: relative;
   color: $primaryColor;
-  padding: 0.5rem;
+  padding: 0.5rem 1rem 0.5rem 1rem;
   font-size: 0.8rem;
   cursor: pointer;
   @include no-select();
 }
 
-.contextButton:hover {
+.contextButton i {
+  width: 0.8rem;
+  margin-right: 0.6rem;
+  display: inline-block;
+}
+
+.contextButton.disabled {
+  color: #7d8a98;
+}
+
+.contextButton.hasNestedLevels:after {
+  font-family: FontAwesome;
+  font-size: 0.9rem;
+  padding-right: 0.5rem;
+  content: "\f0da";
+  position: absolute;
+  right: 0;
+}
+
+.contextButton:hover:not(.disabled) {
   background-color: $primaryHoverBackgroundColor;
-  color: $primaryHoverColor
+  color: $primaryHoverColor;
+}
+
+.contextButton.hasNestedLevels:hover > .contextMenuContainer.nestedLevel {
+  opacity: 1;
+  height: auto;
+  overflow: visible;
 }

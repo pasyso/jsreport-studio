@@ -20,6 +20,7 @@ import CloseConfirmationModal from '../../components/Modals/CloseConfirmationMod
 import RenameModal from '../../components/Modals/RenameModal.js'
 import RestoreDockConfirmationModal from '../../components/Modals/RestoreDockConfirmationModal.js'
 import * as progress from '../../redux/progress'
+import getCloneName from '../../../shared/getCloneName'
 import cookies from 'js-cookie'
 import {
   triggerSplitResize,
@@ -30,6 +31,7 @@ import {
   shouldOpenStartupPage,
   registerCollapseLeftHandler,
   registerCollapsePreviewHandler,
+  collapseEntityHandler,
   entityTreeWrapperComponents
 } from '../../lib/configuration.js'
 import intl from 'react-intl-universal'
@@ -59,9 +61,10 @@ function formatEntityName(name1) {
   tabsWithEntities: selectors.getTabWithEntities(state),
   activeEntity: selectors.getActiveEntity(state),
   lastActiveTemplate: selectors.getLastActiveTemplate(state),
-  undockMode: state.editor.undockMode
+  undockMode: state.editor.undockMode,
+  getEntityByShortid: (shortid, ...params) => entities.selectors.getByShortid(state, shortid, ...params)
 }), { ...actions, ...progressActions })
-export default class App extends Component {
+class App extends Component {
   static contextTypes = {
     store: PropTypes.object.isRequired
   }
@@ -125,6 +128,8 @@ export default class App extends Component {
     })
 
     if (this.props.params.shortid) {
+      collapseEntityHandler({ shortid: this.props.params.shortid }, false, { parents: true, self: false })
+
       this.props.openTab({ shortid: this.props.params.shortid, entitySet: this.props.params.entitySet })
       return
     }
@@ -189,7 +194,7 @@ export default class App extends Component {
 
   openStartup () {
     if (shouldOpenStartupPage) {
-      this.props.openTab({ key: 'StartupPage', editorComponentKey: 'startup', title: intl.get('tab.startup').d('Startup') })
+      this.props.openTab({ key: 'StartupPage', editorComponentKey: 'startup', title: 'Startup' })
     }
   }
 
@@ -281,22 +286,24 @@ export default class App extends Component {
     }
 
     const { activeEntity, references, openTab } = this.props
-    
+
     const entityTreeProps = {
+      main: true,
       toolbar: true,
       onRename: (id) => this.openModal(RenameModal, { _id: id }),
       onClone: (entity) => {
         this.openModal(NewEntityModal, {
           entity: entity,
           entitySet: entity.__entitySet,
-          initialName: formatEntityName(entity.name)
+          // initialName: formatEntityName(entity.name)
+          initialName: getCloneName(entity[entitySets[entity.__entitySet].nameAttribute])
         })
       },
-      onRemove: (id) => removeHandler ? removeHandler(id) : this.openModal(DeleteConfirmationModal, {_id: id}),
+      onRemove: (id, children) => removeHandler ? removeHandler(id, children) : this.openModal(DeleteConfirmationModal, { _id: id, childrenIds: children }),
       activeEntity,
       entities: references,
       onClick: (_id) => openTab({_id: _id}),
-      onNewClick: (es) => entitySets[es].onNew ? entitySets[es].onNew() : this.openModal(NewEntityModal, {entitySet: es})
+      onNewClick: (es, options) => entitySets[es].onNew ? entitySets[es].onNew(options || {}) : this.openModal(NewEntityModal, {...options, entitySet: es})
     }
 
     // if there are no components registered, defaults to rendering the EntityTree alone
@@ -411,3 +418,5 @@ export default class App extends Component {
     )
   }
 }
+
+export default DragDropContext(HTML5Backend)(App)

@@ -1,0 +1,47 @@
+@import "../../../theme/common";
+
+.heading {
+  margin-bottom: 0.2rem;
+}
+
+.openTree {
+  cursor: pointer;
+  display: block;
+  width: 100%;
+}
+
+.select {
+  background-color: #fff;
+  border: none;
+  letter-spacing: normal;
+  word-spacing: normal;
+  border-bottom: .2rem solid $secondaryColor;
+  color: #000;
+  transition: border .3s;
+  padding: .5rem;
+  font: 400 11px system-ui;
+  overflow-y: scroll;
+  overflow-x: scroll;
+}
+
+.select:active, .select:focus, .select:hover {
+  border-bottom: .2rem solid $primarySelectionBackgroundColor;
+}
+
+.list {
+  cursor: default;
+  margin: 0px;
+  padding: 0px;
+  list-style: none;
+}
+
+.list * {
+  cursor: inherit;
+}
+
+.listOption {
+  white-space: pre;
+  padding: 0px 2px 1px;
+  min-height: 1.2em;
+  max-width: 125px;
+}

@@ -1,8 +1,13 @@
 import React, {Component} from 'react'
+import { connect } from 'react-redux'
 import TabTitle from './TabTitle'
+import { selectors as entitiesSelectors } from '../../redux/entities'
+import { entitySets, collapseEntityHandler } from '../../lib/configuration'
 import style from './Tabs.scss'
 
-export default class TabTitles extends Component {
+const getEntityName = (e) => entitySets[e.__entitySet].nameAttribute ? e[entitySets[e.__entitySet].nameAttribute] : e.name
+
+class TabTitles extends Component {
   static propTypes = {
     activeTabKey: React.PropTypes.string,
     activateTab: React.PropTypes.func.isRequired,
@@ -103,6 +108,10 @@ export default class TabTitles extends Component {
     })
   }
 
+  revealInTree (entity) {
+    collapseEntityHandler({ _id: entity._id }, false, { parents: true, self: false })
+  }
+
   handleTabClick (e, t) {
     if (
       (e.nativeEvent &&
@@ -161,22 +170,56 @@ export default class TabTitles extends Component {
           >
             Close All Tabs
           </div>
+          {t.entity && (
+            <hr />
+          )}
+          {t.entity && (
+            <div
+              className={style.contextButton}
+              onClick={(e) => { e.stopPropagation(); this.revealInTree(t.entity); this.tryHide() }}
+            >
+              Reveal in Tree
+            </div>
+          )}
         </div>
       </div>
     )
   }
 
   renderTitle (t) {
-    const { activeTabKey, closeTab } = this.props
+    const { tabs, activeTabKey, closeTab, resolveEntityPath } = this.props
     const { contextMenuKey } = this.state
+    let complementTitle
+
+    if (t.entity) {
+      const currentName = getEntityName(t.entity)
+      const duplicated = tabs.some((targetT) => {
+        if (targetT.entity != null && targetT.entity._id !== t.entity._id) {
+          const targetName = getEntityName(targetT.entity)
+          return currentName != null && targetName != null && currentName === targetName
+        }
+
+        return false
+      })
+
+      if (duplicated) {
+        const currentPath = resolveEntityPath(t.entity)
+        complementTitle = `${currentPath.split('/').slice(1, -1).join('/')}`
+
+        if (complementTitle === '') {
+          complementTitle = null
+        }
+      }
+    }
 
     return (
       <TabTitle
-        ref={t.tab.key}
         key={t.tab.key}
         active={t.tab.key === activeTabKey}
         contextMenu={contextMenuKey != null && contextMenuKey === t.tab.key ? this.renderContextMenu(t) : undefined}
         tab={t}
+        complementTitle={complementTitle}
+        resolveEntityPath={resolveEntityPath}
         onClick={this.handleTabClick}
         onContextMenu={this.handleTabContextMenu}
         onClose={closeTab}
@@ -192,3 +235,7 @@ export default class TabTitles extends Component {
     )
   }
 }
+
+export default connect((state) => ({
+  resolveEntityPath: (entity) => entitiesSelectors.resolveEntityPath(state, entity)
+}))(TabTitles)

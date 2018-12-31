@@ -4,6 +4,7 @@ logs
 npm-debug.log*
 
 # Runtime data
+.DS_Store
 pids
 *.pid
 *.seed
@@ -34,14 +35,19 @@ node_modules
 
 .idea/
 node_modules/
-dist/
+
 *.iml
 webpack-assets.json
 webpack-stats.json
 npm-debug.log
 
+dev.config.json
+prod.config.json
+jsreport.config.json
+
 data
 
 main.js
 main.js.map
+dist/
 extensions_dev.js
