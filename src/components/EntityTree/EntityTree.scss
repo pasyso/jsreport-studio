@@ -43,11 +43,13 @@
 }
 
 .nodeTitle:not(.collapsed):before {
-  content: "\f0da";
+  //content: "\f0da";
+  content: "\f0d7";
 }
 
 .nodeTitle.collapsed:before {
-  content: "\f0d7";
+  //content: "\f0d7";
+  content: "\f0da";
   color: $primarySelectionBackgroundColor;
 }
 

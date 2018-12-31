@@ -9,12 +9,13 @@ function removePrefix(name) {
 }
 
 function formatEntityName(name) {
-  if (!name) return name
-  const [prefix, newName] = removePrefix(name)
-  if (!prefix) return name;
-  const Studio = window.Studio
-  const currentSc = (Studio && Studio.kadmosAuthentication && Studio.kadmosAuthentication.user) ? Studio.kadmosAuthentication.user.systemClientId : null;
-  return prefix!=currentSc ? name : newName
+  return name
+  // if (!name) return name
+  // const [prefix, newName] = removePrefix(name)
+  // if (!prefix) return name;
+  // const Studio = window.Studio
+  // const currentSc = (Studio && Studio.kadmosAuthentication && Studio.kadmosAuthentication.user) ? Studio.kadmosAuthentication.user.systemClientId : null;
+  // return prefix!=currentSc ? name : newName
 }
 
 class TabTitle extends Component {

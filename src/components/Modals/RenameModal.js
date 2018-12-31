@@ -65,7 +65,7 @@ export default class RenameModal extends Component {
     const { entity } = this.props
     const nameAttribute = entitySets[entity.__entitySet].nameAttribute
 
-    const {prefix, name} = removePrefix(entity[nameAttribute])
+    const [prefix, name] = removePrefix(entity[nameAttribute])
 
     return <div>
       <div className='form-group'>
