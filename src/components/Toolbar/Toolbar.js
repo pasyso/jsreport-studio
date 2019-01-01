@@ -2,7 +2,6 @@ import React, {Component} from 'react'
 import EntityFuzzyFinderModal from '../Modals/EntityFuzzyFinderModal.js'
 import { modalHandler, toolbarComponents, toolbarVisibilityResolver } from '../../lib/configuration.js'
 import style from './Toolbar.scss'
-import { toolbarComponents, toolbarVisibilityResolver } from '../../lib/configuration.js'
 import logo from './logo_holon_powervhc21.png'
 
 import intl from 'react-intl-universal'

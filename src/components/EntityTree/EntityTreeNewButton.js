@@ -4,6 +4,7 @@ import NewFolderModal from '../Modals/NewFolderModal'
 import getVisibleEntitySetsInTree from '../../helpers/getVisibleEntitySetsInTree'
 import { entitySets, modalHandler } from '../../lib/configuration'
 import style from './EntityTree.scss'
+import intl from 'react-intl-universal'
 
 class EntityTreeNewButton extends Component {
   constructor (props) {
@@ -78,7 +79,8 @@ class EntityTreeNewButton extends Component {
           this.props.onNewEntity(entitySet.name)
           this.tryHide()
         }}>
-        <i className={`fa ${entitySet.faIcon != null ? entitySet.faIcon : 'fa-file'}`} /> {entitySet.visibleName}
+        <i className={`fa ${entitySet.faIcon != null ? entitySet.faIcon : 'fa-file'}`} />
+        {intl.get('entitiesType.'+entitySet.name).d(entitySet.visibleName)}
       </div>
     ))
 
@@ -88,7 +90,7 @@ class EntityTreeNewButton extends Component {
         className={`${style.contextButton} ${style.hasNestedLevels}`}
         onClick={(e) => { e.stopPropagation() }}
       >
-        <i className='fa fa-file' /> New Entity
+        <i className='fa fa-file' /> {intl.get('entityTree.newEntity').d('New Entity')}
         <div key='entity-contextmenu' className={`${style.contextMenuContainer} ${style.nestedLevel}`}>
           <div className={style.contextMenu}>
             {entitySetsMenuItems}
@@ -107,7 +109,7 @@ class EntityTreeNewButton extends Component {
           modalHandler.open(NewFolderModal, {})
           this.tryHide()
         }}>
-        <i className='fa fa-folder' /> New Folder
+        <i className='fa fa-folder' /> {intl.get('entityTree.newFolder').d('New Folder')}
       </div>
     )
 
@@ -122,7 +124,7 @@ class EntityTreeNewButton extends Component {
 
   render () {
     return (
-      <div title='Add new' style={{ display: 'inline-block', marginLeft: '0.2rem', marginRight: '0.2rem' }}>
+      <div title={intl.get('entityTree.addNew').d('Add new')} style={{ display: 'inline-block', marginLeft: '0.2rem', marginRight: '0.2rem' }}>
         <EntityTreeButton onClick={() => this.setState((state) => ({ isMenuActive: !state.isMenuActive }))}>
           <span style={{ display: 'inline-block' }}>
             <i className='fa fa-plus' />

@@ -1,6 +1,8 @@
 import Promise from 'bluebird'
 import React, {Component, PropTypes} from 'react'
 import {connect} from 'react-redux'
+import { DragDropContext } from 'react-dnd'
+import HTML5Backend from 'react-dnd-html5-backend'
 import { actions, selectors } from 'redux/editor'
 import * as entities from 'redux/entities'
 import Preview from '../../components/Preview/Preview.js'
@@ -37,16 +39,6 @@ import {
 import intl from 'react-intl-universal'
 
 const progressActions = progress.actions
-
-function removePrefix(name) {
-  let p = name.indexOf('!');
-  return p > -1 ? [name.substring(0, p), name.substring(p+1)] : [null, name];
-}
-
-function formatEntityName(name1) {
-  const [prefix, name] = removePrefix(name1)
-  return name.indexOf('.') !== -1 ? name.slice(0, name.indexOf('.')) + '(clone)' + name.slice(name.indexOf('.')) : name + '(clone)'
-}
 
 @connect((state) => ({
   entities: state.entities,
@@ -194,7 +186,7 @@ class App extends Component {
 
   openStartup () {
     if (shouldOpenStartupPage) {
-      this.props.openTab({ key: 'StartupPage', editorComponentKey: 'startup', title: 'Startup' })
+      this.props.openTab({ key: 'StartupPage', editorComponentKey: 'startup', title: intl.get('tab.startup').d('Startup') })
     }
   }
 

@@ -4,6 +4,7 @@ import style from './EntityTree.scss'
 import { checkIsGroupNode, checkIsGroupEntityNode, getNodeDOMId, getNodeTitleDOMId, getAllEntitiesInHierarchy } from './utils'
 import ENTITY_NODE_DRAG_TYPE from './nodeDragType'
 import { entitySets, entityTreeItemComponents, entityTreeIconResolvers } from '../../lib/configuration.js'
+import intl from 'react-intl-universal'
 
 const nodeSource = {
   beginDrag (props, monitor, component) {
@@ -300,7 +301,6 @@ class EntityTreeNode extends Component {
       onNewClick
     } = this.props
 
-    const name = node.name
     const items = node.items
     const groupStyle = node.data != null ? this.resolveEntityTreeIconStyle(node.data, { isCollapsed }) : null
     let groupIsEntity = checkIsGroupEntityNode(node)
@@ -337,7 +337,7 @@ class EntityTreeNode extends Component {
                 {groupStyle && (
                   <i key='entity-icon' className={style.entityIcon + ' fa ' + (groupStyle || '')} />
                 )}
-                {name + (groupIsEntity && node.data.__isDirty ? '*' : '')}
+                {intl.get('entityTree.' + node.name).d(node.name) + (groupIsEntity && node.data.__isDirty ? '*' : '')}
               </div>
             )}
           </span>
@@ -346,7 +346,7 @@ class EntityTreeNode extends Component {
             !selectable ? (
               <a
                 key={id + 'new'}
-                onClick={(ev) => { ev.preventDefault(); ev.stopPropagation(); onNewClick(name) }}
+                onClick={(ev) => { ev.preventDefault(); ev.stopPropagation(); onNewClick(node.name) }}
                 className={style.add}
               />
             ) : null

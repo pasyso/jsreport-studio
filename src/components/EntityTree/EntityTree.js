@@ -728,7 +728,7 @@ class EntityTree extends Component {
       return entitySets[setName].nameAttribute
     }
 
-    return entity[entitySets[setName].nameAttribute]
+    return formatEntityName(entity[entitySets[setName].nameAttribute])
   }
 
   groupEntitiesByType (sets, entitiesByType) {
@@ -881,7 +881,8 @@ class EntityTree extends Component {
           this.tryHide()
         }}
       >
-        <i className={`fa ${entitySet.faIcon != null ? entitySet.faIcon : 'fa-file'}`} /> {entitySet.visibleName}
+        <i className={`fa ${entitySet.faIcon != null ? entitySet.faIcon : 'fa-file'}`} />
+        {intl.get('entitiesType.'+entitySet.name).d(entitySet.visibleName)}
       </div>
     ))
 

@@ -61,9 +61,8 @@
 }
 
 .nodeTitle:not(.collapsed):before {
-  //content: "\f0da";
   content: "\f0d7";
-  transform: rotateZ(45deg);
+  //transform: rotateZ(45deg);
   display: inline-block;
   margin-right: 0.3rem;
   color: $primarySelectionBackgroundColor;
@@ -193,6 +192,7 @@
   padding: 0.5rem 1rem 0.5rem 1rem;
   font-size: 0.8rem;
   cursor: pointer;
+  white-space: nowrap;
   @include no-select();
 }
 
