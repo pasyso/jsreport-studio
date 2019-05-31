@@ -22,15 +22,20 @@ function assertNotFound(obj, ctx, id) {
         throw `Object with 'id' === '${id}' not defined in ${toPrettyString(ctx)}`;
 }
 
+function getMomentTimezone(tz) {
+    let re = tz.match(/(GMT)(\+|\-)(\d+)/i);
+    if (re) {
+        let sign = re[2] == '+' ? '-' : '+';
+        tz = 'Etc/GMT' + sign + re[3];
+        return tz;
+    }
+    if (moment.tz.zone(tz)) return tz;
+}
+
 function withTimezone(timestamp, tz = 'GMT') {
     let dt = moment(timestamp);
-    if (moment.tz.zone(tz)) dt = dt.tz(tz);
-    else {
-        if (tz.match(/(GMT)(\+|\-)(\d+)/i)) {
-            tz = 'Etc/' + tz
-            if (moment.tz.zone(tz)) dt = dt.tz(tz);
-        }
-    }
+    tz = getMomentTimezone(tz);
+    if (tz) dt = dt.tz(tz);
     return dt;
 }
 
@@ -220,7 +225,6 @@ function getCounterparty(ctx) {
     if (ctx.surveyObject && ctx.surveyObject.category == 'vehicle' && ctx.surveyObject.driver) {
         ctpy = addBpExtraProperties(ctx.surveyObject.driver, 'person')
     } else ctpy = getCustomer(ctx)
-    ctx.counterparty = ctpy;
     return ctpy;
 }
 
@@ -295,8 +299,40 @@ function drawLiqbox(name, v, min, max) {
 }
 
 function defaultContext() {
+    const uomMap = {
+        [undefined]: {
+            inch: '″',
+            Cel: '°C',
+            Fa: '°F'
+        },
+        ru: {
+            hr: 'ч',
+            pc: 'шт',
+            mm: 'мм',
+            m: 'м',
+            km: 'км',
+            mile: 'миль',
+            mi: 'миль',
+            l: 'л'
+        },
+        en: {
+            mile: 'miles',
+            mi: 'miles'
+        },
+        am: {
+            km: 'կմ',
+            mile: 'մղոն',
+            mi: 'մղոն'
+        }
+    };
     return {
         locale: 'ru',
+        formatUom(uom, locale = 'ru') {
+            if (!uom) return '';
+            if (uomMap[locale] && uomMap[locale][uom]) return uomMap[locale][uom];
+            if (uomMap[undefined][uom]) return uomMap[undefined][uom];
+            return uom;
+        },
         getAnswerValueFormatted: function (question, answer) {
             if (!answer) return undefined;
             const levelIds = ['fuelLevel', 'engineOilLevel', 'coolantLevel', 'steeringFluidLevel',
@@ -308,21 +344,7 @@ function defaultContext() {
                     if (answer.status == 'green' && (answer.id == 'OK' || answer.id == 'none')) return undefined;
                     return answer.value;
                 case 'length':
-                    let uom = answer.unitOfMeasurement;
-                    switch (uom) {
-                        case 'm':
-                            uom = 'м';
-                            break;
-                        case 'mm':
-                            uom = 'мм';
-                            break;
-                        case 'km':
-                            uom = 'км';
-                            break;
-                        case 'mile':
-                            uom = 'миль';
-                            break;
-                    }
+                    let uom = this.formatUom(answer.unitOfMeasurement, this.locale);
                     return Number(answer.value).toLocaleString(this.locale) + ' ' + uom;
                     // return answer.value + ' ' + uom;
                 case 'imageMarkAndText':
@@ -414,6 +436,10 @@ function defaultContext() {
         // },
         init: function (context) {
             if (!context.contextCommonPrepared) {
+                context.isLocale = {
+                    [context.branch ? context.branch.locale: undefined]: true
+                };
+
                 context.questions = this.getQuestionsFlatList({}, context.contents);
                 // context.liquidLevels = this.getLiquidLevels(context.questions);
 
@@ -421,6 +447,8 @@ function defaultContext() {
                 if (context.surveyObject && context.surveyObject.owner) addBpExtraProperties(context.surveyObject.owner);
                 if (context.customer) addBpExtraProperties(context.customer);
                 if (context.requester) addBpExtraProperties(context.requester);
+                if (context.surveyor) addBpExtraProperties(context.surveyor);
+                if (context.payer) addBpExtraProperties(context.payer);
 
                 context.showPersonalSettings = context.questions.markSeatPosition || context.questions.radio_frequency
                     || context.questions.temperature_left || context.questions.temperature_right;
@@ -631,7 +659,25 @@ module.exports = function () {
                 return (ctx.printOptions && ctx.printOptions.print_header_logo_disabled == true);
             }
         },
-
+        currency: {
+            map: {
+                ru: {
+                    RUB: ['руб.'],
+                    BYR: ['Бел.руб.'],
+                    BYN: 'BYR'
+                }
+            },
+            formatShort(isoCode, locale = 'ru') {
+                if (!isoCode) return '';
+                isoCode = isoCode.toUpperCase();
+                if (this.map[locale] && this.map[locale][isoCode]) {
+                    let t = this.map[locale][isoCode];
+                    if (typeof t == 'string') t = this.map[locale][t];
+                    return t;
+                }
+                return isoCode;
+            }
+        },
         withTimezone: withTimezone,
         findById: findById,
         findQuestionById: findQuestionById,
@@ -698,7 +744,8 @@ function getDamageReport(ctx) {
 
     }
 
-    let damageReport = findQuestionById(ctx, 'damageReport');
+    // let damageReport = findQuestionById(ctx, 'damageReport');
+    let damageReport = findById(ctx, 'damageReport');
     if (damageReport) createMarks(damageReport);
     return damageReport;
 }

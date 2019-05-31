@@ -81,5 +81,13 @@
   "property.scripts": "scripts",
   "property.assets": "assets",
   "property.tags": "tags",
-  "property.resources": "resources"
+  "property.resources": "resources",
+
+  "signIn": "Sign In",
+  "miltiselect.selectAll": "Select/Unselect all",
+
+  "permissions.owner": "owner",
+  "permissions.read": "read permissions",
+  "permissions.edit": "edit permissions",
+  "permissions.multipleChoiceTooltip": "Use the checkboxes to select/deselect multiple options"
 }

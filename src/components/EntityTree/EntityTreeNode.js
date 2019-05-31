@@ -4,7 +4,6 @@ import style from './EntityTree.scss'
 import { checkIsGroupNode, checkIsGroupEntityNode, getNodeDOMId, getNodeTitleDOMId, getAllEntitiesInHierarchy } from './utils'
 import ENTITY_NODE_DRAG_TYPE from './nodeDragType'
 import { entitySets, entityTreeItemComponents, entityTreeIconResolvers } from '../../lib/configuration.js'
-import intl from 'react-intl-universal'
 
 const nodeSource = {
   beginDrag (props, monitor, component) {
@@ -337,7 +336,7 @@ class EntityTreeNode extends Component {
                 {groupStyle && (
                   <i key='entity-icon' className={style.entityIcon + ' fa ' + (groupStyle || '')} />
                 )}
-                {intl.get('entityTree.' + node.name).d(node.name) + (groupIsEntity && node.data.__isDirty ? '*' : '')}
+                {(node.visibleName ? node.visibleName : node.name) + (groupIsEntity && node.data.__isDirty ? '*' : '')}
               </div>
             )}
           </span>

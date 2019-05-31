@@ -24,6 +24,7 @@ import babelRuntime from './lib/babelRuntime.js'
 import customPreview from './helpers/customPreview.js'
 import bluebird from 'bluebird'
 import io from 'socket.io-client'
+import intl from 'react-intl-universal'
 
 /**
  * Main facade and API for extensions. Exposed as global variable Studio. It can be also imported from jsreport-studio
@@ -273,6 +274,10 @@ class Studio {
    */
   get api () {
     return this.API
+  }
+  
+  get intl () {
+    return intl
   }
 
   /**

@@ -13,7 +13,7 @@ const getLogs = (logs, state) => (logs || []).map((l) => {
     ...l,
     template: { ...template, path: selectors.resolveEntityPath(state, template) }
   }
-})
+}).filter(l => l != null)
 
 export const getByKey = (state, key, shouldThrow = true) => {
   const entities = Object.keys(state.settings).map((k) => state.settings[k]).filter((s) => s.key === key)

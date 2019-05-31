@@ -84,5 +84,13 @@
   "property.scripts": "scripts (скрипты)",
   "property.assets": "assets (активы)",
   "property.tags": "tags",
-  "property.resources": "resources (ресурсы)"
+  "property.resources": "resources (ресурсы)",
+
+  "signIn": "Войти",
+  "miltiselect.selectAll": "Выбрать все",
+
+  "permissions.owner": "владелец",
+  "permissions.read": "чтение",
+  "permissions.edit": "редактирование",
+  "permissions.multipleChoiceTooltip": "Используйте чекбоксы для выбора нескольных элементов"
 }

@@ -1,5 +1,6 @@
 import React, { Component } from 'react'
 import styles from './MultiSelect.scss'
+import intl from 'react-intl-universal'
 
 class MultiSelect extends Component {
   constructor (props) {
@@ -110,7 +111,7 @@ class MultiSelect extends Component {
         <div className={styles.allCheckContainer}>
           <label className={styles.allCheck} onClick={this.handleSelectUnselectAllClick}>
             <input type='checkbox' checked={allSelected} readOnly />
-            Select/Unselect all
+            {intl.get('miltiselect.selectAll').d('Select/Unselect all')}
           </label>
         </div>
         <div className={styles.multiSelect} title={title}>

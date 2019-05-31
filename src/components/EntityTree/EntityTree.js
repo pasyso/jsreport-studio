@@ -30,6 +30,10 @@ import {
 } from '../../lib/configuration.js'
 import intl from 'react-intl-universal'
 
+function hasPrefix(name) {
+  return name.indexOf('!') > -1
+}
+
 function removePrefix(name) {
   if (!name) return name
   let p = name.indexOf('!');
@@ -1046,6 +1050,9 @@ class EntityTree extends Component {
   renderItemNode (node = {}, depth, parentId, treeIsDraggable) {
     const { entities, selectable, selectionMode, activeEntity, onNewClick, onNodeSelect } = this.props
     const name = node.name
+
+    node.visibleName = hasPrefix(node.name) ? formatEntityName(node.name) : intl.get('entityTree.' + node.name).d(node.name)
+
     let treeDepth = depth || 0
     const isOnlyGroupNode = checkIsGroupNode(node) && !checkIsGroupEntityNode(node)
     const objectId = this.getNodeId(name, isOnlyGroupNode ? null : node.data, parentId, treeDepth)
